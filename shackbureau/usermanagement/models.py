@@ -140,3 +140,9 @@ class Member(models.Model):
 
     def __unicode__(self):
         return u"%s, %s [%s]" % (self.surname, self.name, self.nickname or u"")
+
+    def save(self, *args, **kwargs):
+        if not self.member_id:
+            self.member_id = Member.objects.aggregate(models.Max('member_id'))\
+                                           .get('member_id_max', 0) + 1
+        return super().save(*args, **kwargs)
