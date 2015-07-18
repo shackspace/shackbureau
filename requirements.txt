@@ -5,3 +5,4 @@ django-localflavor
 django-flat-theme
 django-reversion
 requests
+ipython

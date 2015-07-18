@@ -103,6 +103,9 @@ class Member(models.Model):
         default=True,
         help_text="Membership is active")
 
+    is_cancellation_confirmed = models.BooleanField(
+        default=False)
+
     payment_type = models.CharField(
         choices=(('SEPA', 'Lastschrift'),
                  ('transfer', 'Überweisung')),
