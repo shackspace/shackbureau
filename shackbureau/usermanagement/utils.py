@@ -13,8 +13,8 @@ def import_old_shit(filename):
         for line in reader:
             dataset = dict(zip(headers, line))
             member_data = {}
-            kto = int(dataset.get('konto', 0))
-            blz = int(dataset.get('blz', 0))
+            kto = int(dataset.get('konto') or 0)
+            blz = int(dataset.get('blz') or 0)
             if kto and blz:
                 iban_checksum = 98 - (int('{:010d}{:08d}131400'.format(kto, blz)) % 97)
                 member_data['iban'] = 'DE{:02d}{:010d}{:08d}'.format(iban_checksum, kto, blz)
