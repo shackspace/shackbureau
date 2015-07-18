@@ -29,6 +29,7 @@ class Member(models.Model):
     form_of_address = models.CharField(
         choices=(('F', 'Frau'), ('H', 'Herr')),
         max_length=10,
+        default="H",
         help_text="How to formally address this person")
 
     is_underaged = models.BooleanField(

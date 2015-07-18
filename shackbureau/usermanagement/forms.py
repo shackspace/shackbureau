@@ -12,6 +12,7 @@ class MemberForm(forms.ModelForm):
         model = Member
         fields = [
             'join_date',
+            'form_of_address',
             'name',
             'nickname',
             'surname',
