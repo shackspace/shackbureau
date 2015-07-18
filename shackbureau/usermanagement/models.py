@@ -83,7 +83,7 @@ class Member(models.Model):
     membership_type = models.CharField(
         choices=(('full', 'Vollzahler'),
                  ('reduced', 'ermässigt')),
-        max_length=20)
+        default="full", max_length=20)
 
     membership_fee_monthly = models.DecimalField(
         default=20,
@@ -92,34 +92,45 @@ class Member(models.Model):
         help_text="Monthly Membership Fee")
 
     membership_fee_interval = models.PositiveIntegerField(
-        choices=((1, '1'), (12, '12')),
+        choices=((1, '1'), (12, '12')), default=1,
         help_text="Pays for N months at once")
 
     is_active = models.BooleanField(
         default=True,
         help_text="Membership is active")
 
+    payment_type = models.CharField(
+        choices=(('SEPA', 'Lastschrift'),
+                 ('transfer', 'Überweisung')),
+        default="SEPA", max_length=20)
+
     iban = IBANField(null=True, blank=True, verbose_name="IBAN")
     bic = BICField(null=True, blank=True, verbose_name="BIC")
 
     iban_fullname = models.CharField(
+        null=True, blank=True,
         max_length=255, verbose_name="IBAN full name",
         help_text="Full name for IBAN account owner")
 
     iban_address = models.CharField(
+        null=True, blank=True,
         max_length=255, verbose_name="IBAN address",
         help_text="Address line (e.g. Street / House Number)")
 
     iban_zip_code = models.CharField(
+        null=True, blank=True,
         max_length=20, verbose_name="IBAN zip code",
         help_text="ZIP Code")
 
     iban_city = models.CharField(
+        null=True, blank=True,
         max_length=255, verbose_name="IBAN City",
         help_text="City")
 
     iban_country = models.CharField(
-        max_length=255, default="Deutschland", verbose_name="IBAN Country",
+        null=True, blank=True,
+        max_length=255, default="Deutschland",
+        verbose_name="IBAN Country",
         help_text="Country")
 
     modified = models.DateTimeField(auto_now=True)
