@@ -6,6 +6,9 @@ from localflavor.generic.models import IBANField, BICField
 
 class Member(models.Model):
 
+    class Meta:
+        ordering = ('-created', )
+
     member_id = models.IntegerField(
         unique=True,
         help_text="Membership ID")
@@ -138,11 +141,11 @@ class Member(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
                                    related_name='members')
 
-    def __unicode__(self):
-        return u"%s, %s [%s]" % (self.surname, self.name, self.nickname or u"")
+    def __str__(self):
+        return "{} {} [ID: {}]".format(self.name, self.surname, self.member_id)
 
     def save(self, *args, **kwargs):
         if not self.member_id:
             self.member_id = Member.objects.aggregate(models.Max('member_id'))\
-                                           .get('member_id_max', 0) + 1
+                                           .get('member_id__max', 0) + 1
         return super().save(*args, **kwargs)

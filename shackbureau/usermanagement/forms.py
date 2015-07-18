@@ -32,4 +32,6 @@ class MemberForm(forms.ModelForm):
             'iban_country',
             'bic',
             'iban',
+            # readonly
+            'created_by',
         ]
