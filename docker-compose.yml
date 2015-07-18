@@ -1,0 +1,19 @@
+web:
+  build: .
+  command: "python3 manage.py runserver 0.0.0.0:8000"
+  environment:
+      PYTHONUNBUFFERED: 0
+  links:
+   - db
+  volumes:
+   - .:/opt/code
+  ports:
+   - "8000:8000"
+data:
+  image: aexea/aexea-base
+  volumes:
+    - /home/uid1000
+db:
+  image: postgres:9.4
+  ports:
+   - "5432:5432"
