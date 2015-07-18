@@ -5,12 +5,12 @@ from .models import Member
 
 class MemberForm(forms.ModelForm):
     zip_code = DEZipCodeField()
-    iban_zip_code = DEZipCodeField(label='IBAN zip code')
+    iban_zip_code = DEZipCodeField(label='IBAN zip code',
+                                   required=False)
 
     class Meta(object):
         model = Member
         fields = [
-            'member_id',
             'join_date',
             'name',
             'nickname',
@@ -24,6 +24,7 @@ class MemberForm(forms.ModelForm):
             'membership_type',
             'membership_fee_monthly',
             'membership_fee_interval',
+            'payment_type',
             'iban_fullname',
             'iban_address',
             'iban_zip_code',
