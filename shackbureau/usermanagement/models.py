@@ -147,6 +147,6 @@ class Member(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.member_id:
-            self.member_id = Member.objects.aggregate(models.Max('member_id'))\
-                                           .get('member_id__max', 0) + 1
+            self.member_id = (Member.objects.aggregate(models.Max('member_id'))
+                              .get('member_id__max') or 0) + 1
         return super().save(*args, **kwargs)
