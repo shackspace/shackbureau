@@ -66,8 +66,8 @@ def import_old_shit(filename):
             print('#' * 40)
             print('Saving {member_id} (BIC: {bic})'.format(**member_data))
             member_id = member_data.pop('member_id')
-            Member.objects.get_or_create(member_id=member_id,
-                                         defaults=member_data)
+            Member.objects.update_or_create(member_id=member_id,
+                                            defaults=member_data)
 
 
 bics = {}
