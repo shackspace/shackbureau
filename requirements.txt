@@ -3,3 +3,4 @@ psycopg2
 django-extensions
 django-localflavor
 django-flat-theme
+django-reversion
