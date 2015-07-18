@@ -28,6 +28,10 @@ class Member(models.Model):
         max_length=10,
         help_text="How to formally address this person")
 
+    is_underaged = models.BooleanField(
+        default=False,
+        help_text="Member is not 18+.")
+
     date_of_birth = models.DateField(
         blank=True, null=True,
         help_text="Date of Birth")
@@ -91,12 +95,32 @@ class Member(models.Model):
         choices=((1, '1'), (12, '12')),
         help_text="Pays for N months at once")
 
-    active = models.BooleanField(
+    is_active = models.BooleanField(
         default=True,
         help_text="Membership is active")
 
-    iban = IBANField(null=True, blank=True)
-    bic = BICField(null=True, blank=True)
+    iban = IBANField(null=True, blank=True, verbose_name="IBAN")
+    bic = BICField(null=True, blank=True, verbose_name="BIC")
+
+    iban_fullname = models.CharField(
+        max_length=255, verbose_name="IBAN full name",
+        help_text="Full name for IBAN account owner")
+
+    iban_address = models.CharField(
+        max_length=255, verbose_name="IBAN address",
+        help_text="Address line (e.g. Street / House Number)")
+
+    iban_zip_code = models.CharField(
+        max_length=20, verbose_name="IBAN zip code",
+        help_text="ZIP Code")
+
+    iban_city = models.CharField(
+        max_length=255, verbose_name="IBAN City",
+        help_text="City")
+
+    iban_country = models.CharField(
+        max_length=255, default="Deutschland", verbose_name="IBAN Country",
+        help_text="Country")
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
