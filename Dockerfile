@@ -29,7 +29,6 @@ ADD . /opt/code
 
 RUN useradd uid1000 -d /home/uid1000
 RUN mkdir -p /home/uid1000 && chown uid1000: /home/uid1000
-VOLUME /home/uid1000
 USER uid1000
 
 WORKDIR shackbureau

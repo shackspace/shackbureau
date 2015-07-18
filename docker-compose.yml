@@ -1,12 +1,19 @@
 web:
   build: .
-  command: "python3 manage.py runserver 0.0.0.0:8000"
   environment:
       PYTHONUNBUFFERED: 0
   links:
    - db
   volumes:
    - .:/opt/code
+  volumes_from:
+   - data
+  entrypoint:
+   - 'python3'
+   - 'manage.py'
+  command: 
+   - 'runserver'
+   - '0.0.0.0:8000'
   ports:
    - "8000:8000"
 data:
