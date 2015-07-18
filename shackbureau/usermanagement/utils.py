@@ -32,7 +32,7 @@ def import_old_shit(filename):
             member_data['name'] = dataset['vorname']
             member_data['nickname'] = dataset.get('nickname')
             member_data['join_date'] = dataset['eintritt']
-            member_data['leave_date'] = dataset.get('austritt')
+            member_data['leave_date'] = dataset.get('austritt') or None
             member_data['email'] = dataset['email']
             member_data['is_active'] = not bool(member_data.get('leave_date'))
 
@@ -52,12 +52,13 @@ def import_old_shit(filename):
             member_data['iban_fullname'] = dataset.get('kontoinhaber')
             member_data['iban_address'] = dataset.get('strasse')
             member_data['address1'] = dataset.get('strasse')
-            member_data['zip_code'] = dataset.get('plz')
-            member_data['iban_zip_code'] = dataset.get('plz')
+            member_data['zip_code'] = dataset.get('plz') or None
+            member_data['iban_zip_code'] = dataset.get('plz') or None
             member_data['city'] = dataset.get('ort')
             member_data['iban_city'] = dataset.get('ort')
-            member_data['date_of_birth'] = dataset.get('geburtsdatum')
-            member_data['form_of_address'] = dataset.get('geschlecht').upper().replace('W', 'F').replace('M', 'H')
+            member_data['date_of_birth'] = dataset.get('geburtsdatum') or None
+            member_data['form_of_address'] = dataset.get('geschlecht').upper()\
+                .replace('W', 'F').replace('M', 'H') or None
             member_data['phone_number'] = dataset.get('telefon')
             member_data['created_by'] = User.objects.first()
 
