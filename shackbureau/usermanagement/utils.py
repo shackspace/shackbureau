@@ -16,47 +16,53 @@ def import_old_shit(filename):
             kto = int(dataset.get('konto') or 0)
             blz = int(dataset.get('blz') or 0)
             if kto and blz:
-                iban_checksum = 98 - (int('{:010d}{:08d}131400'.format(kto, blz)) % 97)
-                member_data['iban'] = 'DE{:02d}{:010d}{:08d}'.format(iban_checksum, kto, blz)
-                member_data['bic'] = blz_to_bic(blz)
+                if kto in ['outdated', '?']:
+                    pass
+                elif len(kto) > 10:
+                    iban_checksum = 98 - (int('{:010d}{:08d}131400'.format(kto, blz)) % 97)
+                    member_data['iban'] = 'DE{:02d}{:010d}{:08d}'.format(iban_checksum, kto, blz)
+                    member_data['bic'] = blz_to_bic(blz)
+                else:
+                    member_data['iban'] = kto
+                    member_data['bic'] = dataset.get('blz')
 
-        member_data['member_id'] = dataset['id']
-        member_data['surname'] = dataset['name']
-        member_data['name'] = dataset['vorname']
-        member_data['nickname'] = dataset.get('nickname')
-        member_data['join_date'] = dataset['eintritt']
-        member_data['leave_date'] = dataset.get('austritt')
-        member_data['email'] = dataset['email']
-        member_data['is_active'] = not bool(member_data.get('leave_date'))
+            member_data['member_id'] = dataset['id']
+            member_data['surname'] = dataset['name']
+            member_data['name'] = dataset['vorname']
+            member_data['nickname'] = dataset.get('nickname')
+            member_data['join_date'] = dataset['eintritt']
+            member_data['leave_date'] = dataset.get('austritt')
+            member_data['email'] = dataset['email']
+            member_data['is_active'] = not bool(member_data.get('leave_date'))
 
-        member_data['membership_type'], member_data['membership_fee_interval'] = [
-            ('full', 1),
-            ('full', 12),
-            ('reduced', 1),
-            ('reduced', 12),
-        ][int(dataset['beitragsart'])]
+            member_data['membership_type'], member_data['membership_fee_interval'] = [
+                ('full', 1),
+                ('full', 12),
+                ('reduced', 1),
+                ('reduced', 12),
+            ][int(dataset['beitragsart'])]
 
-        if dataset['zahlweise'] == 'L':
-            member_data['payment_type'] = 'SEPA'
-        elif dataset['zahlweise'] in ['U', 'D']:
-            member_data['payment_type'] = 'transfer'
+            if dataset['zahlweise'] == 'L':
+                member_data['payment_type'] = 'SEPA'
+            elif dataset['zahlweise'] in ['U', 'D']:
+                member_data['payment_type'] = 'transfer'
 
-        member_data['membership_fee_monthly'] = Decimal(dataset['beitrag'].replace(' €', ''))
-        member_data['iban_fullname'] = dataset.get('kontoinhaber')
-        member_data['iban_address'] = dataset.get('strasse')
-        member_data['address1'] = dataset.get('strasse')
-        member_data['zip_code'] = dataset.get('plz')
-        member_data['iban_zip_code'] = dataset.get('plz')
-        member_data['city'] = dataset.get('ort')
-        member_data['iban_city'] = dataset.get('ort')
-        member_data['date_of_birth'] = dataset.get('geburtsdatum')
-        member_data['form_of_address'] = dataset.get('geschlecht').upper().replace('W', 'F').replace('M', 'H')
-        member_data['phone_number'] = dataset.get('telefon')
-        member_data['created_by'] = User.objects.first()
+            member_data['membership_fee_monthly'] = Decimal(dataset['beitrag'].replace(' €', ''))
+            member_data['iban_fullname'] = dataset.get('kontoinhaber')
+            member_data['iban_address'] = dataset.get('strasse')
+            member_data['address1'] = dataset.get('strasse')
+            member_data['zip_code'] = dataset.get('plz')
+            member_data['iban_zip_code'] = dataset.get('plz')
+            member_data['city'] = dataset.get('ort')
+            member_data['iban_city'] = dataset.get('ort')
+            member_data['date_of_birth'] = dataset.get('geburtsdatum')
+            member_data['form_of_address'] = dataset.get('geschlecht').upper().replace('W', 'F').replace('M', 'H')
+            member_data['phone_number'] = dataset.get('telefon')
+            member_data['created_by'] = User.objects.first()
 
-        print('#' * 40)
-        print('Saving {member_id} (BIC: {bic})'.format(**member_data))
-        Member.objects.create(**member_data)
+            print('#' * 40)
+            print('Saving {member_id} (BIC: {bic})'.format(**member_data))
+            Member.objects.create(**member_data)
 
 
 bics = {}
