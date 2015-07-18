@@ -33,6 +33,9 @@ class MemberForm(forms.ModelForm):
             'iban_country',
             'bic',
             'iban',
+            'is_active',
+            'leave_date',
+            'is_cancellation_confirmed',
             # readonly
             'created_by',
         ]

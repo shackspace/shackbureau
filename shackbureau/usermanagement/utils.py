@@ -1,11 +1,12 @@
 import csv
 from decimal import Decimal
 
+from django.contrib.auth.models import User
+
 from .models import Member
 
 
 def import_old_shit(filename):
-    import pprint
     with open(filename) as fp:
         reader = csv.reader(fp, delimiter=";", quotechar='"')
         headers = reader.__next__()
@@ -33,7 +34,7 @@ def import_old_shit(filename):
             ('full', 12),
             ('reduced', 1),
             ('reduced', 12),
-        ][dataset['beitragsart']]
+        ][int(dataset['beitragsart'])]
 
         if dataset['zahlweise'] == 'L':
             member_data['payment_type'] = 'SEPA'
@@ -51,11 +52,10 @@ def import_old_shit(filename):
         member_data['date_of_birth'] = dataset.get('geburtsdatum')
         member_data['form_of_address'] = dataset.get('geschlecht').upper().replace('W', 'F').replace('M', 'H')
         member_data['phone_number'] = dataset.get('telefon')
-        # id, name, vorname, eintritt, austritt, email, is_active, beitragsart, zahlweise, beitrag, kontoinhaber,
-        # strasse, plz, ort, geburtsdatum, geschlecht, telefon, nickname
+        member_data['created_by'] = User.objects.first()
 
         print('#' * 40)
-        print('Saving {m.member_id} (BIC: {m.bic})'.format(m=member_data))
+        print('Saving {member_id} (BIC: {bic})'.format(**member_data))
         Member.objects.create(**member_data)
 
 
