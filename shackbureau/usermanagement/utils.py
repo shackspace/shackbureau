@@ -59,7 +59,7 @@ def import_old_shit(filename):
             member_data['iban_city'] = dataset.get('ort')
             member_data['date_of_birth'] = dataset.get('geburtsdatum') or None
             member_data['form_of_address'] = dataset.get('geschlecht').upper()\
-                .replace('W', 'F').replace('M', 'H') or None
+                .replace('W', 'F').replace('M', 'H') or 'H'
             member_data['phone_number'] = dataset.get('telefon')
             member_data['created_by'] = User.objects.first()
 
