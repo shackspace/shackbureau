@@ -13,13 +13,13 @@ def import_old_shit(filename):
         for line in reader:
             dataset = dict(zip(headers, line))
             member_data = {}
-            kto = int(dataset.get('konto') or 0)
-            blz = int(dataset.get('blz') or 0)
+            kto = dataset.get('konto')
+            blz = dataset.get('blz')
             member_data['bic'] = None
             if kto and blz:
                 if kto in ['outdated', '?']:
                     pass
-                elif len(kto) > 10:
+                elif len(str(kto)) > 10:
                     iban_checksum = 98 - (int('{:010d}{:08d}131400'.format(kto, blz)) % 97)
                     member_data['iban'] = 'DE{:02d}{:010d}{:08d}'.format(iban_checksum, kto, blz)
                     member_data['bic'] = blz_to_bic(blz)
