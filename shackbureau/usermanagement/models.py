@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.conf import settings
 from django.db import models
+from localflavor.generic.models import IBANField, BICField
 
 
 class Member(models.Model):
@@ -93,6 +94,9 @@ class Member(models.Model):
     active = models.BooleanField(
         default=True,
         help_text="Membership is active")
+
+    iban = IBANField(null=True, blank=True)
+    bic = BICField(null=True, blank=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

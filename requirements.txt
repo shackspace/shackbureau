@@ -1,3 +1,4 @@
 Django<1.9
 psycopg2
 django-extensions
+django-localflavor
