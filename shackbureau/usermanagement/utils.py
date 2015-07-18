@@ -20,7 +20,7 @@ def import_old_shit(filename):
                 if kto in ['outdated', '?']:
                     pass
                 elif len(str(kto)) < 11:
-                    iban_checksum = 98 - (int('{:08d}{:10d}131400'.format(int(blz), int(kto))) % 97)
+                    iban_checksum = 98 - (int('{:08d}{:010d}131400'.format(int(blz), int(kto))) % 97)
                     member_data['iban'] = 'DE{:02d}{:08d}{:010d}'.format(iban_checksum, int(blz), int(kto))
                     member_data['bic'] = blz_to_bic(blz)
                 else:
