@@ -23,8 +23,7 @@ class Member(models.Model):
 
     nickname = models.CharField(
         max_length=255,
-        blank=True, null=True,
-        help_text="Nickname")
+        blank=True, null=True)
 
     form_of_address = models.CharField(
         choices=(('F', 'Frau'), ('H', 'Herr')),
@@ -37,8 +36,7 @@ class Member(models.Model):
         help_text="Member is not 18+.")
 
     date_of_birth = models.DateField(
-        blank=True, null=True,
-        help_text="Date of Birth")
+        blank=True, null=True,)
 
     address1 = models.CharField(
         max_length=255,
@@ -54,16 +52,13 @@ class Member(models.Model):
         help_text="ZIP Code")
 
     city = models.CharField(
-        max_length=255,
-        help_text="City")
+        max_length=255,)
 
     country = models.CharField(
-        max_length=255, default="Deutschland",
-        help_text="Country")
+        max_length=255, default="Deutschland",)
 
     email = models.EmailField(
-        max_length=255,
-        help_text="E-mail address")
+        max_length=255,)
 
     phone_number = models.CharField(
         max_length=32,
@@ -92,16 +87,14 @@ class Member(models.Model):
     membership_fee_monthly = models.DecimalField(
         default=20,
         max_digits=8,
-        decimal_places=2,
-        help_text="Monthly Membership Fee")
+        decimal_places=2,)
 
     membership_fee_interval = models.PositiveIntegerField(
         choices=((1, '1'), (12, '12')), default=1,
         help_text="Pays for N months at once")
 
     is_active = models.BooleanField(
-        default=True,
-        help_text="Membership is active")
+        default=True,)
 
     is_cancellation_confirmed = models.BooleanField(
         default=False)
@@ -131,19 +124,16 @@ class Member(models.Model):
 
     iban_city = models.CharField(
         null=True, blank=True,
-        max_length=255, verbose_name="IBAN City",
-        help_text="City")
+        max_length=255, verbose_name="IBAN City",)
 
     iban_country = models.CharField(
         null=True, blank=True,
         max_length=255, default="Deutschland",
-        verbose_name="IBAN Country",
-        help_text="Country")
+        verbose_name="IBAN Country",)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                   related_name='members')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     def __str__(self):
         return "{} {} [ID: {}]".format(self.name, self.surname, self.member_id)
