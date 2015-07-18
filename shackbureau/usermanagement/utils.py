@@ -37,6 +37,7 @@ def import_old_shit(filename):
             member_data['is_active'] = not bool(member_data.get('leave_date'))
 
             member_data['membership_type'], member_data['membership_fee_interval'] = [
+                None,
                 ('full', 1),
                 ('full', 12),
                 ('reduced', 1),
