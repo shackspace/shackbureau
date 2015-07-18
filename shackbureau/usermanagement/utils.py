@@ -15,6 +15,7 @@ def import_old_shit(filename):
             member_data = {}
             kto = int(dataset.get('konto') or 0)
             blz = int(dataset.get('blz') or 0)
+            member_data['bic'] = None
             if kto and blz:
                 if kto in ['outdated', '?']:
                     pass
