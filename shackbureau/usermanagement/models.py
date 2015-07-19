@@ -151,4 +151,9 @@ class Member(models.Model):
         if not self.member_id:
             self.member_id = (Member.objects.aggregate(models.Max('member_id'))
                               .get('member_id__max') or 0) + 1
+        if not self.is_welcome_mail_sent:
+            from .views import send_welcome_email
+            send_welcome_email(self.email, self.__dict__)
+            self.is_welcome_mail_sent = True
+
         return super().save(*args, **kwargs)
