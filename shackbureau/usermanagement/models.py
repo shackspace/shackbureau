@@ -15,6 +15,7 @@ class Member(models.Model):
         unique=True,
         help_text="Membership ID")
 
+    comment = models.TextField(blank=True, null=True)
     name = models.CharField(
         max_length=255,
         help_text="First/Given Name")
