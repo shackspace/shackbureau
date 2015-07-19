@@ -1,9 +1,17 @@
 from django.contrib import admin
 from reversion import VersionAdmin
 
-from .models import Member, AccountTransaction
+from .models import Member, AccountTransaction, Membership
 from .forms import MemberForm
 from django.contrib import messages
+
+
+class MembershipInline(admin.TabularInline):
+    model = Membership
+    extra = 1
+#            'membership_type',
+#            'membership_fee_monthly',
+#            'membership_fee_interval',
 
 
 @admin.register(Member)
@@ -17,8 +25,10 @@ class MemberAdmin(VersionAdmin):
                        'modified',
                        'created',
                        'created_by',
-                       'is_registration_to_mailinglists_sent'
-                   )
+                       'is_registration_to_mailinglists_sent')
+    inlines = [
+        MembershipInline,
+    ]
     form = MemberForm
     actions = None
     history_latest_first = True
@@ -30,6 +40,7 @@ class MemberAdmin(VersionAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
 
 
 @admin.register(AccountTransaction)

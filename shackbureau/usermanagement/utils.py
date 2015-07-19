@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 
-from .models import Member
+from .models import Member, Membership
 
 
 def import_old_shit(filename):
@@ -37,20 +37,11 @@ def import_old_shit(filename):
             member_data['email'] = dataset['email']
             member_data['is_active'] = not bool(member_data.get('leave_date'))
 
-            member_data['membership_type'], member_data['membership_fee_interval'] = [
-                None,
-                ('full', 1),
-                ('full', 12),
-                ('reduced', 1),
-                ('reduced', 12),
-            ][int(dataset['beitragsart'])]
-
             if dataset['zahlweise'] == 'L':
                 member_data['payment_type'] = 'SEPA'
             elif dataset['zahlweise'] in ['U', 'D']:
                 member_data['payment_type'] = 'transfer'
 
-            member_data['membership_fee_monthly'] = Decimal(dataset['beitrag'].replace(' €', ''))
             member_data['address1'] = dataset.get('strasse') or '-'
             member_data['city'] = dataset.get('ort')
             member_data['zip_code'] = dataset.get('plz') or '-'
@@ -65,11 +56,31 @@ def import_old_shit(filename):
             member_data['phone_number'] = dataset.get('telefon')
             member_data['created_by'] = User.objects.first()
 
+            member_data['is_welcome_mail_sent'] = True
+            member_data['is_payment_instruction_sent'] = True
+            member_data['is_registration_to_mailinglists_sent'] = True
+
             print('#' * 40)
             print('Saving {member_id} (BIC: {bic})'.format(**member_data))
             member_id = member_data.pop('member_id')
-            Member.objects.update_or_create(member_id=member_id,
-                                            defaults=member_data)
+            member, created = Member.objects.update_or_create(member_id=member_id,
+                                                              defaults=member_data)
+
+            membership = {}
+            membership['membership_type'], membership['membership_fee_interval'] = [
+                None,
+                ('full', 1),
+                ('full', 12),
+                ('reduced', 1),
+                ('reduced', 12),
+            ][int(dataset['beitragsart'])]
+            membership['membership_fee_monthly'] = Decimal(dataset['beitrag'].replace(' €', ''))
+            valid_from = dataset['eintritt']
+            membership['created_by'] = User.objects.first()
+
+            Membership.objects.update_or_create(member=member,
+                                                valid_from=valid_from,
+                                                defaults=membership)
 
 
 bics = {}

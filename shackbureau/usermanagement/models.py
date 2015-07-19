@@ -81,20 +81,6 @@ class Member(models.Model):
         default=True,
         help_text="Member should be subscribed on the Mitglieder-announce mailing list")
 
-    membership_type = models.CharField(
-        choices=(('full', 'Vollzahler'),
-                 ('reduced', 'ermässigt')),
-        default="full", max_length=20)
-
-    membership_fee_monthly = models.DecimalField(
-        default=20,
-        max_digits=8,
-        decimal_places=2,)
-
-    membership_fee_interval = models.PositiveIntegerField(
-        choices=((1, '1'), (12, '12')), default=1,
-        help_text="Pays for N months at once")
-
     is_active = models.BooleanField(
         default=True,)
 
@@ -166,6 +152,51 @@ class Member(models.Model):
             send_payment_mail(self.__dict__)
             self.is_payment_instruction_sent = True
 
+        return super().save(*args, **kwargs)
+
+
+class MembershipManager(models.Manager):
+    pass
+
+
+class Membership(models.Model):
+
+    class Meta:
+        ordering = ('-valid_from', )
+
+    member = models.ForeignKey(Member)
+
+    # FIXME: validator. no date before join_date
+    valid_from = models.DateField()
+
+    membership_type = models.CharField(
+        choices=(('full', 'Vollzahler'),
+                 ('reduced', 'ermässigt')),
+        default="full", max_length=20)
+
+    membership_fee_monthly = models.DecimalField(
+        default=20,
+        max_digits=8,
+        decimal_places=2,)
+
+    membership_fee_interval = models.PositiveIntegerField(
+        choices=((1, '1'), (12, '12')), default=1,
+        help_text="Pays for N months at once")
+
+    objects = MembershipManager()
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def __str__(self):
+        return "{}: {} seit {}".format(self.member,
+                                       self.membership_type,
+                                       self.valid_from)
+
+    def save(self, *args, **kwargs):
+        # FIXME: fix all claims according to changed Memberships
+        # FIXME: first valid_from MUST be join_date!
         return super().save(*args, **kwargs)
 
 
