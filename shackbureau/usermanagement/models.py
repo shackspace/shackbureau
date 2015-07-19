@@ -1,4 +1,6 @@
 # coding=utf-8
+import datetime
+
 from django.conf import settings
 from django.db import models
 from localflavor.generic.models import IBANField, BICField
@@ -164,4 +166,42 @@ class Member(models.Model):
             send_payment_mail(self.__dict__)
             self.is_payment_instruction_sent = True
 
+        return super().save(*args, **kwargs)
+
+
+class AccountTransaction(models.Model):
+
+    member = models.ForeignKey(Member)
+    amount = models.DecimalField(max_digits=8,
+                                 decimal_places=2)
+    due_date = models.DateField(null=True, blank=True)
+    booking_date = models.DateField(default=datetime.date.today)
+    transaction_type = models.CharField(max_length=255,
+                                        choices=(
+                                            ('membership fee', 'Mitgliedsbeitrag'),
+                                            ('donation', 'Spende'),
+                                        ))
+    booking_type = models.CharField(max_length=255,
+                                    choices=(
+                                        ('claim', 'Forderung'),
+                                        ('deposit', 'Einzahlung'),
+                                        ('credit', 'Gutschrift'),
+                                    ))
+    payment_reference = models.TextField()
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def __str__(self):
+        return "{}: {} {} [{}]".format(self.member,
+                                       self.transaction_type,
+                                       self.booking_type,
+                                       self.booking_date)
+
+    def save(self, *args, **kwargs):
+        # claims are always negative. all others are positive
+        self.amount = abs(self.amount)
+        if self.booking_type == 'claim':
+            self.amount = self.amount * -1
         return super().save(*args, **kwargs)
