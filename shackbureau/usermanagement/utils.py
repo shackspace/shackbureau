@@ -1,4 +1,5 @@
 import csv
+import requests
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -90,7 +91,7 @@ def blz_to_bic(blz):
 
     return bics[blz]
 
-def add_to_mailman(mailaddress, mitgliederml=True):
+def add_to_mailman(mailaddr, mitgliederml=True):
     from django.conf import settings
     mitglieder_url = 'https://lists.shackspace.de/mailman/admin/mitglieder'
     mitglieder_subscribe_url = 'https://lists.shackspace.de/mailman/admin/mitglieder/members/add'
@@ -109,7 +110,7 @@ def add_to_mailman(mailaddress, mitgliederml=True):
                               'subscribees': mailaddr,
                               'invitation': '',
                               'setmemberopts_btn': 'Submit Your Changes'}
-        r = s.post(mitglieder_subscribe_url, params=subscribe_payload, verify=False 
+        r = s.post(mitglieder_subscribe_url, params=subscribe_payload, verify=False) 
         assert r.status_code == 200
     
 
@@ -123,7 +124,7 @@ def add_to_mailman(mailaddress, mitgliederml=True):
                           'subscribees': mailaddr,
                           'invitation': '',
                           'setmemberopts_btn': 'Submit Your Changes'}
-    r = s.post(mitglieder_announce_subscribe_url, params=subscribe_payload, verify=False 
+    r = s.post(mitglieder_announce_subscribe_url, params=subscribe_payload, verify=False) 
     assert r.status_code == 200
     
 
