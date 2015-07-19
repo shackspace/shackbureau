@@ -50,13 +50,14 @@ def import_old_shit(filename):
                 member_data['payment_type'] = 'transfer'
 
             member_data['membership_fee_monthly'] = Decimal(dataset['beitrag'].replace(' €', ''))
-            member_data['iban_fullname'] = dataset.get('kontoinhaber')
-            member_data['iban_address'] = dataset.get('strasse')
             member_data['address1'] = dataset.get('strasse') or '-'
-            member_data['zip_code'] = dataset.get('plz') or '-'
-            member_data['iban_zip_code'] = dataset.get('plz') or '-'
             member_data['city'] = dataset.get('ort')
-            member_data['iban_city'] = dataset.get('ort')
+            member_data['zip_code'] = dataset.get('plz') or '-'
+            if not member_data['payment_type'] == 'transfer':
+                member_data['iban_fullname'] = dataset.get('kontoinhaber')
+                member_data['iban_address'] = dataset.get('strasse')
+                member_data['iban_zip_code'] = dataset.get('plz') or '-'
+                member_data['iban_city'] = dataset.get('ort')
             member_data['date_of_birth'] = dataset.get('geburtsdatum') or None
             member_data['form_of_address'] = dataset.get('geschlecht').upper()\
                 .replace('W', 'F').replace('M', 'H') or 'H'
