@@ -131,6 +131,15 @@ class Member(models.Model):
         max_length=255, default="Deutschland",
         verbose_name="IBAN Country",)
 
+    is_welcome_mail_sent = models.BooleanField(
+        default=False)
+
+    is_payment_instruction_sent = models.BooleanField(
+        default=False)
+
+    is_registration_to_mailinglists_sent = models.BooleanField(
+        default=False)
+
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
