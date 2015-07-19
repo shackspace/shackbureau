@@ -23,7 +23,7 @@ Make an alias
 
 ### start the containter
     dc up -d
-And navigate your browser to `http://localhost:8000`
+And navigate your browser to `http://localhost:8000/admin/`
 
 ## Importing old data
 Export the CSV from LibreOffice, delimiter `;` quote-char `"` and move it to the root of this git repo.   
