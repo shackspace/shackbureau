@@ -115,6 +115,11 @@ STATIC_URL = '/static/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 try:
+    from .production_settings_template import *
+except ImportError as e:
+    pass
+
+try:
     from .production_settings import *
 except ImportError as e:
     pass
