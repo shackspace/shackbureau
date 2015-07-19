@@ -1,6 +1,7 @@
 # coding=utf-8
 import datetime
 
+from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import models
 from localflavor.generic.models import IBANField, BICField
@@ -157,7 +158,50 @@ class Member(models.Model):
 
 
 class MembershipManager(models.Manager):
-    pass
+
+    def get_current_membership(self, member, date):
+        return self.filter(member=member)\
+                   .filter(valid_from__lte=date)\
+                   .order_by("-valid_from").first()
+
+    def fix_or_create_claims(self, member):
+        # FIXME: tests please!!
+        for year in range(2015, datetime.date.today().year + 1 + 1):
+            for month in range(1, 12 + 1):
+                current_day = datetime.date(year, month, 1)
+                membership = self.get_current_membership(member, current_day)
+                print(membership)
+                if not membership:
+                    AccountTransaction.objects.filter(member=member)\
+                                              .filter(booking_type='fee_claim')\
+                                              .filter(due_date=current_day).delete()
+                    continue
+
+                if member.leave_date and member.leave_date.year == year:
+                    if month + 1 > member.leave_date.month:
+                        AccountTransaction.objects.filter(member=member)\
+                                                  .filter(booking_type='fee_claim')\
+                                                  .filter(due_date=current_day).delete()
+                        continue
+                if member.leave_date and member.leave_date.year < year:
+                    AccountTransaction.objects.filter(member=member)\
+                                              .filter(booking_type='fee_claim')\
+                                              .filter(due_date=current_day).delete()
+                    continue
+                defaults = {
+                    'transaction_type': 'membership fee',
+                    'amount': membership.membership_fee_monthly,
+                    'created_by': User.objects.first(),
+                    'payment_reference': 'Mitgliedsbeitragsforderung {}/{} ID {}'.format(
+                        month, year, member.member_id
+                    )
+                }
+                AccountTransaction.objects.update_or_create(
+                    booking_type='fee_claim',
+                    member=member,
+                    due_date=datetime.date(year, month, 1),
+                    defaults=defaults)
+                # FIXME: use get_or_create to persist booking_date !!
 
 
 class Membership(models.Model):
@@ -196,9 +240,10 @@ class Membership(models.Model):
                                        self.valid_from)
 
     def save(self, *args, **kwargs):
-        # FIXME: fix all claims according to changed Memberships
         # FIXME: first valid_from MUST be join_date!
-        return super().save(*args, **kwargs)
+        result = super().save(*args, **kwargs)
+        Membership.objects.fix_or_create_claims(self.member)
+        return result
 
 
 class AccountTransaction(models.Model):
@@ -216,6 +261,7 @@ class AccountTransaction(models.Model):
     booking_type = models.CharField(max_length=255,
                                     choices=(
                                         ('claim', 'Forderung'),
+                                        ('fee_claim', 'Forderung (automatischer Mitgliedsbeitrag)'),
                                         ('deposit', 'Einzahlung'),
                                         ('credit', 'Gutschrift'),
                                     ))

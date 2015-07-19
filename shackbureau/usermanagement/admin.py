@@ -68,12 +68,11 @@ class MemberAdmin(VersionAdmin):
         return False
 
 
-
 @admin.register(AccountTransaction)
 class AccountTransactionAdmin(VersionAdmin):
     # FIXME: add daterangefilter for booking_date, due_date
-    list_display = ("member", 'booking_date', "booking_type",
-                    "transaction_type", 'amount')
+    list_display = ("member", 'booking_date', 'due_date', "booking_type",
+                    "transaction_type", 'amount', 'payment_reference')
     list_filter = ("member", )
     actions = None
 
