@@ -1,0 +1,7 @@
+Hallo Schatzmeister,
+
+eine neuer Member wurde eingetragen.
+Dieser heisst {{ name }} {{ surname }}.
+Seine Mitgliedsnummer ist {{ member_id }}.
+
+...

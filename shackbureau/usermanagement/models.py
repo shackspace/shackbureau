@@ -156,8 +156,12 @@ class Member(models.Model):
             send_welcome_email(self.email, self.__dict__)
             self.is_welcome_mail_sent = True
         if not self.is_registration_to_mailinglists_sent:
-            from .utils import add_to_mailman 
+            from .utils import add_to_mailman
             add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
             self.is_registration_to_mailinglists_sent = True
+        if not self.is_payment_instruction_sent:
+            from .views import send_payment_mail
+            send_payment_mail(self.__dict__)
+            self.is_payment_instruction_sent = True
 
         return super().save(*args, **kwargs)
