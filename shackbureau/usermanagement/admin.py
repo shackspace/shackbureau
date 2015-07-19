@@ -6,6 +6,30 @@ from .forms import MemberForm
 from django.contrib import messages
 
 
+@admin.register(Membership)
+class MembershipAdmin(VersionAdmin):
+    search_fields = ("member__member_id",
+                     "member__name",
+                     "member__surname")
+    list_display = ("member",
+                    "valid_from",
+                    'membership_type',
+                    "membership_fee"
+    )
+    list_filter = ("member",
+                   'member__is_active',
+                   "membership_fee_monthly",
+                   "membership_type")
+    actions = None
+
+    def membership_fee(self, obj):
+        return "{} / {}".format(obj.membership_fee_monthly,
+                                obj.membership_fee_interval,)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 class MembershipInline(admin.TabularInline):
     model = Membership
     extra = 1
@@ -20,7 +44,9 @@ class MemberAdmin(VersionAdmin):
                     'is_underaged')
     list_display_links = list_display
     search_fields = ("member_id", "name", "surname", "nickname")
-    list_filter = ("payment_type", "is_underaged", 'is_active', )
+    list_filter = ("payment_type", "is_underaged", 'is_active',
+                   "membership__membership_fee_monthly",
+                   "membership__membership_type")
     readonly_fields = ('member_id',
                        'modified',
                        'created',
