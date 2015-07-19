@@ -156,7 +156,10 @@ class Member(models.Model):
 
 
 class MembershipManager(models.Manager):
-    pass
+
+    def get_current_membership(self, member, date):
+        # FIXME: get according to date parameter the matching dataset for a member
+        pass
 
 
 class Membership(models.Model):
