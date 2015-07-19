@@ -200,6 +200,7 @@ class MembershipManager(models.Manager):
                     member=member,
                     due_date=datetime.date(year, month, 1),
                     defaults=defaults)
+                # FIXME: use get_or_create to persist booking_date !!
 
 
 class Membership(models.Model):
@@ -238,7 +239,6 @@ class Membership(models.Model):
                                        self.valid_from)
 
     def save(self, *args, **kwargs):
-        # FIXME: fix all claims according to changed Memberships
         # FIXME: first valid_from MUST be join_date!
         result = super().save(*args, **kwargs)
         Membership.objects.fix_or_create_claims(self.member)
