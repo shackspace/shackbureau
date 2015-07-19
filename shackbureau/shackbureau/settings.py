@@ -113,3 +113,8 @@ STATIC_URL = '/static/'
 
 # set email to stdout for debugging
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+try:
+    from .production_settings import *
+except ImportError as e:
+    pass
