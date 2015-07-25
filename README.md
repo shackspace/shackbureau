@@ -4,9 +4,11 @@ the one and only (yet another) shack member managment
 ## howto run
 
 ### docker-compose
-Install docker-compose    
+
+#### Install docker-compose
     sudo pip install -U docker-compose  
-Make an alias  
+
+#### Make an alias
     alias dc=docker-compose  
 
 ### Build the container
@@ -26,8 +28,11 @@ Make an alias
 And navigate your browser to `http://localhost:8000/admin/`
 
 ## Importing old data
+
 Export the CSV from LibreOffice, delimiter `;` quote-char `"` and move it to the root of this git repo.   
+
 Run `dc run web shell_plus `  
+
     from usermanagement.utils import import_old_shit  
     import_old_shit('/opt/code/Mitglieder.csv')  
     
