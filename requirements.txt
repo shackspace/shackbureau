@@ -1,8 +1,9 @@
 Django<1.9
-psycopg2
 django-extensions
-django-localflavor
 django-flat-theme
+django-localflavor
 django-reversion
-requests
 ipython
+psycopg2
+pytest-django
+requests

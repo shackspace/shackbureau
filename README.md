@@ -36,3 +36,8 @@ Run `dc run web shell_plus `
     from usermanagement.utils import import_old_shit  
     import_old_shit('/opt/code/Mitglieder.csv')  
     
+
+## Testing
+
+### run tests
+    docker exec -ti shackbureau_web_1 py.test
