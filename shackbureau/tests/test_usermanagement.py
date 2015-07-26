@@ -69,3 +69,48 @@ class TestSepa:
         from usermanagement.utils import konto_to_iban
         assert konto_to_iban(iban_fixture.get('blz'),
                              iban_fixture.get('kto')) == iban_fixture.get('iban')
+
+
+@pytest.fixture
+def memberships_fixture_very_simple(member_fixture_transfer, first_of_this_month):
+    member_fixture_transfer.membership_set.create(
+        valid_from=first_of_this_month,
+        created_by=member_fixture_transfer.created_by)
+    return member_fixture_transfer.membership_set
+
+
+@pytest.mark.django_db
+class TestMemberShipManager:
+
+    def test_membership(self, memberships_fixture_very_simple):
+        assert memberships_fixture_very_simple.count() == 1
+        x = memberships_fixture_very_simple.first()
+        assert x.membership_fee_monthly == 20
+
+    # not implemented yet
+    @pytest.mark.xfail
+    def test_membership_join_date_valid_from(self, memberships_fixture_very_simple):
+        x = memberships_fixture_very_simple.first()
+        assert x.valid_from.day == 1
+        assert x.valid_from <= x.member.join_date
+
+    @pytest.mark.parametrize(('day', 'expected'), [
+        (datetime.date(2015, 1, 1), 12 + 12),
+        (datetime.date(2015, 12, 1), 12 + 1),
+        (datetime.date(2015, 7, 1), 12 + 6),
+    ])
+    def test_clarify_expected_months(self, day, expected):
+        """ only to show how we expect the behaviour of expected months
+        """
+        assert 12 - day.month + 1 + 12 == expected
+
+    def test_membership_created_claims_very_simple(self, memberships_fixture_very_simple):
+        x = memberships_fixture_very_simple.first()
+        expected_months = 12 - datetime.date.today().month + 1 + 12
+        assert x.member.accounttransaction_set.count() == expected_months
+
+    # FIXME: test for leave_date
+    # FIXME: test for more sophisticated membership constelations:
+    #  - change of membership_type
+    #  - change of membership_fee
+    # FIXME: test if booking_date persists after change
