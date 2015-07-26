@@ -49,6 +49,11 @@ class TestMember:
     def test_two_member_ids_set(self, member_fixture_transfer, member_fixture_sepa):
         assert member_fixture_sepa.member_id != member_fixture_transfer.member_id
 
+    # not implemented yet
+    @pytest.mark.xfail
+    def test_join_date_set_to_month_start(self, member_fixture_transfer):
+        assert member_fixture_transfer.join_date.day == 1
+
 
 class TestSepa:
 
