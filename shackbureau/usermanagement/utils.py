@@ -21,8 +21,7 @@ def import_old_shit(filename):
                 if kto in ['outdated', '?']:
                     pass
                 elif len(str(kto)) < 11:
-                    iban_checksum = 98 - (int('{:08d}{:010d}131400'.format(int(blz), int(kto))) % 97)
-                    member_data['iban'] = 'DE{:02d}{:08d}{:010d}'.format(iban_checksum, int(blz), int(kto))
+                    member_data['iban'] = konto_to_iban(blz, kto)
                     member_data['bic'] = blz_to_bic(blz)
                 else:
                     member_data['iban'] = kto
@@ -81,6 +80,13 @@ def import_old_shit(filename):
             Membership.objects.update_or_create(member=member,
                                                 valid_from=valid_from,
                                                 defaults=membership)
+
+
+def konto_to_iban(blz, kto):
+    blz = int(blz)
+    kto = int(kto)
+    iban_checksum = 98 - (int('{:08d}{:010d}131400'.format(blz, kto)) % 97)
+    return 'DE{:02d}{:08d}{:010d}'.format(iban_checksum, blz, kto)
 
 
 bics = {}
