@@ -20,3 +20,11 @@ def user_fixture():
     user.save()
 
     return user
+
+
+@pytest.fixture
+def first_of_this_month():
+    import datetime
+    td = datetime.date.today()
+    td = td.replace(day=1)
+    return td
