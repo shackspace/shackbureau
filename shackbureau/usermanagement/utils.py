@@ -102,6 +102,7 @@ def blz_to_bic(blz):
 
     return bics[blz]
 
+
 def add_to_mailman(mailaddr, mitgliederml=True):
     from django.conf import settings
     mitglieder_url = 'https://lists.shackspace.de/mailman/admin/mitglieder'
@@ -112,33 +113,27 @@ def add_to_mailman(mailaddr, mitgliederml=True):
     s = requests.Session()
     if mitgliederml:
         login_payload = {'adminpw': settings.MAILMAN_MITGLIEDER_PW,
-                         'admlogin':  'Let me in...'}
+                         'admlogin': 'Let me in...'}
         r = s.post(mitglieder_url, params=login_payload, verify=False)
         assert r.status_code == 200
-        subscribe_payload = { 'subscribe_or_invite': 0,
-                              'send_welcome_msg_to_this_batch': 1,
-                              'send_notifications_to_list_owner': 0,
-                              'subscribees': mailaddr,
-                              'invitation': '',
-                              'setmemberopts_btn': 'Submit Your Changes'}
-        r = s.post(mitglieder_subscribe_url, params=subscribe_payload, verify=False) 
+        subscribe_payload = {'subscribe_or_invite': 0,
+                             'send_welcome_msg_to_this_batch': 1,
+                             'send_notifications_to_list_owner': 0,
+                             'subscribees': mailaddr,
+                             'invitation': '',
+                             'setmemberopts_btn': 'Submit Your Changes'}
+        r = s.post(mitglieder_subscribe_url, params=subscribe_payload, verify=False)
         assert r.status_code == 200
-    
 
     login_payload = {'adminpw': settings.MAILMAN_MITGLIEDER_ANNOUNCE_PW,
-                     'admlogin':  'Let me in...'}
+                     'admlogin': 'Let me in...'}
     r = s.post(mitglieder_announce_url, params=login_payload, verify=False)
     assert r.status_code == 200
-    subscribe_payload = { 'subscribe_or_invite': 0,
-                          'send_welcome_msg_to_this_batch': 1,
-                          'send_notifications_to_list_owner': 0,
-                          'subscribees': mailaddr,
-                          'invitation': '',
-                          'setmemberopts_btn': 'Submit Your Changes'}
-    r = s.post(mitglieder_announce_subscribe_url, params=subscribe_payload, verify=False) 
+    subscribe_payload = {'subscribe_or_invite': 0,
+                         'send_welcome_msg_to_this_batch': 1,
+                         'send_notifications_to_list_owner': 0,
+                         'subscribees': mailaddr,
+                         'invitation': '',
+                         'setmemberopts_btn': 'Submit Your Changes'}
+    r = s.post(mitglieder_announce_subscribe_url, params=subscribe_payload, verify=False)
     assert r.status_code == 200
-    
-
-
-
-
