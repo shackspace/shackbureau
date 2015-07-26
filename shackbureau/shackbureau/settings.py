@@ -95,13 +95,11 @@ if os.environ.get('TEST_ON_PLATFORM', '').lower() == 'wercker':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'HOST': os.environ.get('WERCKER_POSTGRESQL_HOST', '127.0.01'),
-            'NAME': os.environ.get('WERCKER_POSTGRESQL_DATABASE', 'test'),
-            'TEST_NAME': os.environ.get('WERCKER_POSTGRESQL_DATABASE', 'test'),
-            'USER': os.environ.get('WERCKER_POSTGRESQL_USERNAME', 'postgres'),
-            'PASSWORD': os.environ.get('WERCKER_POSTGRESQL_PASSWORD', ''),
-            'HOST': os.environ.get('WERCKER_POSTGRESQL_HOST', '127.0.01'),
-            'PORT': os.environ.get('WERCKER_POSTGRESQL_PORT', '5432'),
+            'HOST': os.environ.get('POSTGRES_PORT_5432_TCP_ADDR', '127.0.01'),
+            'PORT': os.environ.get('POSTGRES_PORT_5432_TCP_PORT', '5432'),
+            'NAME': os.environ.get('POSTGRES_ENV_POSTGRES_USER'),
+            'USER': os.environ.get('POSTGRES_ENV_POSTGRES_USER'),
+            'PASSWORD': os.environ.get('POSTGRES_ENV_POSTGRES_PASSWORD'),
         }
     }
 
