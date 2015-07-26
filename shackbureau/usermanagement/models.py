@@ -170,7 +170,6 @@ class MembershipManager(models.Manager):
             for month in range(1, 12 + 1):
                 current_day = datetime.date(year, month, 1)
                 membership = self.get_current_membership(member, current_day)
-                print(membership)
                 if not membership:
                     AccountTransaction.objects.filter(member=member)\
                                               .filter(booking_type='fee_claim')\
@@ -201,7 +200,6 @@ class MembershipManager(models.Manager):
                     member=member,
                     due_date=datetime.date(year, month, 1),
                     defaults=defaults)
-                # FIXME: use get_or_create to persist booking_date !!
 
 
 class Membership(models.Model):
