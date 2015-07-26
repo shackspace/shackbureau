@@ -92,7 +92,7 @@ class TestMemberShipManager:
     def test_membership_join_date_valid_from(self, memberships_fixture_very_simple):
         x = memberships_fixture_very_simple.first()
         assert x.valid_from.day == 1
-        assert x.valid_from <= x.member.join_date
+        assert x.valid_from >= x.member.join_date
 
     @pytest.mark.parametrize(('day', 'expected'), [
         (datetime.date(2015, 1, 1), 12 + 12),
