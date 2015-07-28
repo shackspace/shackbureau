@@ -28,3 +28,21 @@ def first_of_this_month():
     td = datetime.date.today()
     td = td.replace(day=1)
     return td
+
+
+@pytest.fixture
+def first_of_previous_month():
+    import datetime
+    td = datetime.date.today()
+    td = td.replace(day=1)
+    td = td.replace(month=td.month - 1)
+    return td
+
+
+@pytest.fixture
+def first_of_next_month():
+    import datetime
+    td = datetime.date.today()
+    td = td.replace(day=1)
+    td = td.replace(month=td.month + 1)
+    return td

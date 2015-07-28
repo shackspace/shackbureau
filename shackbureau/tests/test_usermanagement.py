@@ -79,6 +79,37 @@ def memberships_fixture_very_simple(member_fixture_transfer, first_of_this_month
     return member_fixture_transfer.membership_set
 
 
+@pytest.fixture
+def memberships_fixture_change_type(memberships_fixture_very_simple, first_of_this_month, first_of_previous_month):
+    membership_set = memberships_fixture_very_simple.first().member.membership_set
+    membership_set.create(
+        valid_from=first_of_previous_month,
+        membership_type='reduced',
+        membership_fee_monthly=8,
+        created_by=membership_set.first().member.created_by)
+    return membership_set
+
+
+@pytest.fixture
+def memberships_fixture_change_fee(memberships_fixture_very_simple, first_of_this_month, first_of_next_month):
+    membership_set = memberships_fixture_very_simple.first().member.membership_set
+    membership_set.create(
+        valid_from=first_of_next_month,
+        membership_fee_monthly=42,
+        created_by=membership_set.first().member.created_by)
+    return membership_set
+
+
+@pytest.fixture
+def memberships_fixture_with_leave(member_fixture_transfer, first_of_this_month, first_of_next_month):
+    member_fixture_transfer.leave_date = first_of_next_month
+    member_fixture_transfer.save()
+    member_fixture_transfer.membership_set.create(
+        valid_from=first_of_this_month,
+        created_by=member_fixture_transfer.created_by)
+    return member_fixture_transfer.membership_set
+
+
 @pytest.mark.django_db
 class TestMemberShipManager:
 
@@ -109,8 +140,42 @@ class TestMemberShipManager:
         expected_months = 12 - datetime.date.today().month + 1 + 12
         assert x.member.accounttransaction_set.count() == expected_months
 
-    # FIXME: test for leave_date
-    # FIXME: test for more sophisticated membership constelations:
-    #  - change of membership_type
-    #  - change of membership_fee
-    # FIXME: test if booking_date persists after change
+    def test_membership_created_claims_change_type(self, memberships_fixture_change_type, first_of_this_month,
+                                                   first_of_next_month, first_of_previous_month):
+        x = memberships_fixture_change_type.first()
+        expected_months = 12 - first_of_previous_month.month + 1 + 12
+        assert x.member.accounttransaction_set.count() == expected_months
+        assert x.member.accounttransaction_set.filter(
+            due_date=first_of_next_month).first().amount == 20
+        assert x.member.accounttransaction_set.filter(
+            due_date=first_of_previous_month).first().amount == 8
+        # the month the fee changed is the current month
+        assert x.member.accounttransaction_set.filter(
+            due_date=first_of_this_month).first().amount == 20
+
+    def test_membership_created_claims_change_fee(self, memberships_fixture_change_fee, first_of_next_month):
+        x = memberships_fixture_change_fee.first()
+        expected_months = 12 - datetime.date.today().month + 1 + 12
+        assert x.member.accounttransaction_set.count() == expected_months
+        assert x.member.accounttransaction_set.filter(
+            due_date=first_of_next_month).first().amount == 42
+
+    def test_membership_created_with_leave(self, memberships_fixture_with_leave):
+        x = memberships_fixture_with_leave.first()
+        # joined this month. leave next month
+        expected_months = 1
+        assert x.member.accounttransaction_set.count() == expected_months
+
+    def test_membership_booking_date_persists_on_update(self, memberships_fixture_very_simple, first_of_next_month):
+        x = memberships_fixture_very_simple.first()
+        # save booking date
+        booking_date = x.member.accounttransaction_set.first().booking_date
+        modified = x.member.accounttransaction_set.first().modified
+        assert x.member.accounttransaction_set.first().amount == 20
+        # change
+        x.membership_fee_monthly = 23
+        x.save()
+        # check for persistance
+        assert x.member.accounttransaction_set.first().booking_date == booking_date
+        assert x.member.accounttransaction_set.first().amount == 23
+        assert not x.member.accounttransaction_set.first().modified == modified
