@@ -127,6 +127,10 @@ STATICFILES_DIRS = (
     os.path.normpath(os.path.join(BASE_DIR, 'static')),
 )
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'media'))
+
+
 # set email to stdout for debugging
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
