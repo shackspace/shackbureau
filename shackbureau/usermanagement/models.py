@@ -167,7 +167,6 @@ class MembershipManager(models.Manager):
                    .order_by("-valid_from").first()
 
     def fix_or_create_claims(self, member):
-        # FIXME: tests please!!
         for year in range(2015, datetime.date.today().year + 1 + 1):
             for month in range(1, 12 + 1):
                 current_day = datetime.date(year, month, 1)
