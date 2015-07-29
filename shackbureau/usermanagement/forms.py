@@ -11,6 +11,7 @@ class MemberForm(forms.ModelForm):
     class Meta(object):
         model = Member
         fields = [
+            'comment',
             'join_date',
             'form_of_address',
             'name',
