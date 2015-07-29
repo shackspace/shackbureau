@@ -1,7 +1,12 @@
 from django.contrib import admin
 from reversion import VersionAdmin
 
-from .models import Member, AccountTransaction, Membership
+from .models import (
+    AccountTransaction,
+    BankTransactionUpload,
+    Member,
+    Membership,
+)
 from .forms import MemberForm
 from django.contrib import messages
 
@@ -96,3 +101,8 @@ class AccountTransactionAdmin(VersionAdmin):
         if not getattr(obj, 'created_by', False):
             obj.created_by = request.user
         return super().save_model(request, obj, form, change)
+
+
+@admin.register(BankTransactionUpload)
+class BankTransactionUploadAdmin(admin.ModelAdmin):
+    pass

@@ -282,3 +282,16 @@ class AccountTransaction(models.Model):
         if self.booking_type == 'claim':
             self.amount = self.amount * -1
         return super().save(*args, **kwargs)
+
+
+class BankTransactionUpload(models.Model):
+    data_file = models.FileField(upload_to='bank_transaction_uploads')
+    status = models.CharField(choices=(('new', 'New'),
+                                       ('wip', 'Work in progress'),
+                                       ('done', 'Imported'),
+                                       ('fail', 'Could not import')),
+                              default='new', max_length=10)
+
+    def __str__(self):
+        return "Uploads <{data_file}>".format(
+            data_file=self.data_file)
