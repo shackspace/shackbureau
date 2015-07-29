@@ -67,6 +67,9 @@ class MemberAdmin(VersionAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    class Media:
+        js = ("js/member_admin.js",)
+
 
 @admin.register(AccountTransaction)
 class AccountTransactionAdmin(VersionAdmin):
