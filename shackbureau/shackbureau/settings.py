@@ -122,6 +122,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
+STATICFILES_DIRS = (
+    os.path.normpath(os.path.join(BASE_DIR, 'static')),
+)
+
 # set email to stdout for debugging
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
