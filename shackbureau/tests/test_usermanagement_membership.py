@@ -50,8 +50,6 @@ class TestMemberShipManager:
         x = memberships_fixture_very_simple.first()
         assert x.membership_fee_monthly == 20
 
-    # not implemented yet
-    @pytest.mark.xfail
     def test_membership_join_date_valid_from(self, memberships_fixture_very_simple):
         x = memberships_fixture_very_simple.first()
         assert x.valid_from.day == 1
