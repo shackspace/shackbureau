@@ -1,9 +1,10 @@
 from django.contrib import admin
 from reversion import VersionAdmin
+from django.contrib import messages
+from daterange_filter.filter import DateRangeFilter
 
 from .models import Member, AccountTransaction, Membership
 from .forms import MemberForm
-from django.contrib import messages
 
 
 @admin.register(Membership)
@@ -76,7 +77,9 @@ class AccountTransactionAdmin(VersionAdmin):
     # FIXME: add daterangefilter for booking_date, due_date
     list_display = ("member", 'booking_date', 'due_date', "booking_type",
                     "transaction_type", 'amount', 'payment_reference')
-    list_filter = ("member", )
+    list_filter = ("member",
+                   ('due_date', DateRangeFilter),
+                   ('booking_date', DateRangeFilter),)
     actions = None
 
     def has_delete_permission(self, request, obj=None):

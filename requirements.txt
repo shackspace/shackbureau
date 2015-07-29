@@ -1,4 +1,5 @@
 Django<1.9
+django-daterange-filter==1.1.1
 django-extensions
 django-flat-theme
 django-localflavor

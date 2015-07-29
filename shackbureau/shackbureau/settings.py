@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'localflavor',
     'reversion',
+    'daterange_filter',
     ## own apps
     'usermanagement',
 )
@@ -62,7 +63,7 @@ ROOT_URLCONF = 'shackbureau.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.normpath(os.path.join(BASE_DIR, 'templates')), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,6 +75,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'shackbureau.wsgi.application'
 
