@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 
-from .models import Member, Membership
+from .models import Member, Membership, BankTransactionLog
 
 
 def import_old_shit(filename):
@@ -147,6 +147,37 @@ def add_to_mailman(mailaddr, mitgliederml=True):
                          'setmemberopts_btn': 'Submit Your Changes'}
     r = s.post(mitglieder_announce_subscribe_url, params=subscribe_payload, verify=False)
     assert r.status_code == 200
+
+
+def process_transaction_log(banktransaction):
+    banktransaction.status = 'wip'
+    banktransaction.save()
+    reader = csv.reader(open(banktransaction.data_file.file.name),
+                        delimiter=";", quotechar='"')
+    header = reader.__next__()
+    for line in reader:
+        d = dict(zip(header, line))
+        reference = ''
+        for key in sorted(header):
+            if key.startswith('VWZ'):
+                reference += d[key] + ' '
+    uid, score = reference_parser(reference)
+    member = None
+    error = None
+    try:
+        if uid:
+            member = Member.objects.get(pk=uid)
+    except Member.DoesNotExist:
+        error = "Member does not exist"
+    BankTransactionLog.objects.create(
+        upload=banktransaction,
+        reference=reference,
+        member=member,
+        needs_manual_interaction=bool(uid),
+        created_by=banktransaction.created_by
+    )
+    banktransaction.status = 'done'
+    banktransaction.save()
 
 
 def reference_parser(reference):

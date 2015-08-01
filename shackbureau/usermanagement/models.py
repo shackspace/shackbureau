@@ -301,8 +301,11 @@ class BankTransactionUpload(models.Model):
             data_file=self.data_file)
 
     def save(self, *args, **kwargs):
-        # FIXME: process data_file. synchronous should be enough for now.
-        return super().save(*args, **kwargs)
+        result = super().save(*args, **kwargs)
+        if self.status == 'new':
+            from .utils import process_transaction_log
+            process_transaction_log(self)
+        return result
 
 
 class BankTransactionLog(models.Model):
