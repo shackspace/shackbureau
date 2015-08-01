@@ -114,9 +114,9 @@ class BankTransactionUploadAdmin(admin.ModelAdmin):
 
 @admin.register(BankTransactionLog)
 class BankTransactionLogAdmin(admin.ModelAdmin):
-    list_display = ('needs_manual_interaction', 'member', "reference", "upload")
+    list_display = ('is_matched', 'member', "reference", "upload")
     list_display_links = list_display
-    list_filter = ("needs_manual_interaction", "score")
+    list_filter = ("is_matched", "score")
     search_fields = ("member__name", "member__surname")
     actions = None
 

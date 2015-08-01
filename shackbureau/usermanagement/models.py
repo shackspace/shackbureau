@@ -313,7 +313,7 @@ class BankTransactionLog(models.Model):
     upload = models.ForeignKey("BankTransactionUpload")
     reference = models.TextField()
     member = models.ForeignKey("Member", null=True, blank=True)
-    needs_manual_interaction = models.BooleanField(default=True)
+    is_matched = models.BooleanField(default=True)
     score = models.IntegerField()
     error = models.TextField(null=True, blank=True)
     transaction_owner = models.TextField(null=True, blank=True)
