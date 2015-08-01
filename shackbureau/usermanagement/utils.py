@@ -162,37 +162,38 @@ def process_transaction_log(banktransaction):
         for key in sorted(header):
             if key.startswith('VWZ'):
                 reference += d[key] + ' '
-    uid, score = reference_parser(reference)
-    member = None
-    error = None
-    try:
-        if uid:
-            member = Member.objects.get(member_id=uid)
-    except Member.DoesNotExist:
-        error = "Member does not exist"
-    BankTransactionLog.objects.create(
-        upload=banktransaction,
-        reference=reference,
-        member=member,
-        error=error, score=score,
-        needs_manual_interaction=bool(uid),
-        created_by=banktransaction.created_by
-    )
-    if member:
-        defaults = {
-            'transaction_type': 'membership fee',
-            'amount': Decimal(d.get('Betrag').replace(',', '.')),
-            'created_by': banktransaction.created_by,
-            'payment_reference': reference
-        }
-        booking_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
-        transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
-        AccountTransaction.objects.update_or_create(
-            booking_type='deposit',
+
+        uid, score = reference_parser(reference)
+        member = None
+        error = None
+        try:
+            if uid:
+                member = Member.objects.get(member_id=uid)
+        except Member.DoesNotExist:
+            error = "Member does not exist"
+        BankTransactionLog.objects.create(
+            upload=banktransaction,
+            reference=reference,
             member=member,
-            booking_date=booking_date,
-            transaction_hash=transation_hash,
-            defaults=defaults)
+            error=error, score=score,
+            needs_manual_interaction=bool(uid),
+            created_by=banktransaction.created_by
+        )
+        if member:
+            defaults = {
+                'transaction_type': 'membership fee',
+                'amount': Decimal(d.get('Betrag').replace(',', '.')),
+                'created_by': banktransaction.created_by,
+                'payment_reference': reference
+            }
+            booking_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
+            transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
+            AccountTransaction.objects.update_or_create(
+                booking_type='deposit',
+                member=member,
+                booking_date=booking_date,
+                transaction_hash=transation_hash,
+                defaults=defaults)
 
     banktransaction.status = 'done'
     banktransaction.save()
