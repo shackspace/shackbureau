@@ -150,9 +150,9 @@ class BankTransactionLogAdmin(admin.ModelAdmin):
     add_transaction.short_description = ''
     add_transaction.allow_tags = True
 
-    list_display = ('is_matched', 'member', "reference", add_transaction, "upload")
+    list_display = ('is_matched', 'is_resolved', 'member', "reference", add_transaction, "upload")
     list_display_links = list_display
-    list_filter = ("is_matched", "score")
+    list_filter = ("is_matched", 'is_resolved', "score")
     search_fields = ("member__name", "member__surname")
     actions = None
     readonly_fields = ('modified',
