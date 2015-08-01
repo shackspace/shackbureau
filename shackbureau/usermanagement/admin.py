@@ -3,6 +3,7 @@ from reversion import VersionAdmin
 
 from .models import (
     AccountTransaction,
+    BankTransactionLog,
     BankTransactionUpload,
     Member,
     Membership,
@@ -105,4 +106,9 @@ class AccountTransactionAdmin(VersionAdmin):
 
 @admin.register(BankTransactionUpload)
 class BankTransactionUploadAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(BankTransactionLog)
+class BankTransactionLogAdmin(admin.ModelAdmin):
     pass

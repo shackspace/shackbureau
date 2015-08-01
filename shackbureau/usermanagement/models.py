@@ -292,6 +292,30 @@ class BankTransactionUpload(models.Model):
                                        ('fail', 'Could not import')),
                               default='new', max_length=10)
 
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
     def __str__(self):
         return "Uploads <{data_file}>".format(
             data_file=self.data_file)
+
+    def save(self, *args, **kwargs):
+        # FIXME: process data_file. synchronous should be enough for now.
+        return super().save(*args, **kwargs)
+
+
+class BankTransactionLog(models.Model):
+    upload = models.ForeignKey("BankTransactionUpload")
+    reference = models.TextField()
+    member = models.ForeignKey("Member", null=True, blank=True)
+    needs_manual_interaction = models.BooleanField(default=True)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def __str__(self):
+        return "Log <{upload} / {member} / {interaction}>".format(
+            upload=self.upload, member=self.member,
+            interaction=self.needs_manual_interaction)
