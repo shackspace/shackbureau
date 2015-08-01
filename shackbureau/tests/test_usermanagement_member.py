@@ -1,5 +1,7 @@
 # coding=utf-8
+import datetime
 import pytest
+from usermanagement.models import Member
 
 
 @pytest.mark.django_db
@@ -29,3 +31,23 @@ class TestSepa:
         from usermanagement.utils import konto_to_iban
         assert konto_to_iban(iban_fixture.get('blz'),
                              iban_fixture.get('kto')) == iban_fixture.get('iban')
+
+
+@pytest.mark.django_db
+class TestImportOfOldShit:
+
+    @pytest.fixture
+    def import_stuff(self):
+        from usermanagement.utils import import_old_shit
+        import_old_shit("/opt/code/shackbureau/tests/fixtures/import_test_data.csv")
+
+    @pytest.mark.parametrize(('field_name', 'expected'), [
+        ('member_id', 3),
+        ('name', 'Karl'),
+        ('surname', 'Koch'),
+        ('join_date', datetime.date(2010, 3, 1)),
+        ('leave_date', datetime.date(2012, 2, 29)),
+    ])
+    def test_member_import(self, user_fixture, import_stuff, field_name, expected):
+        member = Member.objects.first()
+        assert getattr(member, field_name) == expected
