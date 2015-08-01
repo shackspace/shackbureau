@@ -31,8 +31,10 @@ def import_old_shit(filename):
             member_data['surname'] = dataset['name']
             member_data['name'] = dataset['vorname']
             member_data['nickname'] = dataset.get('nickname')
-            member_data['join_date'] = dataset['eintritt']
-            member_data['leave_date'] = dataset.get('austritt') or None
+            member_data['join_date'] = datetime.strptime(dataset['eintritt'], '%Y-%m-%d').date()
+            member_data['leave_date'] = None
+            if dataset.get('austritt'):
+                member_data['leave_date'] = datetime.strptime(dataset['austritt'], '%Y-%m-%d').date()
             member_data['email'] = dataset['email']
             member_data['is_active'] = not bool(member_data.get('leave_date'))
 
