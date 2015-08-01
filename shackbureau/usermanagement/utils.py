@@ -176,8 +176,11 @@ def process_transaction_log(banktransaction):
             reference=reference,
             member=member,
             error=error, score=score,
+            amount=Decimal(d.get('Betrag').replace(',', '.')),
+            booking_date=datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date(),
             transaction_owner=d.get('Auftraggeber/Empfänger'),
-            needs_manual_interaction=bool(uid),
+            is_matched=bool(uid),
+            is_resolved=bool(uid),
             created_by=banktransaction.created_by
         )
         if member:

@@ -26,22 +26,28 @@ class MembershipAdmin(VersionAdmin):
                    'member__is_active',
                    "membership_fee_monthly",
                    "membership_type")
-    actions = None
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
 
     def membership_fee(self, obj):
         return "{} / {}".format(obj.membership_fee_monthly,
                                 obj.membership_fee_interval,)
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
 
 
 class MembershipInline(admin.TabularInline):
     model = Membership
     extra = 1
-#            'membership_type',
-#            'membership_fee_monthly',
-#            'membership_fee_interval',
+    fields = ('valid_from', 'membership_type',
+              'membership_fee_monthly', 'membership_fee_interval',)
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
 
 
 @admin.register(Member)
@@ -65,10 +71,19 @@ class MemberAdmin(VersionAdmin):
     actions = None
     history_latest_first = True
 
-    def save_model(self, request, obj, form, change):
-        if not getattr(obj, 'created_by', False):
-            obj.created_by = request.user
-        return super().save_model(request, obj, form, change)
+    def save_formset(self, request, form, formset, change):
+        formset.save(commit=False)
+        print("AAAAA")
+        for f in formset.forms:
+            obj = f.instance
+            print("A")
+            if not getattr(obj, 'valid_from', False):
+                print("B")
+                print(obj.valid_from)
+                continue
+            if not getattr(obj, 'created_by', False):
+                obj.created_by = request.user
+            obj.save()
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -84,6 +99,9 @@ class AccountTransactionAdmin(VersionAdmin):
                     "transaction_type", 'amount', 'payment_reference')
     list_filter = ("member", )
     actions = None
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -107,18 +125,44 @@ class AccountTransactionAdmin(VersionAdmin):
 @admin.register(BankTransactionUpload)
 class BankTransactionUploadAdmin(admin.ModelAdmin):
     actions = None
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
 
 
 @admin.register(BankTransactionLog)
 class BankTransactionLogAdmin(admin.ModelAdmin):
-    list_display = ('is_matched', 'member', "reference", "upload")
+    def add_transaction(self):
+        if self.is_matched and self.is_resolved:
+            return u"<a target='_blank' href='/admin/usermanagement/accounttransaction/add/?" + \
+                "amount={}&booking_date={}&payment_reference={}&booking_type=deposit'>Add Transaction</a>".format(
+                    self.amount, self.booking_date, self.reference)
+        else:
+            return ''
+    add_transaction.short_description = ''
+    add_transaction.allow_tags = True
+
+    list_display = ('is_matched', 'member', "reference", add_transaction, "upload")
     list_display_links = list_display
     list_filter = ("is_matched", "score")
     search_fields = ("member__name", "member__surname")
     actions = None
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)

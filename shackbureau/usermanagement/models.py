@@ -145,15 +145,15 @@ class Member(models.Model):
             self.join_date = self.join_date.replace(day=1)
         if not self.is_welcome_mail_sent:
             from .views import send_welcome_email
-            send_welcome_email(self.email, self.__dict__)
+#            send_welcome_email(self.email, self.__dict__)
             self.is_welcome_mail_sent = True
         if not self.is_registration_to_mailinglists_sent:
             from .utils import add_to_mailman
-            add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
+#            add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
             self.is_registration_to_mailinglists_sent = True
         if not self.is_payment_instruction_sent:
             from .views import send_payment_mail
-            send_payment_mail(self.__dict__)
+#            send_payment_mail(self.__dict__)
             self.is_payment_instruction_sent = True
 
         return super().save(*args, **kwargs)
@@ -314,9 +314,13 @@ class BankTransactionLog(models.Model):
     reference = models.TextField()
     member = models.ForeignKey("Member", null=True, blank=True)
     is_matched = models.BooleanField(default=True)
+    is_resolved = models.BooleanField(default=True)
     score = models.IntegerField()
     error = models.TextField(null=True, blank=True)
     transaction_owner = models.TextField(null=True, blank=True)
+    amount = models.DecimalField(max_digits=8,
+                                 decimal_places=2)
+    booking_date = models.DateField(default=datetime.date.today)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
