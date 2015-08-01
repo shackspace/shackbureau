@@ -135,7 +135,7 @@ class Member(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     def __str__(self):
-        return "{} {} [ID: {}]".format(self.name, self.surname, self.member_id)
+        return "{}, {} [ID: {}]".format(self.surname, self.name, self.member_id)
 
     def save(self, *args, **kwargs):
         if not self.member_id:
@@ -329,4 +329,4 @@ class BankTransactionLog(models.Model):
     def __str__(self):
         return "Log <{upload} / {member} / {interaction}>".format(
             upload=self.upload, member=self.member,
-            interaction=self.needs_manual_interaction)
+            interaction=self.is_matched)

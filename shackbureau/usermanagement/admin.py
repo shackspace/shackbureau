@@ -12,8 +12,15 @@ from .forms import MemberForm
 from django.contrib import messages
 
 
+class OrderMemberByNameMixin():
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "member":
+            kwargs["queryset"] = Member.objects.order_by('surname', 'name')
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
 @admin.register(Membership)
-class MembershipAdmin(VersionAdmin):
+class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
     search_fields = ("member__member_id",
                      "member__name",
                      "member__surname")
@@ -93,7 +100,7 @@ class MemberAdmin(VersionAdmin):
 
 
 @admin.register(AccountTransaction)
-class AccountTransactionAdmin(VersionAdmin):
+class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
     # FIXME: add daterangefilter for booking_date, due_date
     list_display = ("member", 'booking_date', 'due_date', "booking_type",
                     "transaction_type", 'amount', 'payment_reference')
@@ -139,7 +146,7 @@ class BankTransactionUploadAdmin(admin.ModelAdmin):
 
 
 @admin.register(BankTransactionLog)
-class BankTransactionLogAdmin(admin.ModelAdmin):
+class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
     def add_transaction(self):
         if not self.is_matched and not self.is_resolved:
             return u"<a target='_blank' href='/admin/usermanagement/accounttransaction/add/?" + \
