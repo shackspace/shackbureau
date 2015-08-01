@@ -39,7 +39,9 @@ class TestImportOfOldShit:
     @pytest.fixture
     def import_stuff(self):
         from usermanagement.utils import import_old_shit
-        import_old_shit("/opt/code/shackbureau/tests/fixtures/import_test_data.csv")
+        from django.conf import settings
+        fn = os.path.normpath(os.path.join(settings.BASE_DIR, 'tests/fixtures/import_test_data.csv'))
+        import_old_shit(fn)
 
     @pytest.mark.parametrize(('field_name', 'expected'), [
         ('member_id', 3),
