@@ -265,6 +265,7 @@ class AccountTransaction(models.Model):
                                         ('credit', 'Gutschrift'),
                                     ))
     payment_reference = models.TextField()
+    transaction_hash = models.TextField(null=True, blank=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -301,8 +302,11 @@ class BankTransactionUpload(models.Model):
             data_file=self.data_file)
 
     def save(self, *args, **kwargs):
-        # FIXME: process data_file. synchronous should be enough for now.
-        return super().save(*args, **kwargs)
+        result = super().save(*args, **kwargs)
+        if self.status == 'new':
+            from .utils import process_transaction_log
+            process_transaction_log(self)
+        return result
 
 
 class BankTransactionLog(models.Model):
@@ -310,6 +314,8 @@ class BankTransactionLog(models.Model):
     reference = models.TextField()
     member = models.ForeignKey("Member", null=True, blank=True)
     needs_manual_interaction = models.BooleanField(default=True)
+    score = models.IntegerField()
+    error = models.TextField(null=True, blank=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
