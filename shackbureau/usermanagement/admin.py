@@ -141,7 +141,7 @@ class BankTransactionUploadAdmin(admin.ModelAdmin):
 @admin.register(BankTransactionLog)
 class BankTransactionLogAdmin(admin.ModelAdmin):
     def add_transaction(self):
-        if self.is_matched and self.is_resolved:
+        if not self.is_matched and not self.is_resolved:
             return u"<a target='_blank' href='/admin/usermanagement/accounttransaction/add/?" + \
                 "amount={}&booking_date={}&payment_reference={}&booking_type=deposit'>Add Transaction</a>".format(
                     self.amount, self.booking_date, self.reference)
