@@ -316,6 +316,7 @@ class BankTransactionLog(models.Model):
     needs_manual_interaction = models.BooleanField(default=True)
     score = models.IntegerField()
     error = models.TextField(null=True, blank=True)
+    transaction_owner = models.TextField(null=True, blank=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

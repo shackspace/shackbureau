@@ -176,6 +176,7 @@ def process_transaction_log(banktransaction):
             reference=reference,
             member=member,
             error=error, score=score,
+            transaction_owner=d.get('Auftraggeber/Empfänger'),
             needs_manual_interaction=bool(uid),
             created_by=banktransaction.created_by
         )

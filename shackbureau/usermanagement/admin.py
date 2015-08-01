@@ -106,9 +106,19 @@ class AccountTransactionAdmin(VersionAdmin):
 
 @admin.register(BankTransactionUpload)
 class BankTransactionUploadAdmin(admin.ModelAdmin):
-    pass
+    actions = None
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(BankTransactionLog)
 class BankTransactionLogAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('needs_manual_interaction', 'member', "reference", "upload")
+    list_display_links = list_display
+    list_filter = ("needs_manual_interaction", "score")
+    search_fields = ("member__name", "member__surname")
+    actions = None
+
+    def has_delete_permission(self, request, obj=None):
+        return False
