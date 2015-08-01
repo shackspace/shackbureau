@@ -186,7 +186,7 @@ def process_transaction_log(banktransaction):
             'payment_reference': reference
         }
         booking_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
-        transation_hash = hashlib.sha256((str(booking_date) + reference).encode('utf-8')).hexdigest()
+        transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
         AccountTransaction.objects.update_or_create(
             booking_type='deposit',
             member=member,
