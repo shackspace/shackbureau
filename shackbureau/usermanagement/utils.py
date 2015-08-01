@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import requests
 import re
 from datetime import datetime
@@ -6,7 +7,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 
-from .models import Member, Membership, BankTransactionLog
+from .models import Member, Membership, BankTransactionLog, AccountTransaction
 
 
 def import_old_shit(filename):
@@ -166,16 +167,33 @@ def process_transaction_log(banktransaction):
     error = None
     try:
         if uid:
-            member = Member.objects.get(pk=uid)
+            member = Member.objects.get(member_id=uid)
     except Member.DoesNotExist:
         error = "Member does not exist"
     BankTransactionLog.objects.create(
         upload=banktransaction,
         reference=reference,
         member=member,
+        error=error, score=score,
         needs_manual_interaction=bool(uid),
         created_by=banktransaction.created_by
     )
+    if member:
+        defaults = {
+            'transaction_type': 'membership fee',
+            'amount': Decimal(d.get('Betrag').replace(',', '.')),
+            'created_by': banktransaction.created_by,
+            'payment_reference': reference
+        }
+        booking_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
+        transation_hash = hashlib.sha256((str(booking_date) + reference).encode('utf-8')).hexdigest()
+        AccountTransaction.objects.update_or_create(
+            booking_type='deposit',
+            member=member,
+            booking_date=booking_date,
+            transaction_hash=transation_hash,
+            defaults=defaults)
+
     banktransaction.status = 'done'
     banktransaction.save()
 

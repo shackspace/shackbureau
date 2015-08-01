@@ -265,6 +265,7 @@ class AccountTransaction(models.Model):
                                         ('credit', 'Gutschrift'),
                                     ))
     payment_reference = models.TextField()
+    transaction_hash = models.TextField(null=True, blank=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -313,6 +314,8 @@ class BankTransactionLog(models.Model):
     reference = models.TextField()
     member = models.ForeignKey("Member", null=True, blank=True)
     needs_manual_interaction = models.BooleanField(default=True)
+    score = models.IntegerField()
+    error = models.TextField(null=True, blank=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
