@@ -1,5 +1,6 @@
 import csv
 import requests
+import re
 from datetime import datetime
 from decimal import Decimal
 
@@ -146,3 +147,24 @@ def add_to_mailman(mailaddr, mitgliederml=True):
                          'setmemberopts_btn': 'Submit Your Changes'}
     r = s.post(mitglieder_announce_subscribe_url, params=subscribe_payload, verify=False)
     assert r.status_code == 200
+
+
+def reference_parser(reference):
+    reference = reference.lower()
+
+    regexes = (
+        r'.*mitgliedsbeitrag\s+id\s+(?P<ID>\d{1,3})\s.*',
+        r'.*id\s+(?P<ID>\d{1,3})\smitgliedsbeitrag.*',
+        r'.*id\s+(?P<ID>\d{1,3})\s.*',
+        r'.*mitgliedsbeitrag.*id\s+(?P<ID>\d{1,3})\s.*',
+        r'.*mitgliedsbeitrag\s+(?P<ID>\d{1,3})\s.*',
+        r'.*beitrag\s+mitglied\s+(?P<ID>\d{1,3})\s.*',
+        r'.*mitgliedsbeitrag.*\s+(?P<ID>\d{1,3})[^\d].*',
+    )
+
+    for score, regex in enumerate(regexes, 1):
+        hit = re.match(regex, reference)
+        if hit:
+            return (int(hit.groupdict().get('ID')), score)
+
+    return (False, 99)
