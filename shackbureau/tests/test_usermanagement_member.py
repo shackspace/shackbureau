@@ -1,6 +1,7 @@
 # coding=utf-8
 import datetime
 import pytest
+import os.path
 from usermanagement.models import Member
 
 
