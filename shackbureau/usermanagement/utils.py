@@ -153,7 +153,7 @@ def add_to_mailman(mailaddr, mitgliederml=True):
 def process_transaction_log(banktransaction):
     banktransaction.status = 'wip'
     banktransaction.save()
-    reader = csv.reader(open(banktransaction.data_file.file.name),
+    reader = csv.reader(open(banktransaction.data_file.file.name, encoding='iso-8859-1'),
                         delimiter=";", quotechar='"')
     header = reader.__next__()
     for line in reader:
