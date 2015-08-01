@@ -5,7 +5,7 @@ Willkommen im shackspace.
 
 Du solltest bereits automatisch auf unseren Mailinglisten eingetragen sein.
 Bevor du dort postet lies bitte Die Regeln zum Styleschutz auf Mailinglisten[1].
-{% if payment_type == 'SEPA' %}
+{% if payment_type|lower == 'sepa' %}
 Unser Kassenwart wird in den nächsten Tagen ein SEPA-Lastschriftmandat anlegen,
 deine Mandatsreferenz lautet: shack e.V. Mitgliedsbeitrag ID {{ member_id }}.
 {% else %}

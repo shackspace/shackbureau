@@ -11,6 +11,7 @@ class TestMemberEmails:
         mail_content = get_template('welcome_mail.txt').render(Context(member_fixture_transfer.__dict__))
         assert mail_content.split('\n')[0] == 'Hallo {},'.format(member_fixture_transfer.name)
         assert 'überweise deinen Mitgliedsbeitrag' in mail_content
+        assert not 'SEPA-Lastschriftmandat' in mail_content
 
     def test_welcome_mail_sepa(self, member_fixture_sepa):
         mail_content = get_template('welcome_mail.txt').render(Context(member_fixture_sepa.__dict__))
