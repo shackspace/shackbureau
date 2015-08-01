@@ -62,7 +62,8 @@ ROOT_URLCONF = 'shackbureau.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
+        'DIRS': [os.path.normpath(os.path.join(BASE_DIR, 'templates'))],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,6 +75,12 @@ TEMPLATES = [
         },
     },
 ]
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
 
 WSGI_APPLICATION = 'shackbureau.wsgi.application'
 
