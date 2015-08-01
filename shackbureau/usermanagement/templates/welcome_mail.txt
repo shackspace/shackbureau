@@ -1,3 +1,24 @@
-Hallo {{ name }}
+Hallo {{ name }},
 
-add text for welcome mail here.
+Willkommen im shackspace.
+
+
+Du solltest bereits automatisch auf unseren Mailinglisten eingetragen sein.
+Bevor du dort postet lies bitte Die Regeln zum Styleschutz auf Mailinglisten[1].
+{% if payment_type == 'SEPA' %}
+Unser Kassenwart wird in den nächsten Tagen ein SEPA-Lastschriftmandat anlegen,
+deine Mandatsreferenz lautet: shack e.V. Mitgliedsbeitrag ID {{ member_id }}.
+{% else %}
+Bitte überweise deinen Mitgliedsbeitrag mit dem Verwendungszweck:
+shack e.V. Mitgliedsbeitrag ID {{ member_id }}
+Unsere Kontodaten findest du hier: 
+http://shackspace.de/wiki/doku.php?id=golden_bankaccount
+{% endif %}
+
+Viel Spaß im shackspace
+
+shackbureau
+https://github.com/shackspace/shackbureau
+
+[1] http://shackspace.de/wiki/doku.php?id=styleschutz:mailinglisten
+
