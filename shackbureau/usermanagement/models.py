@@ -281,7 +281,7 @@ class AccountTransaction(models.Model):
     def save(self, *args, **kwargs):
         # claims are always negative. all others are positive
         self.amount = abs(self.amount)
-        if self.booking_type == 'claim':
+        if 'claim' in self.booking_type:
             self.amount = self.amount * -1
         if self.send_nagging_mail:
             from .views import send_nagging_email
