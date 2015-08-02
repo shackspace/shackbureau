@@ -19,6 +19,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 
+admin.site.site_header = 'shackspace membership management'
+admin.site.site_title = 'shackspace membership management'
+
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/admin/', permanent=False)),
     url(r'^admin/', include(admin.site.urls)),
