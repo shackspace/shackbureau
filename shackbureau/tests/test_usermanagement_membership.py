@@ -76,19 +76,19 @@ class TestMemberShipManager:
         expected_months = 12 - first_of_previous_month.month + 1 + 12
         assert x.member.accounttransaction_set.count() == expected_months
         assert x.member.accounttransaction_set.filter(
-            due_date=first_of_next_month).first().amount == 20
+            due_date=first_of_next_month).first().amount == -20
         assert x.member.accounttransaction_set.filter(
-            due_date=first_of_previous_month).first().amount == 8
+            due_date=first_of_previous_month).first().amount == -8
         # the month the fee changed is the current month
         assert x.member.accounttransaction_set.filter(
-            due_date=first_of_this_month).first().amount == 20
+            due_date=first_of_this_month).first().amount == -20
 
     def test_membership_created_claims_change_fee(self, memberships_fixture_change_fee, first_of_next_month):
         x = memberships_fixture_change_fee.first()
         expected_months = 12 - datetime.date.today().month + 1 + 12
         assert x.member.accounttransaction_set.count() == expected_months
         assert x.member.accounttransaction_set.filter(
-            due_date=first_of_next_month).first().amount == 42
+            due_date=first_of_next_month).first().amount == -42
 
     def test_membership_created_with_leave(self, memberships_fixture_with_leave):
         x = memberships_fixture_with_leave.first()
@@ -101,11 +101,11 @@ class TestMemberShipManager:
         # save booking date
         booking_date = x.member.accounttransaction_set.first().booking_date
         modified = x.member.accounttransaction_set.first().modified
-        assert x.member.accounttransaction_set.first().amount == 20
+        assert x.member.accounttransaction_set.first().amount == -20
         # change
         x.membership_fee_monthly = 23
         x.save()
         # check for persistance
         assert x.member.accounttransaction_set.first().booking_date == booking_date
-        assert x.member.accounttransaction_set.first().amount == 23
+        assert x.member.accounttransaction_set.first().amount == -23
         assert not x.member.accounttransaction_set.first().modified == modified
