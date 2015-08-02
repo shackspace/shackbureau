@@ -335,3 +335,26 @@ class BankTransactionLog(models.Model):
         return "Log <{upload} / {member} / {interaction}>".format(
             upload=self.upload, member=self.member,
             interaction=self.is_matched)
+
+
+class MemberSpecials(models.Model):
+    member = models.ForeignKey("Member")
+    has_matomat_key = models.BooleanField(default=False)
+    has_snackomat_key = models.BooleanField(default=False)
+    has_metro_card = models.BooleanField(default=False)
+    has_shack_iron_key = models.BooleanField(default=False)
+    is_keyholder = models.BooleanField(default=False)
+    ssh_public_key = models.TextField(null=True, blank=True)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    class Meta:
+        verbose_name = "Member Specials"
+        verbose_name_plural = "Member Specials"
+
+    def __str__(self):
+        return "{member} keyholder: {is_keyholder}".format(
+            member=self.member,
+            is_keyholder=self.is_keyholder)

@@ -7,6 +7,7 @@ from .models import (
     BankTransactionUpload,
     Member,
     Membership,
+    MemberSpecials,
 )
 from .forms import MemberForm
 from django.contrib import messages
@@ -174,6 +175,28 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
             message_bit = "%s entries were" % rows_updated
         self.message_user(request, "%s successfully marked as resolved." % message_bit)
     set_resolved_entry.short_description = "Set entries to resolved"
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
+
+
+@admin.register(MemberSpecials)
+class MemberSpecialsAdmin(admin.ModelAdmin):
+    list_display = ('member', 'is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
+                    'has_shack_iron_key')
+    list_display_links = list_display
+    list_filter = ('is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
+                   'has_shack_iron_key')
+    search_fields = ("member__name", "member__surname")
+    actions = None
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
 
     def has_delete_permission(self, request, obj=None):
         return False
