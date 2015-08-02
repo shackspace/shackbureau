@@ -161,10 +161,19 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
     list_display_links = list_display
     list_filter = ("is_matched", 'is_resolved', "score")
     search_fields = ("member__name", "member__surname")
-    actions = None
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
+    actions = ['set_resolved_entry']
+
+    def set_resolved_entry(self, request, queryset):
+        rows_updated = queryset.update(is_resolved=True)
+        if rows_updated == 1:
+            message_bit = "1 entry was"
+        else:
+            message_bit = "%s entries were" % rows_updated
+        self.message_user(request, "%s successfully marked as resolved." % message_bit)
+    set_resolved_entry.short_description = "Set entries to resolved"
 
     def has_delete_permission(self, request, obj=None):
         return False
