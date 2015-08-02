@@ -152,8 +152,8 @@ class Member(models.Model):
             add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
             self.is_registration_to_mailinglists_sent = True
         if not self.is_payment_instruction_sent:
-            from .views import send_payment_mail
-            send_payment_mail(self.__dict__)
+            from .views import send_payment_email
+            send_payment_email(self.__dict__)
             self.is_payment_instruction_sent = True
 
         return super().save(*args, **kwargs)
@@ -266,6 +266,7 @@ class AccountTransaction(models.Model):
                                     ))
     payment_reference = models.TextField()
     transaction_hash = models.TextField(null=True, blank=True)
+    send_nagging_mail = models.BooleanField(default=False)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -282,6 +283,10 @@ class AccountTransaction(models.Model):
         self.amount = abs(self.amount)
         if self.booking_type == 'claim':
             self.amount = self.amount * -1
+        if self.send_nagging_mail:
+            from .views import send_nagging_email
+            send_nagging_email(self.member.email, self.member.__dict__)
+            self.send_nagging_mail = False
         return super().save(*args, **kwargs)
 
 
