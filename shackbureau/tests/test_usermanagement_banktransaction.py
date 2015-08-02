@@ -1,5 +1,7 @@
 # coding=utf-8
 import pytest
+import os.path
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 class TestbankTransactionUploadParser:
@@ -31,3 +33,31 @@ class TestbankTransactionUploadParser:
     def test_reference_parser(self, reference, expected, score):
         from usermanagement.utils import reference_parser
         assert reference_parser(reference) == (expected, score)
+
+
+@pytest.mark.django_db
+class TestBankTransactionUpload:
+
+    @pytest.fixture
+    def example_csv_file(self):
+        from django.conf import settings
+        fn = os.path.normpath(os.path.join(settings.BASE_DIR, 'tests/fixtures/sample_lastschrift.csv'))
+        text_file = InMemoryUploadedFile(open(fn), None, 'example.csv', 'text',
+                                         len(open(fn).read()), None)
+        return text_file
+
+    @pytest.fixture
+    def import_transaction_csv(self, user_fixture, member_fixture_transfer, example_csv_file):
+        from usermanagement.models import BankTransactionUpload
+        BankTransactionUpload.objects.create(data_file=example_csv_file,
+                                             status="new", created_by=user_fixture)
+
+    def test_process_transaction_log(self, import_transaction_csv):
+        from usermanagement.models import BankTransactionUpload, BankTransactionLog
+        assert BankTransactionUpload.objects.first().status == 'done'
+        assert BankTransactionLog.objects.count() == 1
+        transaction = BankTransactionLog.objects.first()
+        assert transaction.member.member_id == 1
+        assert transaction.is_matched is True
+        assert transaction.is_resolved is True
+        assert str(transaction.amount) == '8.00'
