@@ -23,6 +23,16 @@ def send_payment_email(context):
     email.send()
 
 
+def send_cancellation_mail_to_cashmaster(context):
+    content = get_template('payment_mail_on_cancellation.txt').render(Context(context))
+
+    email = EmailMessage('Payment für {} {}'.format(context.get('name'),
+                                                    context.get('surname')),
+                         content, 'no-reply@vorstand.shack.space',
+                         [settings.CASHMASTER_MAILADDR])
+    email.send()
+
+
 def send_nagging_email(email_address, context):
     content = get_template('nagging_mail.txt').render(Context(context))
 

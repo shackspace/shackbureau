@@ -1,0 +1,8 @@
+Hallo Schatzmeister,
+
+ein Member wurde cancelliert.
+Dieser heisst {{ name }} {{ surname }}.
+Seine Mitgliedsnummer ist {{ member_id }}.
+
+Bitte stell das mit dem SEPA ab.
+...

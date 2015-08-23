@@ -130,6 +130,9 @@ class Member(models.Model):
     is_registration_to_mailinglists_sent = models.BooleanField(
         default=False)
 
+    is_cancellation_mail_sent_to_cashmaster = models.BooleanField(
+        default=False)
+
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
@@ -146,6 +149,12 @@ class Member(models.Model):
         if self.is_cancellation_confirmed:
             # if the membership is cancelled the member isn't active anymore
             self.is_active = False
+            # send mail to cashmaster if member cancelled and uses SEPA
+            # but only if mail not already sent
+            if not self.is_cancellation_mail_sent_to_cashmaster and self.payment_type == 'SEPA':
+                from .views import send_cancellation_mail_to_cashmaster
+                send_cancellation_mail_to_cashmaster(self.__dict__)
+                self.is_cancellation_mail_sent_to_cashmaster = True
         if not self.is_welcome_mail_sent:
             from .views import send_welcome_email
             send_welcome_email(self.email, self.__dict__)
