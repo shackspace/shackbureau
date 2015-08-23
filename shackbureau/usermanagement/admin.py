@@ -188,10 +188,10 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
 @admin.register(MemberSpecials)
 class MemberSpecialsAdmin(admin.ModelAdmin):
     list_display = ('member', 'is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
-                    'has_shack_iron_key')
+                    'has_selgros_card', 'has_shack_iron_key')
     list_display_links = list_display
-    list_filter = ('is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
-                   'has_shack_iron_key')
+    list_filter = ('is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card', 
+                   'has_selgros_card', 'has_shack_iron_key')
     search_fields = ("member__name", "member__surname")
     actions = None
     readonly_fields = ('modified',
