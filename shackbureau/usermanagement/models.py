@@ -143,6 +143,9 @@ class Member(models.Model):
                               .get('member_id__max') or 0) + 1
         if self.join_date and not self.join_date.day == 1:
             self.join_date = self.join_date.replace(day=1)
+        if self.is_cancellation_confirmed:
+            # if the membership is cancelled the member isn't active anymore
+            self.is_active = False
         if not self.is_welcome_mail_sent:
             from .views import send_welcome_email
             send_welcome_email(self.email, self.__dict__)

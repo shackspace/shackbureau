@@ -1,13 +1,8 @@
 from django import forms
-from localflavor.de.forms import DEZipCodeField
 from .models import Member
 
 
 class MemberForm(forms.ModelForm):
-    zip_code = DEZipCodeField()
-    iban_zip_code = DEZipCodeField(label='IBAN zip code',
-                                   required=False)
-
     class Meta(object):
         model = Member
         fields = [

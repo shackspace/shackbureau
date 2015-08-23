@@ -81,13 +81,10 @@ class MemberAdmin(VersionAdmin):
 
     def save_formset(self, request, form, formset, change):
         formset.save(commit=False)
-        print("AAAAA")
         for f in formset.forms:
             obj = f.instance
-            print("A")
             if not getattr(obj, 'valid_from', False):
-                print("B")
-                print(obj.valid_from)
+                # don't save if valid_from is not set
                 continue
             if not getattr(obj, 'created_by', False):
                 obj.created_by = request.user
