@@ -342,6 +342,7 @@ class MemberSpecials(models.Model):
     has_matomat_key = models.BooleanField(default=False)
     has_snackomat_key = models.BooleanField(default=False)
     has_metro_card = models.BooleanField(default=False)
+    has_selgros_card = models.BooleanField(default=False)
     has_shack_iron_key = models.BooleanField(default=False)
     is_keyholder = models.BooleanField(default=False)
     ssh_public_key = models.TextField(null=True, blank=True)
