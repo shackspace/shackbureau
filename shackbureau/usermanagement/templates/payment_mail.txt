@@ -2,6 +2,16 @@ Hallo Schatzmeister,
 
 eine neuer Member wurde eingetragen.
 Dieser heisst {{ name }} {{ surname }}.
-Seine Mitgliedsnummer ist {{ member_id }}.
 
-...
+{% if payment_type|lower == 'sepa' %}
+Seine Mandatsreferenz lautet: shack e.V. Mitgliedsbeitrag ID {{ member_id }}.
+Seine IBAN Lautet: {{ iban }}
+{% if bic %} Seine BIC lautet: {{ bic }} {% endif %}
+{% else %}
+Das Mitglied wir seinen Mitgliedsbeitrag an uns ueberweisen.
+{% endif %}
+
+LG
+
+shackbureau
+https://github.com/shackspace/shackbureau
