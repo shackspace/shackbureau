@@ -96,6 +96,11 @@ class MemberAdmin(VersionAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
+
     class Media:
         js = ("js/member_admin.js",)
 
