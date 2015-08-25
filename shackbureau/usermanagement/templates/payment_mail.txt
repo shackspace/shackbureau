@@ -4,6 +4,7 @@ eine neuer Member wurde eingetragen.
 Dieser heisst {{ name }} {{ surname }}.
 
 {% if payment_type|lower == 'sepa' %}
+Sein Lastschriftmandat wurde am {{ iban_issue_date }} ausgestellt.
 Seine Mandatsreferenz lautet: shack e.V. Mitgliedsbeitrag ID {{ member_id }}.
 Seine IBAN Lautet: {{ iban }}
 {% if bic %} Seine BIC lautet: {{ bic }} {% endif %}
