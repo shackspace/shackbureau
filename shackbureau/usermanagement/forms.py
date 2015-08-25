@@ -19,6 +19,7 @@ class MemberForm(forms.ModelForm):
             'email',
             'date_of_birth',
             'payment_type',
+            'iban_issue_date',
             'iban_fullname',
             'iban_address',
             'iban_zip_code',

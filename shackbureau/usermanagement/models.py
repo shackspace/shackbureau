@@ -97,6 +97,11 @@ class Member(models.Model):
     iban = IBANField(null=True, blank=True, verbose_name="IBAN")
     bic = BICField(null=True, blank=True, verbose_name="BIC")
 
+    iban_issue_date = models.DateField(
+            null=True, blank=True,
+            verbose_name="IBAN Issue Date",
+            help_text="The issue date of the direct debit mandate")
+
     iban_fullname = models.CharField(
         null=True, blank=True,
         max_length=255, verbose_name="IBAN full name",
