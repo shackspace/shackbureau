@@ -8,6 +8,7 @@ from .models import (
     Member,
     Membership,
     MemberSpecials,
+    MemberTrackingCode,
 )
 from .forms import MemberForm
 from django.contrib import messages
@@ -207,3 +208,9 @@ class MemberSpecialsAdmin(admin.ModelAdmin):
         if not getattr(obj, 'created_by', False):
             obj.created_by = request.user
         return super().save_model(request, obj, form, change)
+
+
+@admin.register(MemberTrackingCode)
+class MemberTrackingCodeAdmin(admin.ModelAdmin):
+    list_display = ('member', 'uuid', 'validated')
+    list_filter = ('validated',)
