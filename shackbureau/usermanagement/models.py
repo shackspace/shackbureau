@@ -1,5 +1,6 @@
 # coding=utf-8
 import datetime
+import uuid
 
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -376,3 +377,28 @@ class MemberSpecials(models.Model):
         return "{member} keyholder: {is_keyholder}".format(
             member=self.member,
             is_keyholder=self.is_keyholder)
+
+
+class MemberTrackingCode(models.Model):
+    """ uuid to use in tracking urls in emails
+    """
+    member = models.ForeignKey("Member")
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    validated = models.BooleanField(default=False)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+
+class Balance:
+    """ calculated balance for given user per year
+    """
+    member = models.ForeignKey("Member")
+    balance = models.DecimalField(max_digits=8,
+                                  decimal_places=2)
+    year = models.PositiveIntegerField()
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
