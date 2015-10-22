@@ -1,0 +1,6 @@
+Hallo {{ member.name }},
+
+TEXT
+
+{{ uuid.uuid }}
+
