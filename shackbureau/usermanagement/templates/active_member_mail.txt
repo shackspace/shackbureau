@@ -12,7 +12,7 @@ Deine bei uns hinterlegten Daten sind:
 {{ member.zip_code }} {{ member.city }}
 
 E-Mail: {{ member.email }}
-IBAN: {{ member.iban|slice:":4" }}xxxxxxxxxxxxxxxx{{ member.iban|slice:"-2:" }}
+{% if member.iban %}IBAN: {{ member.iban|slice:":4" }}xxxxxxxxxxxxxxxx{{ member.iban|slice:"-2:" }}{% endif %}
 
 Wenn das alles passt sind wir hier fertig.
 
