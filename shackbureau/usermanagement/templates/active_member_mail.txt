@@ -1,6 +1,23 @@
 Hallo {{ member.name }},
 
-TEXT
+Wir schreiben dir, um deine bei uns hinterlegten Daten zu verifizieren.
 
-{{ uuid.uuid }}
+Bitte klicke in erster Instaz auf folgenden Link[1] damit wir wissen dass unsere E-Mail ankam:
+http://active.shack.space/uuid/{{ uuid.uuid }}
 
+Deine bei uns hinterlegten Daten sind:
+
+{{ member.name }} {{ member.surname }}
+{{ member.address1 }}
+{{ member.zip_code }} {{ member.city }}
+
+E-Mail: {{ member.email }}
+IBAN: {{ member.iban|slice:":4" }}xxxxxxxxxxxxxxxx{{ member.iban|slice:":-2" }}
+
+Wenn das alles passt sind wir hier fertig.
+
+Wenn nicht wende dich bitte an tt-vorstand@shackspace.de
+
+Vielen Dank
+
+shackbureau
