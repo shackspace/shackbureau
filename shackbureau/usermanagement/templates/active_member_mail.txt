@@ -2,7 +2,7 @@ Hallo {{ member.name }},
 
 Wir schreiben dir, um deine bei uns hinterlegten Daten zu verifizieren.
 
-Bitte klicke in erster Instaz auf folgenden Link[1] damit wir wissen dass unsere E-Mail ankam:
+Bitte klicke in erster Instanz auf folgenden Link damit wir wissen dass unsere E-Mail ankam:
 http://active.shack.space/uuid/{{ uuid.uuid }}
 
 Deine bei uns hinterlegten Daten sind:
@@ -12,7 +12,7 @@ Deine bei uns hinterlegten Daten sind:
 {{ member.zip_code }} {{ member.city }}
 
 E-Mail: {{ member.email }}
-IBAN: {{ member.iban|slice:":4" }}xxxxxxxxxxxxxxxx{{ member.iban|slice:":-2" }}
+IBAN: {{ member.iban|slice:":4" }}xxxxxxxxxxxxxxxx{{ member.iban|slice:"-2:" }}
 
 Wenn das alles passt sind wir hier fertig.
 
