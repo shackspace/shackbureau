@@ -26,8 +26,8 @@ class Command(BaseCommand):
 
             print(member.email)
 
-            email = EmailMessage('Subject please',
+            email = EmailMessage('Deine Mitgliedsdaten',
                                  content,
-                                 'vorstand@shackspace.de',
+                                 'tt-vorstand@shackspace.de',
                                  [member.email])
             email.send()
