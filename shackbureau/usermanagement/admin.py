@@ -64,7 +64,7 @@ class MemberAdmin(VersionAdmin):
     list_display = ("member_id", 'is_active', "name", "surname",
                     'is_underaged')
     list_display_links = list_display
-    search_fields = ("member_id", "name", "surname", "nickname")
+    search_fields = ("member_id", "name", "surname", "nickname", "email")
     list_filter = ("payment_type", "is_underaged", 'is_active',
                    "membership__membership_fee_monthly",
                    "membership__membership_type")
