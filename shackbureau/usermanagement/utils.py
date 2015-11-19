@@ -100,16 +100,14 @@ bics = {}
 def blz_to_bic(blz):
     if blz not in bics:
         import requests
-        r = requests.get(
-            'https://www.sparkasse.de/privatkunden/konto-karte/iban-resources/iban/iban.php'
-            '?bank-code={}&bank-account-number=1234567&_=1437238271816'.format(blz),
-            headers={'X-Requested-With': 'XMLHttpRequest'}
-        )
+        r = requests.get('http://banking.stupig.org/v1/bank?blz={}'.format(blz))
 
         assert r.status_code == 200
 
-        bic = r.json().get('BIC')
-        bics[blz] = bic
+        for bank in r.json().get('results'):
+            bics[blz] = bank.get('bic')
+            # use first bank in list
+            break
 
     return bics[blz]
 
