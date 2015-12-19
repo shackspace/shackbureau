@@ -363,7 +363,11 @@ class MemberSpecials(models.Model):
     has_selgros_card = models.BooleanField(default=False)
     has_shack_iron_key = models.BooleanField(default=False)
     is_keyholder = models.BooleanField(default=False)
+    has_safe_key = models.BooleanField(default=False)
+    has_loeffelhardt_account = models.BooleanField(default=False)
+    signed_DSV = models.BooleanField(default=False)
     ssh_public_key = models.TextField(null=True, blank=True)
+
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
