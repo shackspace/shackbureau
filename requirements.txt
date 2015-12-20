@@ -2,7 +2,7 @@ Django<1.9
 django-extensions
 django-flat-theme
 django-localflavor
-django-reversion
+django-reversion==1.9.3
 fake-factory
 ipython
 psycopg2
