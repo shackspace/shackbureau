@@ -12,7 +12,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from usermanagement.models import Member, MemberTrackingCode
-        for member in Member.objects.filter(is_active=True):
+        for member in Member.objects.filter(is_active=True)\
+                                    .filter(membertrackingcode__validated=False):
             if not member.email:
                 continue
 
