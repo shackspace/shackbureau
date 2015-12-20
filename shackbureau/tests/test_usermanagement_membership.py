@@ -65,9 +65,9 @@ class TestMemberShipManager:
         """
         assert 12 - day.month + 1 + 12 == expected
 
-    def test_membership_created_claims_very_simple(self, memberships_fixture_very_simple):
+    def test_membership_created_claims_very_simple(self, memberships_fixture_very_simple, join_date_fixture):
         x = memberships_fixture_very_simple.first()
-        expected_months = 12 - datetime.date.today().month + 1 + 12
+        expected_months = 12 - join_date_fixture.month + 1 + 12
         assert x.member.accounttransaction_set.count() == expected_months
 
     def test_membership_created_claims_change_type(self, memberships_fixture_change_type, first_of_this_month,
@@ -83,9 +83,9 @@ class TestMemberShipManager:
         assert x.member.accounttransaction_set.filter(
             due_date=first_of_this_month).first().amount == -20
 
-    def test_membership_created_claims_change_fee(self, memberships_fixture_change_fee, first_of_next_month):
+    def test_membership_created_claims_change_fee(self, memberships_fixture_change_fee, first_of_next_month, join_date_fixture):
         x = memberships_fixture_change_fee.first()
-        expected_months = 12 - datetime.date.today().month + 1 + 12
+        expected_months = 12 - join_date_fixture.month + 1 + 12
         assert x.member.accounttransaction_set.count() == expected_months
         assert x.member.accounttransaction_set.filter(
             due_date=first_of_next_month).first().amount == -42

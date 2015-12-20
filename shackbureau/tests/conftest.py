@@ -10,9 +10,13 @@ USERNAME = 'Test User'
 
 
 @pytest.fixture
-def first_of_this_month():
-    import datetime
-    td = datetime.date.today()
+def join_date_fixture():
+    return datetime.date(2015, 10, 17)
+
+
+@pytest.fixture
+def first_of_this_month(join_date_fixture):
+    td = join_date_fixture
     td = td.replace(day=1)
     return td
 
@@ -32,7 +36,7 @@ def first_of_next_month(first_of_this_month):
 
 
 @pytest.fixture
-def member_fixture_sepa(user_fixture):
+def member_fixture_sepa(user_fixture, join_date_fixture):
     fake = Factory.create('de_DE')
     from usermanagement.models import Member
     member, created = Member.objects.get_or_create(name=fake.first_name(),
@@ -41,7 +45,7 @@ def member_fixture_sepa(user_fixture):
                                                    zip_code=fake.postcode(),
                                                    city=fake.city(),
                                                    email=fake.free_email(),
-                                                   join_date=datetime.date.today(),
+                                                   join_date=join_date_fixture,
                                                    payment_type='sepa',
                                                    iban_fullname=fake.name(),
                                                    iban_address=fake.street_address(),
@@ -52,7 +56,7 @@ def member_fixture_sepa(user_fixture):
 
 
 @pytest.fixture
-def member_fixture_transfer(user_fixture):
+def member_fixture_transfer(user_fixture, join_date_fixture):
     fake = Factory.create('de_DE')
     from usermanagement.models import Member
     member, created = Member.objects.get_or_create(name=fake.first_name(),
@@ -61,7 +65,7 @@ def member_fixture_transfer(user_fixture):
                                                    zip_code=fake.postcode(),
                                                    city=fake.city(),
                                                    email=fake.free_email(),
-                                                   join_date=datetime.date.today(),
+                                                   join_date=join_date_fixture,
                                                    payment_type='transfer',
                                                    created_by=user_fixture)
     return member
