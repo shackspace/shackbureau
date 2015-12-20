@@ -16,7 +16,7 @@ E-Mail: {{ member.email }}
 
 Wenn das alles passt sind wir hier fertig.
 
-Wenn nicht wende dich bitte an tt-vorstand@shackspace.de
+Wenn nicht wende dich bitte an vorstand@shackspace.de
 
 Vielen Dank
 
