@@ -17,8 +17,8 @@ class Command(BaseCommand):
             if not member.email:
                 continue
 
-            uuid = MemberTrackingCode.objects.create(member=member,
-                                                     created_by=User.objects.get(username="admin"))
+            uuid, created = MemberTrackingCode.objects.get_or_create(member=member,
+                                                                     created_by=User.objects.get(username="admin"))
             context = {
                 'uuid': uuid,
                 'member': member,
