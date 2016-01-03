@@ -1,0 +1,2 @@
+{% for member in members %}command="/opt/Portal-v3/portal/portal.py -a {{ task }} -s {{ member.member_id }} -n \"{{ member.name }} {{ member.surname }}\" --nick \"{{member.get_nickname}}\"",no-port-forwarding,no-X11-forwarding,no-agent-forwarding {{ member.get_ssh_public_key }}
+{% endfor %}

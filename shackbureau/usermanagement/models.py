@@ -176,6 +176,17 @@ class Member(models.Model):
 
         return super().save(*args, **kwargs)
 
+    def get_ssh_public_key(self):
+        memberspecials = self.memberspecials_set.first()
+        if memberspecials:
+            return memberspecials.ssh_public_key
+        return None
+
+    def get_nickname(self):
+        if self.nickname:
+            return self.nickname
+        return "{} {}.".format(self.name, self.surname[:2])
+
 
 class MembershipManager(models.Manager):
 
