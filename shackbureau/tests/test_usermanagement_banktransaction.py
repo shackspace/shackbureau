@@ -41,6 +41,7 @@ class TestBankTransactionUpload:
     @pytest.fixture
     def example_csv_file(self):
         from django.conf import settings
+        os.mkdir(os.path.join(settings.BASE_DIR, 'media'))
         fn = os.path.normpath(os.path.join(settings.BASE_DIR, 'tests/fixtures/sample_lastschrift.csv'))
         text_file = InMemoryUploadedFile(open(fn), None, 'example.csv', 'text',
                                          len(open(fn).read()), None)
