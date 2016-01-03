@@ -72,6 +72,12 @@ def member_fixture_transfer(user_fixture, join_date_fixture):
 
 
 @pytest.fixture
+def member_fixture_keymember(member_fixture_transfer):
+    from usermanagement.models import MemberSpecials
+    memberspecial, created = MemberSpecials.objects.get_or_create(member=member_fixture_transfer, created_by=member_fixture_transfer.created_by)
+    return member_fixture_transfer
+
+@pytest.fixture
 def user_fixture():
     from django.contrib.auth import get_user_model
 
@@ -81,6 +87,20 @@ def user_fixture():
         username=USERNAME, email=EMAIL, password=PASSWORD
     )
     user.set_password(PASSWORD)
+    user.save()
+
+    return user
+
+
+@pytest.fixture
+def admin_fixture():
+    from django.contrib.auth import get_user_model
+
+    user_model = get_user_model()
+
+    user = user_model.objects.create_user(
+        username="admin", password="admin"
+    )
     user.save()
 
     return user

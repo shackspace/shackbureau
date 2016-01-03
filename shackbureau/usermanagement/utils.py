@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 
-from .models import Member, Membership, BankTransactionLog, AccountTransaction
+from .models import Member, Membership, BankTransactionLog, AccountTransaction, MemberSpecials
 
 
 def import_old_shit(filename):
@@ -220,3 +220,12 @@ def reference_parser(reference):
             return (int(hit.groupdict().get('ID')), score)
 
     return (False, 99)
+
+
+def update_keymember(member_id, ssh_key):
+    member = Member.objects.get(member_id=member_id)
+    member_special, created = MemberSpecials.objects.get_or_create(member=member,
+                                                                   defaults={'created_by': User.objects.get(username="admin")})
+    member_special.is_keyholder = True
+    member_special.ssh_public_key = ssh_key
+    member_special.save()
