@@ -67,13 +67,15 @@ class TestMemberShipManager:
 
     def test_membership_created_claims_very_simple(self, memberships_fixture_very_simple, join_date_fixture):
         x = memberships_fixture_very_simple.first()
-        expected_months = 12 - join_date_fixture.month + 1 + 12
+        today = datetime.date.today()
+        expected_months = 12 - join_date_fixture.month + 1 + (today.year - join_date_fixture.year + 1) * 12
         assert x.member.accounttransaction_set.count() == expected_months
 
     def test_membership_created_claims_change_type(self, memberships_fixture_change_type, first_of_this_month,
                                                    first_of_next_month, first_of_previous_month):
         x = memberships_fixture_change_type.first()
-        expected_months = 12 - first_of_previous_month.month + 1 + 12
+        today = datetime.date.today()
+        expected_months = 12 - first_of_previous_month.month + 1 + (today.year - first_of_previous_month.year + 1) * 12
         assert x.member.accounttransaction_set.count() == expected_months
         assert x.member.accounttransaction_set.filter(
             due_date=first_of_next_month).first().amount == -20
@@ -83,9 +85,11 @@ class TestMemberShipManager:
         assert x.member.accounttransaction_set.filter(
             due_date=first_of_this_month).first().amount == -20
 
-    def test_membership_created_claims_change_fee(self, memberships_fixture_change_fee, first_of_next_month, join_date_fixture):
+    def test_membership_created_claims_change_fee(self, memberships_fixture_change_fee,
+                                                  first_of_next_month, join_date_fixture):
         x = memberships_fixture_change_fee.first()
-        expected_months = 12 - join_date_fixture.month + 1 + 12
+        today = datetime.date.today()
+        expected_months = 12 - join_date_fixture.month + 1 + (today.year - join_date_fixture.year + 1) * 12
         assert x.member.accounttransaction_set.count() == expected_months
         assert x.member.accounttransaction_set.filter(
             due_date=first_of_next_month).first().amount == -42
