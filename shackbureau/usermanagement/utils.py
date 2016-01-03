@@ -100,7 +100,7 @@ bics = {}
 def blz_to_bic(blz):
     if blz not in bics:
         import requests
-        r = requests.get('http://banking.stupig.org/v1/bank?blz={}'.format(blz))
+        r = requests.get('https://banking.stupig.org/v1/bank?blz={}'.format(blz))
 
         assert r.status_code == 200
 
