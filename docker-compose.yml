@@ -22,5 +22,3 @@ data:
     - /home/uid1000
 db:
   image: postgres:9.4
-  ports:
-   - "5432:5432"
