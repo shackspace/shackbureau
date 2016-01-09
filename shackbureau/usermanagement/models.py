@@ -144,6 +144,9 @@ class Member(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     def __str__(self):
+        if self.nickname:
+            return "{}, {} ({}) [ID: {}]".format(self.surname, self.name, self.nickname, self.member_id)
+
         return "{}, {} [ID: {}]".format(self.surname, self.name, self.member_id)
 
     def save(self, *args, **kwargs):
