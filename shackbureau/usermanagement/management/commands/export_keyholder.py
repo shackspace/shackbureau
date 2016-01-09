@@ -20,5 +20,6 @@ class Command(BaseCommand):
             }
             content = get_template('portal_authorized_keys.txt')\
                 .render(Context(context))
-            print(task)
-            print(content)
+
+            with open("/tmp/authorized_keys." + task) as f:
+                f.write(content)
