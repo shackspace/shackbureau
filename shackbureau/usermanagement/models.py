@@ -396,6 +396,11 @@ class MemberSpecials(models.Model):
             member=self.member,
             is_keyholder=self.is_keyholder)
 
+    def save(self, *args, **kwargs):
+        # format ssh-key in on line seperated by one whitespace
+        self.ssh_public_key = " ".join(self.ssh_public_key.strip().split())
+        return super().save(*args, **kwargs)
+
 
 class MemberTrackingCode(models.Model):
     """ uuid to use in tracking urls in emails
