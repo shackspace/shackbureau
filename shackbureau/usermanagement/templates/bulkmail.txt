@@ -1,0 +1,2 @@
+{% for member in members %}\brief{{ lb }}{{ member.name }}{{ rb }}{{ lb }}{{ member.surname }}{{ rb }}{{ lb }}{{ member.address1 }}{% if member.address2 %}\\{{ member.address2 }}{% endif %}{{ rb }}{{ lb }}{{ member.zip_code }}{{ rb }}{{ lb }}{{ member.city }}{{ rb }}
+{% endfor %}
