@@ -11,9 +11,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from usermanagement.models import Member
 
+        members = Member.objects.filter(memberspecials__is_keyholder=True)\
+            .filter(is_active=True).order_by("member_id")
+
         for task in ["open", "close"]:
-            members = Member.objects.filter(memberspecials__is_keyholder=True)\
-                .filter(is_active=True).order_by("member_id")
             context = {
                 'task': task,
                 'members': members,
