@@ -329,6 +329,11 @@ class BankTransactionUpload(models.Model):
                                        ('done', 'Imported'),
                                        ('fail', 'Could not import')),
                               default='new', max_length=10)
+    data_type = models.CharField(max_length=255,
+                                 choices=(
+                                     ('bank_csv', 'Bank [CSV]'),
+                                     ('accountant_csv', 'Accountant [CSV]'),
+                                 ))
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
