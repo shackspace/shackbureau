@@ -149,6 +149,9 @@ def add_to_mailman(mailaddr, mitgliederml=True):
 
 
 def process_transaction_log(banktransaction):
+    if not banktransaction.data_type == 'bank_csv':
+        # bail out because other format is not implemented yet.
+        return
     banktransaction.status = 'wip'
     banktransaction.save()
     reader = csv.reader(open(banktransaction.data_file.file.name, encoding='iso-8859-1'),

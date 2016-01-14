@@ -52,6 +52,7 @@ class TestBankTransactionUpload:
     def import_transaction_csv(self, user_fixture, member_fixture_transfer, example_csv_file):
         from usermanagement.models import BankTransactionUpload
         BankTransactionUpload.objects.create(data_file=example_csv_file,
+                                             data_type="bank_csv",
                                              status="new", created_by=user_fixture)
 
     def test_process_transaction_log(self, import_transaction_csv):
@@ -63,3 +64,27 @@ class TestBankTransactionUpload:
         assert transaction.is_matched is True
         assert transaction.is_resolved is True
         assert str(transaction.amount) == '8.00'
+
+
+@pytest.mark.django_db
+class TestAccountantTransactionUpload:
+
+    @pytest.fixture
+    def example_accountant_csv_file(self):
+        from django.conf import settings
+        folder = os.path.join(settings.BASE_DIR, 'media')
+        os.makedirs(folder, exist_ok=True)
+        fn = os.path.normpath(os.path.join(settings.BASE_DIR, 'tests/fixtures/sample_steuerberater.csv'))
+        text_file = InMemoryUploadedFile(open(fn), None, 'example.csv', 'text',
+                                         len(open(fn).read()), None)
+        return text_file
+
+    @pytest.fixture
+    def import_accountant_transaction_csv(self, user_fixture, member_fixture_transfer, example_accountant_csv_file):
+        from usermanagement.models import BankTransactionUpload
+        BankTransactionUpload.objects.create(data_file=example_accountant_csv_file,
+                                             data_type="accountant_csv",
+                                             status="new", created_by=user_fixture)
+
+    def test_process_transaction_log(self, import_accountant_transaction_csv):
+        assert True
