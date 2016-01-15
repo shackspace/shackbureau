@@ -155,6 +155,23 @@ class TransactionLogProcessor:
             return
         self.process_bank_csv(banktransaction)
 
+    def process_accountant_csv(self, banktransaction):
+        banktransaction.status = 'wip'
+        banktransaction.save()
+        reader = csv.reader(open(banktransaction.data_file.file.name, encoding='iso-8859-1'),
+                            delimiter=";", quotechar='"')
+        reader.__next__()  # first line is meta of accountant
+        header = reader.__next__()  # second line is header
+        for line in reader:
+            d = dict(zip(header, line))
+            print(d)
+            # strategy:
+            # - search for lastname from csv
+            # - if lastname is more than one time in database; tag transaction as
+            #      is_matched=False, is_resolved=False
+            # - otherwise match and add entry, see in other processor.
+        return
+
     def process_bank_csv(self, banktransaction):
         banktransaction.status = 'wip'
         banktransaction.save()
