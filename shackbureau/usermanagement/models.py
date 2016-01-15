@@ -346,8 +346,8 @@ class BankTransactionUpload(models.Model):
     def save(self, *args, **kwargs):
         result = super().save(*args, **kwargs)
         if self.status == 'new':
-            from .utils import process_transaction_log
-            process_transaction_log(self)
+            from .utils import TransactionLogProcessor
+            TransactionLogProcessor().process(self)
         return result
 
 
@@ -386,7 +386,6 @@ class MemberSpecials(models.Model):
     has_loeffelhardt_account = models.BooleanField(default=False)
     signed_DSV = models.BooleanField(default=False)
     ssh_public_key = models.TextField(null=True, blank=True)
-
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

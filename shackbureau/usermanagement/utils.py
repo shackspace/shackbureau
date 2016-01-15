@@ -108,7 +108,6 @@ def blz_to_bic(blz):
             bics[blz] = bank.get('bic')
             # use first bank in list
             break
-
     return bics[blz]
 
 
@@ -148,81 +147,85 @@ def add_to_mailman(mailaddr, mitgliederml=True):
     assert r.status_code == 200
 
 
-def process_transaction_log(banktransaction):
-    if not banktransaction.data_type == 'bank_csv':
-        # bail out because other format is not implemented yet.
-        return
-    banktransaction.status = 'wip'
-    banktransaction.save()
-    reader = csv.reader(open(banktransaction.data_file.file.name, encoding='iso-8859-1'),
-                        delimiter=";", quotechar='"')
-    header = reader.__next__()
-    for line in reader:
-        d = dict(zip(header, line))
-        reference = ''
-        for key in sorted(header):
-            if key.startswith('VWZ'):
-                reference += d[key] + ' '
+class TransactionLogProcessor:
 
-        uid, score = reference_parser(reference)
-        member = None
-        error = None
-        try:
-            if uid:
-                member = Member.objects.get(member_id=uid)
-        except Member.DoesNotExist:
-            error = "Member does not exist"
-        BankTransactionLog.objects.create(
-            upload=banktransaction,
-            reference=reference,
-            member=member,
-            error=error, score=score,
-            amount=Decimal(d.get('Betrag').replace(',', '.')),
-            booking_date=datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date(),
-            transaction_owner=d.get('Auftraggeber/Empfänger'),
-            is_matched=bool(uid),
-            is_resolved=bool(uid),
-            created_by=banktransaction.created_by
-        )
-        if member:
-            defaults = {
-                'transaction_type': 'membership fee',
-                'amount': Decimal(d.get('Betrag').replace(',', '.')),
-                'created_by': banktransaction.created_by,
-                'payment_reference': reference
-            }
-            booking_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
-            transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
-            AccountTransaction.objects.update_or_create(
-                booking_type='deposit',
+    def process(self, banktransaction):
+        if not banktransaction.data_type == 'bank_csv':
+            # bail out because other format is not implemented yet.
+            return
+        self.process_bank_csv(banktransaction)
+
+    def process_bank_csv(self, banktransaction):
+        banktransaction.status = 'wip'
+        banktransaction.save()
+        reader = csv.reader(open(banktransaction.data_file.file.name, encoding='iso-8859-1'),
+                            delimiter=";", quotechar='"')
+        header = reader.__next__()
+        for line in reader:
+            d = dict(zip(header, line))
+            reference = ''
+            for key in sorted(header):
+                if key.startswith('VWZ'):
+                    reference += d[key] + ' '
+
+            uid, score = self.reference_parser(reference)
+            member = None
+            error = None
+            try:
+                if uid:
+                    member = Member.objects.get(member_id=uid)
+            except Member.DoesNotExist:
+                error = "Member does not exist"
+            BankTransactionLog.objects.create(
+                upload=banktransaction,
+                reference=reference,
                 member=member,
-                booking_date=booking_date,
-                transaction_hash=transation_hash,
-                defaults=defaults)
+                error=error, score=score,
+                amount=Decimal(d.get('Betrag').replace(',', '.')),
+                booking_date=datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date(),
+                transaction_owner=d.get('Auftraggeber/Empfänger'),
+                is_matched=bool(uid),
+                is_resolved=bool(uid),
+                created_by=banktransaction.created_by
+            )
+            if member:
+                defaults = {
+                    'transaction_type': 'membership fee',
+                    'amount': Decimal(d.get('Betrag').replace(',', '.')),
+                    'created_by': banktransaction.created_by,
+                    'payment_reference': reference
+                }
+                booking_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
+                transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
+                AccountTransaction.objects.update_or_create(
+                    booking_type='deposit',
+                    member=member,
+                    booking_date=booking_date,
+                    transaction_hash=transation_hash,
+                    defaults=defaults)
 
-    banktransaction.status = 'done'
-    banktransaction.save()
+        banktransaction.status = 'done'
+        banktransaction.save()
 
+    def reference_parser(self, reference):
+        reference = reference.lower()
 
-def reference_parser(reference):
-    reference = reference.lower()
+        regexes = (
+            r'.*mitgliedsbeitrag\s+id\s+(?P<ID>\d{1,3})\s.*',
+            r'.*id\s+(?P<ID>\d{1,3})\smitgliedsbeitrag.*',
+            r'.*id\s+(?P<ID>\d{1,3})\s.*',
+            r'.*mitgliedsbeitrag.*id\s+(?P<ID>\d{1,3})\s.*',
+            r'.*mitgliedsbeitrag\s+(?P<ID>\d{1,3})\s.*',
+            r'.*beitrag\s+mitglied\s+(?P<ID>\d{1,3})\s.*',
+            r'.*mitgliedsbeitrag.*\s+(?P<ID>\d{1,3})[^\d].*',
+        )
 
-    regexes = (
-        r'.*mitgliedsbeitrag\s+id\s+(?P<ID>\d{1,3})\s.*',
-        r'.*id\s+(?P<ID>\d{1,3})\smitgliedsbeitrag.*',
-        r'.*id\s+(?P<ID>\d{1,3})\s.*',
-        r'.*mitgliedsbeitrag.*id\s+(?P<ID>\d{1,3})\s.*',
-        r'.*mitgliedsbeitrag\s+(?P<ID>\d{1,3})\s.*',
-        r'.*beitrag\s+mitglied\s+(?P<ID>\d{1,3})\s.*',
-        r'.*mitgliedsbeitrag.*\s+(?P<ID>\d{1,3})[^\d].*',
-    )
+        for score, regex in enumerate(regexes, 1):
+            hit = re.match(regex, reference)
+            if hit:
+                return (int(hit.groupdict().get('ID')), score)
 
-    for score, regex in enumerate(regexes, 1):
-        hit = re.match(regex, reference)
-        if hit:
-            return (int(hit.groupdict().get('ID')), score)
-
-    return (False, 99)
+        return (False, 99)
 
 
 def update_keymember(member_id, ssh_key):

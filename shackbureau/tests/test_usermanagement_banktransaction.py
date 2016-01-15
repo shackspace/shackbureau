@@ -31,8 +31,8 @@ class TestbankTransactionUploadParser:
         ('shack e.V. Mitgliedsbeitrag ID 492 Dauerauftrag:         23           ', 492, 1),
     ])
     def test_reference_parser(self, reference, expected, score):
-        from usermanagement.utils import reference_parser
-        assert reference_parser(reference) == (expected, score)
+        from usermanagement.utils import TransactionLogProcessor
+        assert TransactionLogProcessor().reference_parser(reference) == (expected, score)
 
 
 @pytest.mark.django_db
