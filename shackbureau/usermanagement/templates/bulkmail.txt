@@ -1,2 +1,7 @@
-{% for member in members %}\brief{{ lb }}{{ member.name }}{{ rb }}{{ lb }}{{ member.surname }}{{ rb }}{{ lb }}{{ member.address1 }}{% if member.address2 %}\\{{ member.address2 }}{% endif %}{{ rb }}{{ lb }}{{ member.zip_code }}{{ rb }}{{ lb }}{{ member.city }}{{ rb }}
+{% for member in members %}
+{% if member.iban %}
+\briefiban{{ lb }}{{ member.name }}{{ rb }}{{ lb }}{{ member.surname }}{{ rb }}{{ lb }}{{ member.address1 }}{% if member.address2 %}\\{{ member.address2 }}{% endif %}{{ rb }}{{ lb }}{{ member.zip_code }}{{ rb }}{{ lb }}{{ member.city }}{{ rb }}{{ lb }}{{ member.email }}{{ rb }}{{ lb }}{{ member.iban|slice:":4" }}xxxxxxxxxxxxxxxx{{ member.iban|slice:"-2:" }}{{ rb }}
+{% else %}
+\brief{{ lb }}{{ member.name }}{{ rb }}{{ lb }}{{ member.surname }}{{ rb }}{{ lb }}{{ member.address1 }}{% if member.address2 %}\\{{ member.address2 }}{% endif %}{{ rb }}{{ lb }}{{ member.zip_code }}{{ rb }}{{ lb }}{{ member.city }}{{ rb }}{{ lb }}{{ member.email }}{{ rb }}
+{% endif %}
 {% endfor %}
