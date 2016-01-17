@@ -6,6 +6,14 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import models
 from localflavor.generic.models import IBANField, BICField
+from django.db.models import Q
+
+
+class MemberManager(models.Manager):
+    def get_active_members(self, date):
+        return self.filter(join_date__lte=date)\
+                   .filter(Q(is_active=True) | Q(leave_date__gt=date))\
+                   .order_by("member_id")
 
 
 class Member(models.Model):
@@ -138,6 +146,8 @@ class Member(models.Model):
 
     is_cancellation_mail_sent_to_cashmaster = models.BooleanField(
         default=False)
+
+    objects = MemberManager()
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

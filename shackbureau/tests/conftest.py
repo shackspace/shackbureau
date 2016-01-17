@@ -15,6 +15,11 @@ def join_date_fixture():
 
 
 @pytest.fixture
+def leave_date_fixture():
+    return datetime.date(2018, 1, 15)
+
+
+@pytest.fixture
 def first_of_this_month(join_date_fixture):
     td = join_date_fixture
     td = td.replace(day=1)
@@ -66,6 +71,24 @@ def member_fixture_transfer(user_fixture, join_date_fixture):
                                                    city=fake.city(),
                                                    email=fake.free_email(),
                                                    join_date=join_date_fixture,
+                                                   payment_type='transfer',
+                                                   created_by=user_fixture)
+    return member
+
+
+@pytest.fixture
+def member_fixture_inactive(user_fixture, join_date_fixture, leave_date_fixture):
+    fake = Factory.create('de_DE')
+    from usermanagement.models import Member
+    member, created = Member.objects.get_or_create(name=fake.first_name(),
+                                                   surname=fake.last_name(),
+                                                   address1=fake.street_address(),
+                                                   zip_code=fake.postcode(),
+                                                   city=fake.city(),
+                                                   email=fake.free_email(),
+                                                   join_date=join_date_fixture,
+                                                   is_active=False,
+                                                   leave_date=leave_date_fixture,
                                                    payment_type='transfer',
                                                    created_by=user_fixture)
     return member
