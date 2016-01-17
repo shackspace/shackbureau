@@ -7,7 +7,7 @@ python:
   - "3.4"
 script:
   - docker-compose up -d
-  - docker exec -ti shackbureau_web_1 py.test
+  - docker exec -u root -ti shackbureau_web_1 py.test
 notifications:
   irc:
     channels:
