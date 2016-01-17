@@ -1,6 +1,7 @@
 # coding=utf-8
 import pytest
 import os.path
+import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
@@ -41,10 +42,12 @@ class TestBankTransactionUpload:
     @pytest.fixture
     def example_csv_file(self):
         folder = os.path.dirname(os.path.abspath(__file__))
-        fn = os.path.join(folder, 'fixtures/sample_lastschrift.csv')
-        print(fn)
-        text_file = InMemoryUploadedFile(open(fn), None, 'sample_lastschrift.csv', 'text',
-                                         len(open(fn).read()), None)
+        fn = os.path.join(folder, 'fixtures',
+                          'sample_lastschrift.csv')
+        dummy_file = io.BytesIO()
+        dummy_file.write(open(fn).read().encode('utf-8'))
+        text_file = InMemoryUploadedFile(dummy_file, None, 'sample_lastschrift.csv', 'text',
+                                         len(dummy_file.read()), None)
         return text_file
 
     @pytest.fixture
@@ -71,9 +74,12 @@ class TestAccountantTransactionUpload:
     @pytest.fixture
     def example_accountant_csv_file(self):
         folder = os.path.dirname(os.path.abspath(__file__))
-        fn = os.path.join(folder, 'fixtures/sample_steuerberater.csv')
-        text_file = InMemoryUploadedFile(open(fn), None, 'sample_steuerberater.csv', 'text',
-                                         len(open(fn).read()), None)
+        fn = os.path.join(folder, 'fixtures',
+                          'sample_steuerberater.csv')
+        dummy_file = io.BytesIO()
+        dummy_file.write(open(fn).read().encode('utf-8'))
+        text_file = InMemoryUploadedFile(dummy_file, None, 'sample_steuerberater.csv', 'text',
+                                         len(dummy_file.read()), None)
         return text_file
 
     @pytest.fixture
