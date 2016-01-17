@@ -11,7 +11,5 @@ script:
 notifications:
   irc:
     channels:
-      - "irc.freenode.org#shackspace"
+      - "irc.freenode.org##shackbureau"
     use_notice: true
-
-  
