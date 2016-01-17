@@ -113,6 +113,9 @@ def blz_to_bic(blz):
 
 def add_to_mailman(mailaddr, mitgliederml=True):
     from django.conf import settings
+    if not settings.MAILMAN_MITGLIEDER_PW or not settings.MAILMAN_MITGLIEDER_ANNOUNCE_PW:
+        return
+
     mitglieder_url = 'https://lists.shackspace.de/mailman/admin/mitglieder'
     mitglieder_subscribe_url = 'https://lists.shackspace.de/mailman/admin/mitglieder/members/add'
     mitglieder_announce_url = 'https://lists.shackspace.de/mailman/admin/mitglieder-announce'
