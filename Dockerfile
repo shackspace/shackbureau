@@ -30,8 +30,6 @@ ADD . /opt/code
 RUN useradd uid1000 -d /home/uid1000
 RUN mkdir -p /home/uid1000 && chown uid1000: /home/uid1000
 
-RUN chown uid1000 -R /opt/code/shackbureau/media
-
 USER uid1000
 
 WORKDIR shackbureau
