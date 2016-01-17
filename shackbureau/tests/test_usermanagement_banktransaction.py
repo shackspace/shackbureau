@@ -44,7 +44,7 @@ class TestBankTransactionUpload:
         folder = os.path.join(settings.BASE_DIR, 'media')
         os.makedirs(folder, exist_ok=True)
         fn = os.path.normpath(os.path.join(settings.BASE_DIR, 'tests/fixtures/sample_lastschrift.csv'))
-        text_file = InMemoryUploadedFile(open(fn), None, 'example.csv', 'text',
+        text_file = InMemoryUploadedFile(open(fn), None, 'sample_lastschrift.csv', 'text',
                                          len(open(fn).read()), None)
         return text_file
 
@@ -75,7 +75,7 @@ class TestAccountantTransactionUpload:
         folder = os.path.join(settings.BASE_DIR, 'media')
         os.makedirs(folder, exist_ok=True)
         fn = os.path.normpath(os.path.join(settings.BASE_DIR, 'tests/fixtures/sample_steuerberater.csv'))
-        text_file = InMemoryUploadedFile(open(fn), None, 'example.csv', 'text',
+        text_file = InMemoryUploadedFile(open(fn), None, 'sample_steuerberater.csv', 'text',
                                          len(open(fn).read()), None)
         return text_file
 
@@ -108,14 +108,14 @@ class TestAccountantTransactionUpload:
         assert BankTransactionUpload.objects.first().status == 'done'
         assert BankTransactionLog.objects.count() == 2
 
-        transaction = BankTransactionLog.objects.get(pk=1)
+        transaction = BankTransactionLog.objects.get(member__surname="Koch")
         assert transaction.member.member_id == 1
         assert transaction.member.surname == "Koch"
         assert transaction.is_matched is True
         assert transaction.is_resolved is True
         assert str(transaction.amount) == '20.00'
 
-        transaction = BankTransactionLog.objects.get(pk=2)
+        transaction = BankTransactionLog.objects.exclude(member__surname="Koch").first()
         assert transaction.member is None
         assert transaction.is_matched is False
         assert transaction.is_resolved is False
