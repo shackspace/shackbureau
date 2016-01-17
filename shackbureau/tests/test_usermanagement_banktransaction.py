@@ -55,7 +55,7 @@ class TestBankTransactionUpload:
                                              data_type="bank_csv",
                                              status="new", created_by=user_fixture)
 
-    def test_process_transaction_log(self, import_transaction_csv):
+    def test_process_bank_csv_log(self, import_transaction_csv):
         from usermanagement.models import BankTransactionUpload, BankTransactionLog
         assert BankTransactionUpload.objects.first().status == 'done'
         assert BankTransactionLog.objects.count() == 1
@@ -80,11 +80,43 @@ class TestAccountantTransactionUpload:
         return text_file
 
     @pytest.fixture
-    def import_accountant_transaction_csv(self, user_fixture, member_fixture_transfer, example_accountant_csv_file):
+    def member_fixture_koch(self, user_fixture, join_date_fixture):
+        from faker import Factory
+        fake = Factory.create('de_DE')
+        from usermanagement.models import Member
+        member, created = Member.objects.get_or_create(name=fake.first_name(),
+                                                       surname="Koch",
+                                                       address1=fake.street_address(),
+                                                       zip_code=fake.postcode(),
+                                                       city=fake.city(),
+                                                       email=fake.free_email(),
+                                                       join_date=join_date_fixture,
+                                                       payment_type='transfer',
+                                                       created_by=user_fixture)
+        return member
+
+    @pytest.fixture
+    def import_accountant_transaction_csv(self, user_fixture, member_fixture_koch,
+                                          example_accountant_csv_file):
         from usermanagement.models import BankTransactionUpload
         BankTransactionUpload.objects.create(data_file=example_accountant_csv_file,
                                              data_type="accountant_csv",
                                              status="new", created_by=user_fixture)
 
-    def test_process_transaction_log(self, import_accountant_transaction_csv):
-        assert True
+    def test_process_accountant_csv_log(self, import_accountant_transaction_csv):
+        from usermanagement.models import BankTransactionUpload, BankTransactionLog
+        assert BankTransactionUpload.objects.first().status == 'done'
+        assert BankTransactionLog.objects.count() == 2
+
+        transaction = BankTransactionLog.objects.get(pk=1)
+        assert transaction.member.member_id == 1
+        assert transaction.member.surname == "Koch"
+        assert transaction.is_matched is True
+        assert transaction.is_resolved is True
+        assert str(transaction.amount) == '20.00'
+
+        transaction = BankTransactionLog.objects.get(pk=2)
+        assert transaction.member is None
+        assert transaction.is_matched is False
+        assert transaction.is_resolved is False
+        assert str(transaction.amount) == '8.00'

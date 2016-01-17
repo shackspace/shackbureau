@@ -150,10 +150,10 @@ def add_to_mailman(mailaddr, mitgliederml=True):
 class TransactionLogProcessor:
 
     def process(self, banktransaction):
-        if not banktransaction.data_type == 'bank_csv':
-            # bail out because other format is not implemented yet.
-            return
-        self.process_bank_csv(banktransaction)
+        if banktransaction.data_type == 'bank_csv':
+            self.process_bank_csv(banktransaction)
+        else:
+            self.process_accountant_csv(banktransaction)
 
     def process_accountant_csv(self, banktransaction):
         banktransaction.status = 'wip'
@@ -164,13 +164,43 @@ class TransactionLogProcessor:
         header = reader.__next__()  # second line is header
         for line in reader:
             d = dict(zip(header, line))
-            print(d)
-            # strategy:
-            # - search for lastname from csv
-            # - if lastname is more than one time in database; tag transaction as
-            #      is_matched=False, is_resolved=False
-            # - otherwise match and add entry, see in other processor.
-        return
+            member = None
+            uid = None
+            error = None
+            if 'Buchungstext' in d:
+                members = Member.objects.filter(surname=d.get('Buchungstext'))
+                if members.count() == 1:
+                    member = members.first()
+                    uid = member.member_id
+            reference = d.get('Buchungstext')
+            BankTransactionLog.objects.create(
+                upload=banktransaction,
+                reference=reference,
+                member=member,
+                error=error, score=0,
+                amount=Decimal(d.get('Umsatz Haben').replace(',', '.')),
+                booking_date=datetime.strptime(d.get('Datum'), '%d.%m.%Y').date(),
+                is_matched=bool(uid),
+                is_resolved=bool(uid),
+                created_by=banktransaction.created_by
+            )
+            if member:
+                defaults = {
+                    'transaction_type': 'membership fee',
+                    'amount': Decimal(d.get('Umsatz Haben').replace(',', '.')),
+                    'created_by': banktransaction.created_by,
+                    'payment_reference': reference
+                }
+                booking_date = datetime.strptime(d.get('Datum'), '%d.%m.%Y').date()
+                transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
+                AccountTransaction.objects.update_or_create(
+                    booking_type='deposit',
+                    member=member,
+                    booking_date=booking_date,
+                    transaction_hash=transation_hash,
+                    defaults=defaults)
+        banktransaction.status = 'done'
+        banktransaction.save()
 
     def process_bank_csv(self, banktransaction):
         banktransaction.status = 'wip'
