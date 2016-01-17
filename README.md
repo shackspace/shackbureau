@@ -1,6 +1,8 @@
 # shackbureau
 the one and only (yet another) shack member managment
 
+[![Build Status](https://travis-ci.org/shackspace/shackbureau.svg?branch=master)](https://travis-ci.org/shackspace/shackbureau)
+
 ## howto run
 
 ### docker-compose
@@ -41,6 +43,3 @@ Run `dc run web shell_plus `
 
 ### run tests
     docker exec -ti shackbureau_web_1 py.test
-
-[![Build Status](https://travis-ci.org/shackspace/shackbureau.svg?branch=master)](https://travis-ci.org/shackspace/shackbureau)
-
