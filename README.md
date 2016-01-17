@@ -42,4 +42,5 @@ Run `dc run web shell_plus `
 ### run tests
     docker exec -ti shackbureau_web_1 py.test
 
-[![wercker status](https://app.wercker.com/status/24858fa12027a6ad2bb5295b398a8c2b/m/master "wercker status")](https://app.wercker.com/project/bykey/24858fa12027a6ad2bb5295b398a8c2b)
+[![Build Status](https://travis-ci.org/shackspace/shackbureau.svg?branch=master)](https://travis-ci.org/shackspace/shackbureau)
+
