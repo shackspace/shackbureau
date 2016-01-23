@@ -6,10 +6,10 @@ from .models import Debitor
 
 @admin.register(Debitor)
 class MemberAdmin(VersionAdmin):
-    list_display = ("debitor_id", "districtcourt", "record_token", "name",)
+    list_display = ("debitor_id", "districtcourt", "record_token", "name", "is_done",)
     list_display_links = list_display
     search_fields = list_display
-    list_filter = ("districtcourt", "debitor_id")
+    list_filter = ("districtcourt", "is_done", "debitor_id")
     readonly_fields = ('debitor_id',
                        'modified',
                        'created',

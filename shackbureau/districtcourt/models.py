@@ -33,6 +33,9 @@ class Debitor(models.Model):
 
     due_date = models.DateField()
 
+    is_done = models.BooleanField(
+        default=False,)
+
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
