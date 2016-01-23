@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'reversion',
     ## own apps
     'usermanagement',
+    'districtcourt',
 )
 
 MIDDLEWARE_CLASSES = (
