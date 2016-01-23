@@ -28,7 +28,7 @@ class TestMemberManager:
         join_date = datetime.date(join_date_fixture.year, join_date_fixture.month, 1)
 
         #today in from join_date_fixture to leave_date_fixture +- 100 days
-        for today in [d for d in (join_date_fixture + datetime.timedelta(n) for n in range( -100 , day_count + 100))]:
+        for today in [d for d in (join_date_fixture + datetime.timedelta(n) for n in range(-100, day_count + 100, 100))]:
             members = Member.objects.get_active_members(today)
             if today < join_date:
                 assert not member_fixture_transfer in members
