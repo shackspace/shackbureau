@@ -1,9 +1,5 @@
 # coding=utf-8
 from django.core.management import BaseCommand
-# from django.template import Context
-# from django.template.loader import get_template
-# from os import path
-# from django.conf import settings
 
 
 class Command(BaseCommand):
@@ -33,6 +29,10 @@ class Command(BaseCommand):
 
         for member in members:
             membership = Membership.objects.get_current_membership(member, date)
+            if not membership:
+                print("{} has no active membership for {}".format(member, date))
+                continue
+
             if membership.membership_type == 'full':
                 voll += 1
             else:
