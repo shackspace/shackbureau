@@ -2,6 +2,8 @@
 from django.core.management import BaseCommand
 from django.template import Context
 from django.template.loader import get_template
+from django.conf import settings
+from os import path
 
 
 class Command(BaseCommand):
@@ -22,5 +24,6 @@ class Command(BaseCommand):
             content = get_template('portal_authorized_keys.txt')\
                 .render(Context(context))
 
-            with open("/tmp/authorized_keys." + task) as f:
+            with open(path.join(settings.MEDIA_ROOT, "authorized_keys." +
+                                task), 'w') as f:
                 f.write(content)
