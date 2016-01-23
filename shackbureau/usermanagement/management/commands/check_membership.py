@@ -18,29 +18,7 @@ class Command(BaseCommand):
             if not membership:
                 print("{} has no active membership for {}".format(member, member.join_date))
 
-
-        # for month in range(1, 13):
-        #     date = datetime.date(year, month, 1)
-        #     members = Member.objects.get_active_members(date)
-        #
-        #     mitglieder = len(members)
-        #     erm = 0
-        #     voll = 0
-        #     summe = 0
-        #
-        #     for member in members:
-        #         membership = Membership.objects.get_current_membership(member, date)
-        #         if not membership:
-        #             print("{} has no active membership for {}".format(member, date))
-        #             continue
-        #         if membership.membership_type == 'full':
-        #             voll += 1
-        #         else:
-        #             erm += 1
-        #
-        #         summe += membership.membership_fee_monthly
-        #
-        #     statistic.append([month, mitglieder, erm, voll, summe])
-        #
-        # for stat in statistic:
-        #     print(stat)
+        for membership in Membership.objects.all():
+            if membership.membership_fee_monthly < 20 and membership.membership_type == "full"\
+                    or membership.membership_fee_monthly >= 20 and not membership.membership_type == "full":
+                print("{} has in {} fee: {} but type: {}".format(membership.member, membership.valid_from, membership.membership_fee_monthly, membership.membership_type))
