@@ -249,6 +249,7 @@ class Membership(models.Model):
 
     class Meta:
         ordering = ('-valid_from', )
+        unique_together = (('member' ,'valid_from') )
 
     member = models.ForeignKey(Member)
 
