@@ -2,7 +2,7 @@ MAILMAN_MITGLIEDER_PW = None
 MAILMAN_MITGLIEDER_ANNOUNCE_PW = None
 CASHMASTER_MAILADDR = 'foo@shackspace.de'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = ""
 EMAIL_PORT = 587
 EMAIL_HOST_USER = ""
