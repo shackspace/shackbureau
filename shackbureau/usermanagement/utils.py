@@ -2,10 +2,12 @@ import csv
 import hashlib
 import requests
 import re
-from datetime import datetime
+from datetime import datetime, date
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+
+from django.db import models
 
 from .models import Member, Membership, BankTransactionLog, AccountTransaction, MemberSpecials
 
@@ -285,3 +287,64 @@ def update_keymember(member_id, ssh_key):
     member_special.is_keyholder = True
     member_special.ssh_public_key = ssh_key
     member_special.save()
+
+
+def member_statistic(year=None, month=None):
+    from collections import namedtuple
+    MemberSatistic = namedtuple('MemberStatistic', ['date', 'members', 'full', 'reduced', 'sum', 'fees'])
+    statistic = []
+
+    if year:
+        if month:
+            start_date = date(year, month, 1)
+            end_date = date(year, month, 1)
+        else:
+            start_date = date(year, 1, 1)
+            end_date = date(year, 12, 1)
+    else:
+        start_date = (Member.objects.aggregate(models.Min('join_date')).get('join_date__min') or date.today()).replace(day=1)
+        end_date = date.today().replace(day=1)
+
+    def duration(start_date, end_date):
+        current_date = start_date
+        while True:
+            if current_date > end_date:
+                return
+            yield current_date
+            if current_date.month == 12:
+                current_date = current_date.replace(year=current_date.year+1, month=1)
+            else:
+                current_date = current_date.replace(month=current_date.month+1)
+
+    for current_date in duration(start_date, end_date):
+        members = Member.objects.get_active_members(current_date)
+
+        amount_of_members = len(members)
+        membership_full = 0
+        membership_reduced = 0
+        sum_of_fees = 0
+        fees = dict()
+
+        for member in members:
+            membership = Membership.objects.get_current_membership(member, current_date)
+            if not membership:
+                print("{} has no active membership for {}".format(member, current_date))
+                continue
+            if membership.membership_type == 'full':
+                membership_full += 1
+            else:
+                membership_reduced += 1
+
+            fee = membership.membership_fee_monthly
+            sum_of_fees += fee
+            if fee in fees:
+                fees[fee] += 1
+            else:
+                fees[fee] = 1
+
+        statistic.append(MemberSatistic(current_date, amount_of_members, membership_full,
+                                        membership_reduced, sum_of_fees, fees))
+
+    if month:
+        return statistic[0]
+    return statistic
