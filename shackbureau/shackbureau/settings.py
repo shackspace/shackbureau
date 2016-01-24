@@ -130,9 +130,11 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'media'))
 
+EXPORT_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'export'))
 
 # set email to stdout for debugging
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 try:
     from .production_settings_template import *

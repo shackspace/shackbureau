@@ -24,6 +24,6 @@ class Command(BaseCommand):
             content = get_template('portal_authorized_keys.txt')\
                 .render(Context(context))
 
-            with open(path.join(settings.MEDIA_ROOT, "authorized_keys." +
+            with open(path.join(settings.EXPORT_ROOT, "authorized_keys." +
                                 task), 'w') as f:
                 f.write(content)

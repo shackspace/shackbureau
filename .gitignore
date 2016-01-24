@@ -56,5 +56,9 @@ docs/_build/
 # PyBuilder
 target/
 
-*.csv
+# *.csv
 shackbureau/shackbureau/production_settings.py
+shackbureau/media/*
+!shackbureau/media/.gitkeep
+shackbureau/export/*
+!shackbureau/export/.gitkeep
