@@ -6,40 +6,27 @@ class Command(BaseCommand):
 
     help = "Some statistic."
 
-    def add_arguments(self, parser):
-        parser.add_argument('year', type=int)
+    # def add_arguments(self, parser):
+    #     parser.add_argument('year', type=int)
+    #     parser.add_argument('month', type=int)
 
     def handle(self, *args, **options):
-        from usermanagement.models import Member
-        import datetime
-        from usermanagement.models import Membership
+        from usermanagement.utils import member_statistic
 
-        statistic = [["Monat", "Mitglieder", "Ermäßigt", "Voll", "Summe"]]
+        # statistic = member_statistic(year=options['year'])
+        statistic = member_statistic()
 
-        year = options['year']
-
-        for month in range(1, 13):
-            date = datetime.date(year, month, 1)
-            members = Member.objects.get_active_members(date)
-
-            mitglieder = len(members)
-            erm = 0
-            voll = 0
-            summe = 0
-
-            for member in members:
-                membership = Membership.objects.get_current_membership(member, date)
-                if not membership:
-                    print("{} has no active membership for {}".format(member, date))
-                    continue
-                if membership.membership_type == 'full':
-                    voll += 1
-                else:
-                    erm += 1
-
-                summe += membership.membership_fee_monthly
-
-            statistic.append([month, mitglieder, erm, voll, summe])
+        statistic = [stat._replace(date=stat.date.isoformat()) for stat in statistic]
 
         for stat in statistic:
-            print(stat)
+            # stat = stat._asdict()
+            print(";".join([stat.date,
+                            str(stat.members),
+                            str(stat.full),
+                            str(stat.reduced),
+                            str(stat.sum),
+                            ]))
+        import json
+
+        statistic = [stat._asdict() for stat in statistic]
+        print(json.dumps(statistic, indent=2, sort_keys=True))
