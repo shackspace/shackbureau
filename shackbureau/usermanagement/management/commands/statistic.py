@@ -27,6 +27,18 @@ class Command(BaseCommand):
                             str(stat.sum),
                             ]))
         import json
+        # import json
+        import decimal
 
-        statistic = [stat._asdict() for stat in statistic]
-        print(json.dumps(statistic, indent=2, sort_keys=True))
+        def decimal_default(obj):
+            if isinstance(obj, decimal.Decimal):
+                return float(obj)
+            raise TypeError
+
+        statistic_json = []
+        for stat in statistic:
+            fees = dict((str(key), value) for (key, value) in stat.fees.items())
+            stat_dict = stat._asdict()
+            stat_dict["fees"] = fees
+            statistic_json.append(stat_dict)
+        print(json.dumps(statistic_json, indent=2, sort_keys=True, skipkeys=True, default=decimal_default))
