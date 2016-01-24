@@ -81,7 +81,7 @@ def import_old_shit(filename):
                 ('reduced', 12),
             ][int(dataset['beitragsart'])]
             membership['membership_fee_monthly'] = Decimal(dataset['beitrag'].replace(' €', ''))
-            valid_from = dataset['eintritt']
+            valid_from = datetime.strptime(dataset['eintritt'], "%Y-%m-%d").date()
             membership['created_by'] = User.objects.first()
 
             Membership.objects.update_or_create(member=member,

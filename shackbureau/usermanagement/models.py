@@ -253,7 +253,8 @@ class Membership(models.Model):
     member = models.ForeignKey(Member)
 
     # FIXME: validator. no date before join_date
-    valid_from = models.DateField()
+    valid_from = models.DateField(
+        help_text="Membership starts on this date. The date is forced to the begin of given month.")
 
     membership_type = models.CharField(
         choices=(('full', 'Vollzahler'),
@@ -281,6 +282,10 @@ class Membership(models.Model):
                                        self.valid_from)
 
     def save(self, *args, **kwargs):
+        if self.valid_from and not self.valid_from.day == 1:
+            self.valid_from = self.valid_from.replace(day=1)
+        # if self.valid_from and not self.valid_from.day == 1:
+        #     self.valid_from = self.valid_from.replace(day=1)
         # FIXME: first valid_from MUST be join_date!
         result = super().save(*args, **kwargs)
         Membership.objects.fix_or_create_claims(self.member)
