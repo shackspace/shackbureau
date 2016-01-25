@@ -24,6 +24,11 @@ class Debitor(models.Model):
         max_length=255,
         help_text="Aktenzeichen")
 
+    record_token_line_2 = models.CharField(
+        max_length=255,
+        help_text="Aktenzeichen Zeile 2",
+        blank=True, null=True)
+
     name = models.CharField(
         max_length=255,)
 
