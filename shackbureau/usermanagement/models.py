@@ -420,7 +420,8 @@ class MemberSpecials(models.Model):
         if self.ssh_public_key:
             # format ssh-key in on line seperated by one whitespace
             self.ssh_public_key = " ".join(self.ssh_public_key.strip().split())
-            return super().save(*args, **kwargs)
+
+        return super().save(*args, **kwargs)
 
 
 class MemberTrackingCode(models.Model):
