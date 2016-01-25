@@ -197,7 +197,7 @@ class MemberSpecialsAdmin(admin.ModelAdmin):
     list_filter = ('is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
                    'has_selgros_card', 'has_shack_iron_key', 'has_safe_key', 'has_loeffelhardt_account',
                    'signed_DSV',)
-    search_fields = ("member__name", "member__surname")
+    search_fields = ("member__name", "member__surname", "member__nickname")
     actions = None
     readonly_fields = ('modified',
                        'created',
