@@ -172,7 +172,7 @@ class Member(models.Model):
             # but only if mail not already sent
             if not self.is_cancellation_mail_sent_to_cashmaster and self.payment_type == 'SEPA':
                 from .views import send_cancellation_mail_to_cashmaster
-                send_cancellation_mail_to_cashmaster(self.__dict__)
+                send_cancellation_mail_to_cashmaster(self)
                 self.is_cancellation_mail_sent_to_cashmaster = True
         if not self.is_welcome_mail_sent:
             from .views import send_welcome_email
