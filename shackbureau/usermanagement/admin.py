@@ -10,7 +10,7 @@ from .models import (
     MemberSpecials,
     MemberTrackingCode,
 )
-from .forms import MemberForm
+from .forms import MemberForm, MemberSpecialsForm
 from django.contrib import messages
 
 
@@ -202,6 +202,7 @@ class MemberSpecialsAdmin(admin.ModelAdmin):
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
+    form = MemberSpecialsForm
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -211,8 +212,12 @@ class MemberSpecialsAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         return super().save_model(request, obj, form, change)
 
+    class Media:
+        js = ("js/memberspecials_admin.js",)
+
 
 @admin.register(MemberTrackingCode)
 class MemberTrackingCodeAdmin(admin.ModelAdmin):
     list_display = ('member', 'uuid', 'validated')
     list_filter = ('validated',)
+    search_fields = ("member__name", "member__surname", "member__nickname")
