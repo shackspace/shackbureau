@@ -31,7 +31,6 @@ def send_payment_email(member):
                        "membership_fee": membership_fee,
                        "membership_interval": membership_interval})
     content = get_template('payment_mail.txt').render(context)
-    from os import path
 
     email = EmailMessage('Payment für {} {}'.format(member.name,
                                                     member.surname),
