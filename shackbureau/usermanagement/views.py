@@ -15,23 +15,23 @@ def send_welcome_email(email_address, context):
 
 
 def send_payment_email(member):
-    # membership = Membership.objects.get_current_membership(member, member.get("join_date"))
-    # membership_fee = membership.membership_fee_monthly * membership.membership_fee_interval
-    # membership_interval = "alle {} Monate".format(membership.membership_fee_interval)
-    # if membership.membership_fee_interval == 1:
-    #     membership_interval = "monatlich"
-    # if membership.membership_fee_interval == 12:
-    #     membership_interval = "jährlich"
     membership_fee = None
     membership_interval = None
+    membership = Membership.objects.get_current_membership(member, member.join_date)
+    if membership:
+        membership_fee = membership.membership_fee_monthly * membership.membership_fee_interval
+        membership_interval = "alle {} Monate".format(membership.membership_fee_interval)
+        if membership.membership_fee_interval == 1:
+            membership_interval = "monatlich"
+        if membership.membership_fee_interval == 12:
+            membership_interval = "jährlich"
 
     context = Context({"member": member,
+                       "membership": membership,
                        "membership_fee": membership_fee,
                        "membership_interval": membership_interval})
     content = get_template('payment_mail.txt').render(context)
     from os import path
-    with open(path.join(settings.EXPORT_ROOT, "payment_email"), 'w') as f:
-        f.write(content)
 
     email = EmailMessage('Payment für {} {}'.format(member.name,
                                                     member.surname),

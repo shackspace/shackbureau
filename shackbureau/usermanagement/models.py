@@ -184,7 +184,7 @@ class Member(models.Model):
             self.is_registration_to_mailinglists_sent = True
         if not self.is_payment_instruction_sent:
             from .views import send_payment_email
-            send_payment_email(self.__dict__)
+            send_payment_email(self)
             self.is_payment_instruction_sent = True
 
         return super().save(*args, **kwargs)

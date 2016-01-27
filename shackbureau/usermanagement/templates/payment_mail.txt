@@ -17,13 +17,18 @@ Straße:            {{ member.iban_address }}
 Postleitzahl:      {{ member.iban_zip_code }}
 Ort:               {{ member.iban_city }}
                    
-BIC:               {{ member.iban }}
+BIC:               {{ member.bic }}
 IBAN:              {{ member.iban }}
-{% if membership_fee %}Betrag:            {{ membership_fee }}{% endif %}
-{% if membership_interval %}Interval:          {{ membership_interval }}{% endif %}
 {% else %}
 Das Mitglied wird seinen Mitgliedsbeitrag an uns ueberweisen.
 {% endif %}
+{% if membership %}
+{% if membership_fee %}Betrag:            {{ membership_fee }}{% endif %}
+{% if membership_interval %}Interval:          {{ membership_interval }}{% endif %}
+{% else %}
+ES KONNTEN KEIN AKTUELLER BEITRAGSSATZ ERMITTELT WERDEN!!!
+{% endif %}
+
 LG
 
 shackbureau
