@@ -1,5 +1,18 @@
 from django import forms
 from .models import Member, MemberSpecials
+from django.utils.safestring import mark_safe
+
+
+class CopyMemberAddressWidget(forms.TextInput):
+    # Special form element that can copy addres information from member to sepa
+    def __init__(self, *args, **kwargs):
+        super(CopyMemberAddressWidget, self).__init__(*args, **kwargs)
+
+    def render(self, name, value, attrs=None):
+        attrs['size'] = 31
+        html = super(CopyMemberAddressWidget, self).render(name, value, attrs=attrs)
+        html += u"&nbsp;<a onclick='copyMemberAddressInSepa()'>copy member address</a>"
+        return mark_safe(html)
 
 
 class MemberForm(forms.ModelForm):
@@ -33,6 +46,9 @@ class MemberForm(forms.ModelForm):
             # readonly
             'created_by',
         ]
+
+    iban_fullname = forms.CharField(widget=CopyMemberAddressWidget())
+
     def clean(self):
         cleaned_data = super(MemberForm, self).clean()
         payment_type = cleaned_data.get("payment_type")
