@@ -48,7 +48,7 @@ class MemberForm(forms.ModelForm):
             'created_by',
         ]
 
-    iban_fullname = forms.CharField(widget=CopyMemberAddressWidget())
+    iban_fullname = forms.CharField(widget=CopyMemberAddressWidget(), required=False)
 
     def clean(self):
         cleaned_data = super(MemberForm, self).clean()
@@ -105,15 +105,23 @@ class MemberSpecialsForm(forms.ModelForm):
 class MembershipInlineFormset(forms.models.BaseInlineFormSet):
     def clean(self):
         # get forms that actually have valid data
-        valid_membership = False
+        valid_from = set()
+        muliple_valid_from = set()
         for form in self.forms:
             try:
                 if form.cleaned_data:
-                    valid_membership = 1
-                    break
+                    membership_valid_from = form.cleaned_data.get("valid_from").replace(day=1)
+                    if membership_valid_from in valid_from:
+                        muliple_valid_from.add(membership_valid_from)
+                    else:
+                        valid_from.add(membership_valid_from)
             except AttributeError:
                 # annoyingly, if a subform is invalid Django explicity raises
                 # an AttributeError for cleaned_data
                 pass
-        if not valid_membership:
+        if len(valid_from) == 0:
             raise forms.ValidationError('A member must have at least one membership')
+        if muliple_valid_from:
+            msg = "Multiple membeships for the same month are not allowed: " +\
+                ", ".join([x.isoformat() for x in muliple_valid_from])
+            raise forms.ValidationError(msg)
