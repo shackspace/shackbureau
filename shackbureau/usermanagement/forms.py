@@ -7,6 +7,7 @@ class CopyMemberAddressWidget(forms.TextInput):
     # Special form element that can copy addres information from member to sepa
     def __init__(self, *args, **kwargs):
         super(CopyMemberAddressWidget, self).__init__(*args, **kwargs)
+        self.is_required = False
 
     def render(self, name, value, attrs=None):
         attrs['size'] = 31
@@ -99,3 +100,20 @@ class MemberSpecialsForm(forms.ModelForm):
             self.add_error('ssh_public_key', msg)
 
         return cleaned_data
+
+
+class MembershipInlineFormset(forms.models.BaseInlineFormSet):
+    def clean(self):
+        # get forms that actually have valid data
+        valid_membership = False
+        for form in self.forms:
+            try:
+                if form.cleaned_data:
+                    valid_membership = 1
+                    break
+            except AttributeError:
+                # annoyingly, if a subform is invalid Django explicity raises
+                # an AttributeError for cleaned_data
+                pass
+        if not valid_membership:
+            raise forms.ValidationError('A member must have at least one membership')

@@ -10,7 +10,7 @@ from .models import (
     MemberSpecials,
     MemberTrackingCode,
 )
-from .forms import MemberForm, MemberSpecialsForm
+from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset
 from django.contrib import messages
 
 
@@ -49,8 +49,10 @@ class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
         return super().save_model(request, obj, form, change)
 
 
+
 class MembershipInline(admin.TabularInline):
     model = Membership
+    formset = MembershipInlineFormset
     extra = 1
     fields = ('valid_from', 'membership_type',
               'membership_fee_monthly', 'membership_fee_interval',)
