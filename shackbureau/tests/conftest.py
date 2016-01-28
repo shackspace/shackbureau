@@ -100,6 +100,15 @@ def member_fixture_keymember(member_fixture_transfer):
     memberspecial, created = MemberSpecials.objects.get_or_create(member=member_fixture_transfer, created_by=member_fixture_transfer.created_by)
     return member_fixture_transfer
 
+
+@pytest.fixture
+def membership_fixture(member_fixture_transfer, join_date_fixture):
+    from usermanagement.models import Membership
+    from decimal import Decimal
+    membership , created = Membership.objects.get_or_create(member=member_fixture_transfer, created_by=member_fixture_transfer.created_by, defaults = {"valid_from": join_date_fixture, "membership_fee_monthly": Decimal('23.42')})
+    return membership
+
+
 @pytest.fixture
 def user_fixture():
     from django.contrib.auth import get_user_model

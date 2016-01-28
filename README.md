@@ -38,6 +38,8 @@ Run `dc run web shell_plus `
     from usermanagement.utils import import_old_shit  
     import_old_shit('/opt/code/Mitglieder.csv')  
     
+## view logs
+    dc logs [web|db|data]
 
 ## Testing
 
