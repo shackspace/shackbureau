@@ -3,16 +3,17 @@ from .models import Member, MemberSpecials
 from django.utils.safestring import mark_safe
 
 
-class CopyMemberAddressWidget(forms.TextInput):
+class TextInputWithActionWidget(forms.TextInput):
     # Special form element that can copy addres information from member to sepa
     def __init__(self, *args, **kwargs):
-        super(CopyMemberAddressWidget, self).__init__(*args, **kwargs)
-        self.is_required = False
+        self.action = kwargs.pop('action', '')
+        self.description = kwargs.pop('description')
+        super(TextInputWithActionWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
         attrs['size'] = 31
-        html = super(CopyMemberAddressWidget, self).render(name, value, attrs=attrs)
-        html += u"&nbsp;<a onclick='copyMemberAddressInSepa()'>copy member address</a>"
+        html = super(TextInputWithActionWidget, self).render(name, value, attrs=attrs)
+        html += u"&nbsp;<a onclick='{action}'>{description}</a>".format(action=self.action, description=self.description)
         return mark_safe(html)
 
 
@@ -48,7 +49,9 @@ class MemberForm(forms.ModelForm):
             'created_by',
         ]
 
-    iban_fullname = forms.CharField(widget=CopyMemberAddressWidget(), required=False)
+    iban_fullname = forms.CharField(widget=TextInputWithActionWidget(description="copy member address",
+                                                                     action="copyMemberAddressInSepa()"),
+                                    required=False)
 
     def clean(self):
         cleaned_data = super(MemberForm, self).clean()
