@@ -23,6 +23,26 @@ function iban_fields() {
   return $('.field-iban, .field-bic, .field-iban_fullname, .field-iban_address, .field-iban_zip_code, .field-iban_city, .field-iban_country, .field-iban_issue_date');
 }
 
+$('#id_is_active').show(function(){
+  if(this.checked) {
+    leave_fields().hide();
+  } else {
+    leave_fields().show();
+  }
+});
+
+$('#id_is_active').change(function(){
+  if(this.checked) {
+    leave_fields().hide();
+  } else {
+    leave_fields().show();
+  }
+});
+
+function leave_fields() {
+  return $('.field-leave_date, .field-is_cancellation_confirmed');
+}
+
 });
 
 function copyMemberAddressInSepa() {

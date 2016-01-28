@@ -71,6 +71,20 @@ class MemberForm(forms.ModelForm):
                 if not cleaned_data.get(field):
                     self.add_error(field, sepa_msg)
 
+        is_active = cleaned_data.get("is_active")
+        leave_date = cleaned_data.get("leave_date")
+        is_cancellation_confirmed = cleaned_data.get("is_cancellation_confirmed")
+
+        if is_active is True:
+            if leave_date:
+                self.add_error("leave_date", "an active member can not have a leave date")
+            if is_cancellation_confirmed:
+                self.add_error("is_cancellation_confirmed", "an active member can not have a confirmed cancelation")
+        if is_active is False:
+            if not leave_date:
+                self.add_error("leave_date", "an inactive member must have a leave date")
+
+
         return cleaned_data
 
 
