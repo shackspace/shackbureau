@@ -110,7 +110,7 @@ class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
     list_display = ('member', 'booking_date', 'due_date', 'booking_type',
                     'transaction_type', 'amount', 'payment_reference')
     list_filter = ('transaction_type', 'booking_type', 'booking_date', 'due_date', 'member', )
-    search_fields = ('member', 'payment_reference')
+    search_fields = ('member__name', 'member__surname', 'member__nickname', 'payment_reference', )
     actions = None
     readonly_fields = ('modified',
                        'created',
