@@ -84,7 +84,6 @@ class MemberForm(forms.ModelForm):
             if not leave_date:
                 self.add_error("leave_date", "an inactive member must have a leave date")
 
-
         return cleaned_data
 
 
