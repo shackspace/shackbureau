@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db import models
 from localflavor.generic.models import IBANField, BICField
 from django.db.models import Q
+from .utils2 import last_day_of_month
 
 
 class MemberManager(models.Manager):
@@ -91,7 +92,7 @@ class Member(models.Model):
 
     leave_date = models.DateField(
         null=True, blank=True,
-        help_text="Member left on this date")
+        help_text="Member left on this date. The date is forced to the end of given month")
 
     mailing_list_initial_mitglieder = models.BooleanField(
         default=True,
@@ -181,6 +182,8 @@ class Member(models.Model):
                               .get('member_id__max') or 0) + 1
         if self.join_date and not self.join_date.day == 1:
             self.join_date = self.join_date.replace(day=1)
+        if self.leave_date:
+            self.leave_date = last_day_of_month(self.leave_date)
         if self.is_cancellation_confirmed:
             # if the membership is cancelled the member isn't active anymore
             self.is_active = False
