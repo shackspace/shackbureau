@@ -49,7 +49,6 @@ class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
         return super().save_model(request, obj, form, change)
 
 
-
 class MembershipInline(admin.TabularInline):
     model = Membership
     formset = MembershipInlineFormset
@@ -108,9 +107,10 @@ class MemberAdmin(VersionAdmin):
 @admin.register(AccountTransaction)
 class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
     # FIXME: add daterangefilter for booking_date, due_date
-    list_display = ("member", 'booking_date', 'due_date', "booking_type",
-                    "transaction_type", 'amount', 'payment_reference')
-    list_filter = ("member", )
+    list_display = ('member', 'booking_date', 'due_date', 'booking_type',
+                    'transaction_type', 'amount', 'payment_reference')
+    list_filter = ('transaction_type', 'booking_type', 'booking_date', 'due_date', 'member', )
+    search_fields = ('member', 'payment_reference')
     actions = None
     readonly_fields = ('modified',
                        'created',
