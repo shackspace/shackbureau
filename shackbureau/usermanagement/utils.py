@@ -2,7 +2,7 @@ import csv
 import hashlib
 import requests
 import re
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -348,3 +348,9 @@ def member_statistic(year=None, month=None):
     if month:
         return statistic[0]
     return statistic
+
+
+def last_day_of_month(given_date):
+    new_date = given_date.replace(day=28) + timedelta(days=5)
+    new_date = new_date.replace(day=1) - timedelta(days=1)
+    return new_date
