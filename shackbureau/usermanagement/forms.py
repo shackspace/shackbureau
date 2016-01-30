@@ -45,6 +45,7 @@ class MemberForm(forms.ModelForm):
             'is_active',
             'leave_date',
             'is_cancellation_confirmed',
+            'show_additional_information',
             # readonly
             'created_by',
         ]
@@ -52,6 +53,7 @@ class MemberForm(forms.ModelForm):
     iban_fullname = forms.CharField(widget=TextInputWithActionWidget(description="copy member address",
                                                                      action="copyMemberAddressInSepa()"),
                                     required=False)
+    show_additional_information = forms.BooleanField(required=False)
 
     def clean(self):
         cleaned_data = super(MemberForm, self).clean()

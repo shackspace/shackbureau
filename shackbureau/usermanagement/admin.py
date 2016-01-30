@@ -29,8 +29,7 @@ class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
     list_display = ("member",
                     "valid_from",
                     'membership_type',
-                    "membership_fee"
-    )
+                    "membership_fee")
     list_filter = ("member",
                    'member__is_active',
                    "membership_fee_monthly",
@@ -70,16 +69,41 @@ class MemberAdmin(VersionAdmin):
                    "membership__membership_fee_monthly",
                    "membership__membership_type")
     readonly_fields = ('member_id',
+                       'copy_paste_information',
                        'modified',
                        'created',
                        'created_by',
-                       'is_registration_to_mailinglists_sent')
+                       'is_registration_to_mailinglists_sent',
+                       'is_welcome_mail_sent',
+                       'is_payment_instruction_sent',
+                       'is_cancellation_mail_sent_to_cashmaster',
+                       'is_revoke_memberspecials_mail_sent',
+                       )
     inlines = [
         MembershipInline,
     ]
     form = MemberForm
     actions = None
     history_latest_first = True
+
+    def copy_paste_information(self, obj):
+        copy_paste = ["{} {}".format(obj.name, obj.surname),
+                      obj.address1 or "",
+                      obj.address2 or "",
+                      "{} {}".format(obj.zip_code, obj.city),
+                      "",
+                      obj.email or "",
+                      "",
+                      obj.iban_fullname or "",
+                      obj.iban_address or "",
+                      obj.iban_zip_code or "",
+                      obj.iban_country or "",
+                      obj.bic or "",
+                      obj.iban or ""]
+        return "\n".join(copy_paste)
+
+    def show_additional_information(self, obj):
+        return False
 
     def save_formset(self, request, form, formset, change):
         formset.save(commit=False)
