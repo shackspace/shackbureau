@@ -196,9 +196,8 @@ class Member(models.Model):
         return super().save(*args, **kwargs)
 
     def get_ssh_public_key(self):
-        memberspecials = self.memberspecials_set.first()
-        if memberspecials:
-            return memberspecials.ssh_public_key
+        if hasattr(self, 'memberspecials'):
+            return self.memberspecials.ssh_public_key
         return None
 
     def get_nickname(self):
