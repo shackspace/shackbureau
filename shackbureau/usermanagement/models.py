@@ -147,6 +147,9 @@ class Member(models.Model):
     is_cancellation_mail_sent_to_cashmaster = models.BooleanField(
         default=False)
 
+    is_revoke_memberspecials_mail_sent = models.BooleanField(
+        default=False)
+
     objects = MemberManager()
 
     modified = models.DateTimeField(auto_now=True)
@@ -156,7 +159,6 @@ class Member(models.Model):
     def __str__(self):
         if self.nickname:
             return "{}, {} ({}) [ID: {}]".format(self.surname, self.name, self.nickname, self.member_id)
-
         return "{}, {} [ID: {}]".format(self.surname, self.name, self.member_id)
 
     def save(self, *args, **kwargs):
@@ -186,6 +188,10 @@ class Member(models.Model):
             from .views import send_payment_email
             send_payment_email(self)
             self.is_payment_instruction_sent = True
+        if not self.is_active and not self.is_revoke_memberspecials_mail_sent:
+            from .views import send_revoke_memberspecials_mail
+            send_revoke_memberspecials_mail(self)
+            self.is_revoke_memberspecials_mail_sent = True
 
         return super().save(*args, **kwargs)
 
@@ -285,8 +291,6 @@ class Membership(models.Model):
     def save(self, *args, **kwargs):
         if self.valid_from and not self.valid_from.day == 1:
             self.valid_from = self.valid_from.replace(day=1)
-        # if self.valid_from and not self.valid_from.day == 1:
-        #     self.valid_from = self.valid_from.replace(day=1)
         # FIXME: first valid_from MUST be join_date!
         result = super().save(*args, **kwargs)
         Membership.objects.fix_or_create_claims(self.member)
@@ -391,7 +395,7 @@ class BankTransactionLog(models.Model):
 
 
 class MemberSpecials(models.Model):
-    member = models.ForeignKey("Member")
+    member = models.OneToOneField("Member")
     has_matomat_key = models.BooleanField(default=False)
     has_snackomat_key = models.BooleanField(default=False)
     has_metro_card = models.BooleanField(default=False)
