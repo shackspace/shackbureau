@@ -4,6 +4,8 @@ from django.core.management import BaseCommand
 from usermanagement.models import Member, Membership
 from django.db.models import Q
 
+from usermanagement.utils import last_day_of_month
+
 def get_member_without_membership_on_join_date():
     members = []
     for member in Member.objects.all():
@@ -38,3 +40,8 @@ class Command(BaseCommand):
         )
         for member in members:
             print("{} has inconsitent leave state".format(member))
+
+        #check leave_date is last day of month
+        for member in Member.objects.filter(leave_date__isnull=False):
+            if not member.leave_date == last_day_of_month(member.leave_date):
+                print("{} has not leave_date ({}) at last day of month".format(member, member.leave_date))
