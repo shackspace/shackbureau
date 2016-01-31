@@ -8,7 +8,7 @@ Dieses heisst {{ member.name }} {{ member.surname }}.
 Eintrittsdatum:   {{ member.join_date }}
 Mandatsdatum:     {{ member.iban_issue_date }}
 
-Mandatsreference: SHACKEVBEITRAGID{{ member.member_id }}
+Mandatsreferenz:  SHACKEVBEITRAGID{{ member.member_id }}
 Mandatsgrund:     shack e.V. Mitgliedsbeitrag ID {{ member.member_id }}
 
 

@@ -115,7 +115,7 @@ def member_fixture_not_keymember(member_fixture_transfer, user_fixture, join_dat
 
 
 @pytest.fixture
-def member_fixture_keymember(member_fixture_transfer, user_fixture, join_date_fixture):
+def member_fixture_keymember(user_fixture, join_date_fixture):
     fake = Factory.create('de_DE')
     from usermanagement.models import Member
     member, created = Member.objects.get_or_create(name=fake.first_name(),
@@ -137,6 +137,38 @@ def member_fixture_keymember(member_fixture_transfer, user_fixture, join_date_fi
     memberspecial.ssh_public_key = "a"
     memberspecial.save()
     return member
+
+
+@pytest.fixture
+def member_fixture_memberspecials(user_fixture, join_date_fixture):
+    fake = Factory.create('de_DE')
+    from usermanagement.models import Member
+    member, created = Member.objects.get_or_create(name=fake.first_name(),
+                                                   surname=fake.last_name(),
+                                                   address1=fake.street_address(),
+                                                   zip_code=fake.postcode(),
+                                                   city=fake.city(),
+                                                   email=fake.free_email(),
+                                                   join_date=join_date_fixture,
+                                                   payment_type='sepa',
+                                                   iban_fullname=fake.name(),
+                                                   iban_address=fake.street_address(),
+                                                   iban_zip_code=fake.postcode(),
+                                                   iban_city=fake.city(),
+                                                   created_by=user_fixture)
+    from usermanagement.models import MemberSpecials
+    memberspecial, created = MemberSpecials.objects.get_or_create(member=member,
+                                                                  created_by=user_fixture,
+                                                                  has_matomat_key=True,
+                                                                  has_snackomat_key=True,
+                                                                  has_metro_card=True,
+                                                                  has_selgros_card=True,
+                                                                  has_shack_iron_key=True,
+                                                                  has_safe_key=True,
+                                                                  has_loeffelhardt_account=True,
+                                                                  signed_DSV=True,)
+    return member
+
 
 
 @pytest.fixture

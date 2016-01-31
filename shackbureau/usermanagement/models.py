@@ -170,28 +170,30 @@ class Member(models.Model):
         if self.is_cancellation_confirmed:
             # if the membership is cancelled the member isn't active anymore
             self.is_active = False
-            # send mail to cashmaster if member cancelled and uses SEPA
-            # but only if mail not already sent
-            if not self.is_cancellation_mail_sent_to_cashmaster and self.payment_type == 'SEPA':
-                from .views import send_cancellation_mail_to_cashmaster
-                send_cancellation_mail_to_cashmaster(self.__dict__)
+        if not self.is_cancellation_mail_sent_to_cashmaster and not self.is_active and self.payment_type == 'SEPA':
+            from .views import send_cancellation_mail_to_cashmaster
+            ret = send_cancellation_mail_to_cashmaster(self.__dict__)
+            if ret:
                 self.is_cancellation_mail_sent_to_cashmaster = True
         if not self.is_welcome_mail_sent:
             from .views import send_welcome_email
-            send_welcome_email(self.email, self.__dict__)
-            self.is_welcome_mail_sent = True
+            ret = send_welcome_email(self.email, self.__dict__)
+            if ret:
+                self.is_welcome_mail_sent = True
         if not self.is_registration_to_mailinglists_sent:
             from .utils import add_to_mailman
             add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
             self.is_registration_to_mailinglists_sent = True
         if not self.is_payment_instruction_sent:
             from .views import send_payment_email
-            send_payment_email(self)
-            self.is_payment_instruction_sent = True
+            ret = send_payment_email(self)
+            if ret:
+                self.is_payment_instruction_sent = True
         if not self.is_active and not self.is_revoke_memberspecials_mail_sent:
             from .views import send_revoke_memberspecials_mail
-            send_revoke_memberspecials_mail(self)
-            self.is_revoke_memberspecials_mail_sent = True
+            ret = send_revoke_memberspecials_mail(self)
+            if ret:
+                self.is_revoke_memberspecials_mail_sent = True
 
         return super().save(*args, **kwargs)
 
@@ -254,7 +256,7 @@ class Membership(models.Model):
 
     class Meta:
         ordering = ('-valid_from', )
-        unique_together = (('member' ,'valid_from') )
+        unique_together = (('member', 'valid_from'))
 
     member = models.ForeignKey(Member)
 
@@ -404,7 +406,9 @@ class MemberSpecials(models.Model):
     has_safe_key = models.BooleanField(default=False)
     has_loeffelhardt_account = models.BooleanField(default=False)
     signed_DSV = models.BooleanField(default=False)
-    ssh_public_key = models.TextField(null=True, blank=True)
+    ssh_public_key = models.TextField(
+        null=True, blank=True,
+        help_text="The format ist forced into one line, with single whitespaces as seperators")
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -421,10 +425,19 @@ class MemberSpecials(models.Model):
 
     def save(self, *args, **kwargs):
         if self.ssh_public_key:
-            # format ssh-key in on line seperated by one whitespace
+            # format ssh-key in on line seperated by single whitespaces
             self.ssh_public_key = " ".join(self.ssh_public_key.strip().split())
 
         return super().save(*args, **kwargs)
+
+    def active_specials(self, ignore=None):
+        if ignore is None:
+            ignore = ['signed_DSV', 'ssh_public_key']
+        ignore = ignore + ['created', 'modified', 'created_by_id', 'id', 'member_id']  # add internal information to ignore
+        specials = dict(self.__dict__)
+
+        specials = [(k, v) for k, v in specials.items() if not k[0] == "_" and not k in ignore and v]
+        return dict(specials)
 
 
 class MemberTrackingCode(models.Model):

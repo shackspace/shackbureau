@@ -11,7 +11,8 @@ def send_welcome_email(email_address, context):
     email = EmailMessage('Willkommen im shack e.V.', content, 'vorstand@shackspace.de',
                          [email_address],
                          ['vorstand@shackspace.de'], reply_to=['vorstand@shackspace.de'])
-    email.send()
+    ret = email.send()
+    return ret
 
 
 def send_payment_email(member):
@@ -36,7 +37,8 @@ def send_payment_email(member):
                                                     member.surname),
                          content, 'vorstand@shackspace.de',
                          [settings.CASHMASTER_MAILADDR])
-    email.send()
+    ret = email.send()
+    return ret
 
 
 def send_cancellation_mail_to_cashmaster(context):
@@ -46,7 +48,8 @@ def send_cancellation_mail_to_cashmaster(context):
                                                     context.get('surname')),
                          content, 'vorstand@shackspace.de',
                          [settings.CASHMASTER_MAILADDR])
-    email.send()
+    ret = email.send()
+    return ret
 
 
 def send_nagging_email(email_address, context):
@@ -57,28 +60,24 @@ def send_nagging_email(email_address, context):
                          content, 'vorstand@shackspace.de',
                          [email_address],
                          ['vorstand@shackspace.de'], reply_to=['vorstand@shackspace.de'])
-    email.send()
+    ret = email.send()
+    return ret
 
 
 def send_revoke_memberspecials_mail(member):
-    memberspecials = MemberSpecials.objects.filter(member=member).first()
-    if not memberspecials:
-        return
-    specials = dict(memberspecials.__dict__)
-    for key in [k for k in specials.keys() if k[0]=="_" ]:
-        specials.pop(key)
-    ignore_specials = set(['signed_DSV', 'ssh_public_key'])
-    for key in set(['created', 'created_by_id', 'id', 'member_id', 'modified', 'ssh_public_key']).intersection(specials.keys()).union(ignore_specials):
-        specials.pop(key)
-    specials = [(k, v) for k, v in specials.items() if v]
+    if not hasattr(member, "memberspecials"):
+        return 0
+    specials = member.memberspecials.active_specials()
     if not specials:
-        return
+        return 0
 
     content = get_template('revoke_memberspecials_mail.txt').render(Context({'specials': specials,
                                                                              'member': member}))
 
-    email = EmailMessage('Revoke Memberspecials for {}'.format(memberspecials.member),
+    print(content)
+    email = EmailMessage('Revoke Memberspecials for {}'.format(member),
                          content, 'vorstand@shackspace.de',
                          ['tt-vorstand@shackspace.de'],
                          [])
-    email.send()
+    ret = email.send()
+    return ret

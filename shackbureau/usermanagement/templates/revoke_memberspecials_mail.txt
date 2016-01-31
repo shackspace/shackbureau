@@ -2,8 +2,8 @@
 
 er hat noch specials. bitte holt sie euch zurück:
 
-{% for k, v in specials %}{% if v %}{{ k }} : {{ v }}
-{% endif %}{% endfor %}
+{% for k, v in specials.items %}{{ k }} : {{ v }}
+{% endfor %}
 
 LG 
 
