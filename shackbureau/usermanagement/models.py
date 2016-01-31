@@ -106,6 +106,11 @@ class Member(models.Model):
     iban = IBANField(null=True, blank=True, verbose_name="IBAN")
     bic = BICField(null=True, blank=True, verbose_name="BIC")
 
+    iban_institute = models.CharField(
+        max_length=255,
+        null=True, blank=True,
+        verbose_name="IBAN Institute")
+
     iban_issue_date = models.DateField(
         null=True, blank=True,
         verbose_name="IBAN Issue Date",

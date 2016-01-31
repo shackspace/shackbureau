@@ -40,6 +40,7 @@ class MemberForm(forms.ModelForm):
             'iban_zip_code',
             'iban_city',
             'iban_country',
+            'iban_institute',
             'bic',
             'iban',
             'is_active',
@@ -66,7 +67,7 @@ class MemberForm(forms.ModelForm):
                            'iban_zip_code',
                            'iban_city',
                            'iban_country',
-                           'bic',
+                           # 'bic',
                            'iban',)
             sepa_msg = "must be set if payment type is SEPA"
             for field in sepa_fields:
