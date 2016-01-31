@@ -44,7 +44,7 @@ def send_payment_email(member):
 def send_cancellation_mail_to_cashmaster(context):
     content = get_template('payment_mail_on_cancellation.txt').render(Context(context))
 
-    email = EmailMessage('Payment für {} {}'.format(context.get('name'),
+    email = EmailMessage('Payment cancelation für {} {}'.format(context.get('name'),
                                                     context.get('surname')),
                          content, 'vorstand@shackspace.de',
                          [settings.CASHMASTER_MAILADDR])
