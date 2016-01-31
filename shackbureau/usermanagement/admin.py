@@ -96,7 +96,7 @@ class MemberAdmin(VersionAdmin):
                       "",
                       obj.iban_fullname or "",
                       obj.iban_address or "",
-                      obj.iban_zip_code or "",
+                      "{} {}".format(obj.iban_zip_code, obj.iban_city),
                       obj.iban_country or "",
                       obj.bic or "",
                       obj.iban or ""]
