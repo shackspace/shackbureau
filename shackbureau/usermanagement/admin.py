@@ -61,7 +61,7 @@ class MembershipInline(admin.TabularInline):
 
 @admin.register(Member)
 class MemberAdmin(VersionAdmin):
-    list_display = ("member_id", 'is_active', "name", "surname",
+    list_display = ("member_id", 'is_active', "name", "surname", 'nickname',
                     'is_underaged')
     list_display_links = list_display
     search_fields = ("member_id", "name", "surname", "nickname", "email")
@@ -220,10 +220,10 @@ class MemberSpecialsAdmin(admin.ModelAdmin):
                     'has_selgros_card', 'has_shack_iron_key', 'has_safe_key', 'has_loeffelhardt_account',
                     'signed_DSV',)
     list_display_links = list_display
-    list_filter = ('is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
+    list_filter = ('member__is_active', 'is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
                    'has_selgros_card', 'has_shack_iron_key', 'has_safe_key', 'has_loeffelhardt_account',
                    'signed_DSV',)
-    search_fields = ("member__name", "member__surname", "member__nickname")
+    search_fields = ("member__name", "member__surname", "member__nickname", "member__member_id")
     actions = None
     readonly_fields = ('modified',
                        'created',

@@ -74,7 +74,6 @@ def send_revoke_memberspecials_mail(member):
     content = get_template('revoke_memberspecials_mail.txt').render(Context({'specials': specials,
                                                                              'member': member}))
 
-    print(content)
     email = EmailMessage('Revoke Memberspecials for {}'.format(member),
                          content, 'vorstand@shackspace.de',
                          ['tt-vorstand@shackspace.de'],
