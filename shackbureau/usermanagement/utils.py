@@ -291,7 +291,7 @@ def update_keymember(member_id, ssh_key):
 
 def member_statistic(year=None, month=None):
     from collections import namedtuple
-    MemberSatistic = namedtuple('MemberStatistic', ['date', 'members', 'full', 'reduced', 'sum', 'fees'])
+    MemberSatistic = namedtuple('MemberStatistic', ['date', 'members', 'joined', 'left', 'full', 'reduced', 'sum', 'fees'])
     statistic = []
 
     if year:
@@ -318,8 +318,13 @@ def member_statistic(year=None, month=None):
 
     for current_date in duration(start_date, end_date):
         members = Member.objects.get_active_members(current_date)
+        joined_members = Member.objects.get_joined_members(current_date)
+        left_members = Member.objects.get_left_members(current_date)
 
         amount_of_members = len(members)
+        amount_of_joined_members = len(joined_members)
+        amount_of_left_members = len(left_members)
+
         membership_full = 0
         membership_reduced = 0
         sum_of_fees = 0
@@ -342,8 +347,14 @@ def member_statistic(year=None, month=None):
             else:
                 fees[fee] = 1
 
-        statistic.append(MemberSatistic(current_date, amount_of_members, membership_full,
-                                        membership_reduced, sum_of_fees, fees))
+        statistic.append(MemberSatistic(current_date,
+                                        amount_of_members,
+                                        amount_of_joined_members,
+                                        amount_of_left_members,
+                                        membership_full,
+                                        membership_reduced,
+                                        sum_of_fees,
+                                        fees))
 
     if month:
         return statistic[0]

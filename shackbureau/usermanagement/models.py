@@ -15,6 +15,15 @@ class MemberManager(models.Manager):
                    .filter(Q(is_active=True) | Q(leave_date__gt=date))\
                    .order_by("member_id")
 
+    def get_joined_members(self, date):
+        return self.filter(join_date=date)
+
+    def get_left_members(self, date):
+        from .utils import last_day_of_month
+        start_date = date.replace(day=1)
+        end_date = last_day_of_month(date)
+        return self.filter(leave_date__gte=start_date).filter(leave_date__lte=end_date)
+
 
 class Member(models.Model):
 

@@ -1,0 +1,12 @@
+Mitglieder Statistik {{ statistic.date.year }}-{{ statistic.date.month }}
+
+Aktive Mitglieder: {{ statistic.members }}
+Eintritte: {{ statistic.joined }}
+Austritte: {{ statistic.left }}
+
+Vollzahler: {{ statistic.full }}
+Ermäßigt: {{ statistic.reduced }}
+
+
+Diese Statistik wurde ihnen präsentiert vom shackbureau
+https://github.com/shackspace/shackbureau

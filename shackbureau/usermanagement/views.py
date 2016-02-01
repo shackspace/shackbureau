@@ -3,6 +3,7 @@ from django.template.loader import get_template
 from django.core.mail import EmailMessage
 from django.conf import settings
 from usermanagement.models import Membership, MemberSpecials
+from .utils import member_statistic
 
 
 def send_welcome_email(email_address, context):
@@ -77,6 +78,19 @@ def send_revoke_memberspecials_mail(member):
     email = EmailMessage('Revoke Memberspecials for {}'.format(member),
                          content, 'vorstand@shackspace.de',
                          ['tt-vorstand@shackspace.de'],
+                         [])
+    ret = email.send()
+    return ret
+
+
+def send_member_statistic_mail(year, month):
+    statistic = member_statistic(year, month)
+
+    content = get_template('member_statistic_mail.txt').render(Context({'statistic': statistic}))
+
+    email = EmailMessage('Mitglieder Statistik {}-{}'.format(year, month),
+                         content, 'vorstand@shackspace.de',
+                         ['mitglieder@shackspace.de'],
                          [])
     ret = email.send()
     return ret
