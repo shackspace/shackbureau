@@ -8,9 +8,10 @@ from .models import (
     Member,
     Membership,
     MemberSpecials,
+    MemberDocument,
     MemberTrackingCode,
 )
-from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset
+from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset #, MemberDocumentInlineFormset
 from django.contrib import messages
 
 
@@ -59,6 +60,19 @@ class MembershipInline(admin.TabularInline):
                        'created_by',)
 
 
+class MemberDocumentInline(admin.TabularInline):
+    model = MemberDocument
+    # formset = MemberDocumentInlineFormset
+    extra = 1
+    fields = ('description',
+              'data_file',
+              'comment'
+              )
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
+
+
 @admin.register(Member)
 class MemberAdmin(VersionAdmin):
     list_display = ("member_id", 'is_active', "name", "surname", 'nickname',
@@ -81,6 +95,7 @@ class MemberAdmin(VersionAdmin):
                        )
     inlines = [
         MembershipInline,
+        MemberDocumentInline,
     ]
     form = MemberForm
     actions = None
@@ -109,12 +124,20 @@ class MemberAdmin(VersionAdmin):
         formset.save(commit=False)
         for f in formset.forms:
             obj = f.instance
-            if not getattr(obj, 'valid_from', False):
-                # don't save if valid_from is not set
-                continue
-            if not getattr(obj, 'created_by', False):
-                obj.created_by = request.user
-            obj.save()
+            if isinstance(obj, Membership):
+                if not getattr(obj, 'valid_from', False):
+                    # don't save if valid_from is not set
+                    continue
+                if not getattr(obj, 'created_by', False):
+                    obj.created_by = request.user
+                obj.save()
+            if isinstance(obj, MemberDocument):
+                if not getattr(obj, 'data_file', False):
+                    # don't save without a file
+                    continue
+                if not getattr(obj, 'created_by', False):
+                    obj.created_by = request.user
+                obj.save()
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -247,3 +270,19 @@ class MemberTrackingCodeAdmin(admin.ModelAdmin):
     list_display = ('member', 'uuid', 'validated')
     list_filter = ('validated',)
     search_fields = ("member__name", "member__surname", "member__nickname")
+
+
+@admin.register(MemberDocument)
+class MemberDocumentAdmin(admin.ModelAdmin):
+    list_display = ('member', 'description',)
+    list_filter = ('member', )
+    search_fields = ('member__name', 'member__surname', 'member__nickname', 'member__member_id',
+                     'description_', 'comment')
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)

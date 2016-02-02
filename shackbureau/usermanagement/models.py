@@ -312,6 +312,20 @@ class Membership(models.Model):
         return result
 
 
+class MemberDocument(models.Model):
+    member = models.ForeignKey(Member)
+    description = models.CharField(max_length=255)
+    data_file = models.FileField(upload_to='member_documents')
+    comment = models.TextField(blank=True, null=True)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def __str__(self):
+        return "{}/{}".format(self.description, self.member)
+
+
 class AccountTransaction(models.Model):
 
     member = models.ForeignKey(Member)
