@@ -9,9 +9,10 @@ from .models import (
     Membership,
     MemberSpecials,
     MemberDocument,
+    MemberDocumentTag,
     MemberTrackingCode,
 )
-from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset #, MemberDocumentInlineFormset
+from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset
 from django.contrib import messages
 
 
@@ -62,11 +63,11 @@ class MembershipInline(admin.TabularInline):
 
 class MemberDocumentInline(admin.TabularInline):
     model = MemberDocument
-    # formset = MemberDocumentInlineFormset
-    extra = 1
+    extra = 0
     fields = ('description',
               'data_file',
-              'comment'
+              'comment',
+              'tag',
               )
     readonly_fields = ('modified',
                        'created',
@@ -274,10 +275,26 @@ class MemberTrackingCodeAdmin(admin.ModelAdmin):
 
 @admin.register(MemberDocument)
 class MemberDocumentAdmin(admin.ModelAdmin):
-    list_display = ('member', 'description',)
-    list_filter = ('member', )
+    list_display = ('data_file', 'member', 'description', 'tag_list')
+    list_display_links = list_display
+    list_filter = ('tag', 'member', )
     search_fields = ('member__name', 'member__surname', 'member__nickname', 'member__member_id',
-                     'description_', 'comment')
+                     'data_file', 'description', 'comment')
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
+
+
+@admin.register(MemberDocumentTag)
+class MemberDocumentTagAdmin(admin.ModelAdmin):
+    list_display = ('tag', )
+    list_display_links = list_display
+    search_fields = ('tag', )
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
