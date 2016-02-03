@@ -200,7 +200,7 @@ class BankTransactionUploadAdmin(admin.ModelAdmin):
 
 
 @admin.register(BankTransactionLog)
-class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
+class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
     def add_transaction(self):
         if not self.is_matched and not self.is_resolved:
             return u"<a target='_blank' href='/admin/usermanagement/accounttransaction/add/?" + \
@@ -239,7 +239,7 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
 
 
 @admin.register(MemberSpecials)
-class MemberSpecialsAdmin(admin.ModelAdmin):
+class MemberSpecialsAdmin(VersionAdmin):
     list_display = ('member', 'is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
                     'has_selgros_card', 'has_shack_iron_key', 'has_safe_key', 'has_loeffelhardt_account',
                     'signed_DSV',)
@@ -291,7 +291,7 @@ class MemberDocumentAdmin(admin.ModelAdmin):
 
 
 @admin.register(MemberDocumentTag)
-class MemberDocumentTagAdmin(admin.ModelAdmin):
+class MemberDocumentTagAdmin(VersionAdmin):
     list_display = ('tag', )
     list_display_links = list_display
     search_fields = ('tag', )
