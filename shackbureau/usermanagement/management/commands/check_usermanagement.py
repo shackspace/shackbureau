@@ -63,7 +63,7 @@ class Command(BaseCommand):
         if members:
             print("\n### Members without cancellation mail sent")
         for member in members:
-            print("{} has no cancellation mail".format(member))
+            print("{} has no cancellation mail leave date is: {}".format(member, member.leave_date or ""))
 
         # check welcome mail
         members = Member.objects.filter(is_welcome_mail_sent=False)

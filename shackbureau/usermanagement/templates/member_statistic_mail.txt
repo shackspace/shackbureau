@@ -7,9 +7,5 @@ Austritte: {{ statistic.left }}
 Vollzahler: {{ statistic.full }}
 Ermäßigt: {{ statistic.reduced }}
 
-Mitgliedsbeiträge:
-{% for fee_amount, fee_number in statistic.fees.items %}{{ fee_amount }}€: {{fee_number}}
-{% endfor %}
-
 Diese Statistik wurde ihnen präsentiert vom shackbureau
 https://github.com/shackspace/shackbureau
