@@ -5,9 +5,11 @@ from .models import CashTransaction
 
 @admin.register(CashTransaction)
 class CashTransactionAdmin(VersionAdmin):
-    list_display = ("transaction_id", "transaction_date", "description", 'transaction_sum', 'account_sum',
-                    "coin_001", "coin_002", "coin_005", "coin_010", "coin_020", "coin_050",  "coin_100", "coin_200",
-                    "bill_005", "bill_010", "bill_020", "bill_050", "bill_100", "bill_200", "bill_500")
+    list_display = ("transaction_id", "transaction_date", "is_stored_by_account", "description", 'transaction_sum', 'account_sum',
+                    "transaction_coin_001", "transaction_coin_002", "transaction_coin_005", "transaction_coin_010",
+                    "transaction_coin_020", "transaction_coin_050",  "transaction_coin_100", "transaction_coin_200",
+                    "transaction_bill_005", "transaction_bill_010", "transaction_bill_020", "transaction_bill_050",
+                    "transaction_bill_100", "transaction_bill_200", "transaction_bill_500")
     list_display_links = list_display
 
     readonly_fields = ("transaction_sum", "account_sum", "transaction_id", "modified", "created_by", "created")
@@ -16,3 +18,6 @@ class CashTransactionAdmin(VersionAdmin):
         if not getattr(obj, 'created_by', False):
             obj.created_by = request.user
         return super().save_model(request, obj, form, change)
+
+    class Media:
+        js = ("js/cash_transaction_admin.js", )
