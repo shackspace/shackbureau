@@ -137,13 +137,15 @@ class CashTransaction(models.Model):
         return CashTransaction.objects.filter(Q(transaction_date__gt=self.transaction_date) |
                                               Q(transaction_date=self.transaction_date,
                                                 transaction_date_id__gt=self.transaction_date_id)) \
-            .order_by("transaction_date", "transaction_date_id").last()
+            .order_by("transaction_date", "transaction_date_id").first()
 
     def __str__(self):
-        return "{} [id:{}] {} ({})".format(self.transaction_date,
-                                           self.transaction_id,
-                                           self.description,
-                                           self.transaction_sum)
+        return "{} - {} [id:{}] {} ({} / {})".format(self.transaction_date,
+                                                self.transaction_date_id,
+                                                self.transaction_id,
+                                                self.description,
+                                                self.account_sum,
+                                                self.transaction_sum)
 
     def save(self, *args, **kwargs):
         if not self.transaction_id:
@@ -239,12 +241,35 @@ class CashTransaction(models.Model):
         else:
             self.account_sum = self.transaction_sum
 
+        if self.pk:
+            old_next_cashtransaction = CashTransaction.objects.get(id=self.id).get_next_cashtransaction()
+        else:
+            old_next_cashtransaction = None
+
         ret = super().save(*args, **kwargs)
 
-        # update later CashTransaction recursive
+        # update CashTransaction recursive
         next_cashtransaction = self.get_next_cashtransaction()
+        if old_next_cashtransaction:
+            if not next_cashtransaction:
+                old_next_cashtransaction.save()
+                return ret
+            if old_next_cashtransaction.transaction_date < next_cashtransaction.transaction_date:
+                old_next_cashtransaction.save()
+                return ret
+            if next_cashtransaction.transaction_date < old_next_cashtransaction.transaction_date:
+                next_cashtransaction.save()
+                return ret
+            if next_cashtransaction.transaction_date == old_next_cashtransaction.transaction_date:
+                if old_next_cashtransaction.transaction_date_id < next_cashtransaction.transaction_date_id:
+                    old_next_cashtransaction.save()
+                    return ret
+                else:
+                    next_cashtransaction.save()
+                    return ret
+                return ret
+            old_next_cashtransaction.save()
         if next_cashtransaction:
-            print(next_cashtransaction)
             next_cashtransaction.save()
-
+            return ret
         return ret
