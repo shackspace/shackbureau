@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 
 from decimal import Decimal
@@ -7,11 +8,14 @@ from decimal import Decimal
 class CashTransaction(models.Model):
 
     class Meta:
-        ordering = ('-transaction_date', )
+        ordering = ('-transaction_date', '-transaction_date_id')
+        unique_together = (('transaction_date', 'transaction_date_id'))
 
     transaction_id = models.IntegerField(verbose_name="id", unique=True)
 
-    transaction_date = models.DateField(unique=True)
+    transaction_date = models.DateField()
+
+    transaction_date_id = models.IntegerField(verbose_name="Transaction of the Day", default=1)
 
     description = models.CharField(max_length=255)
 
@@ -123,6 +127,18 @@ class CashTransaction(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
+    def get_previous_cashtransaction(self):
+        return CashTransaction.objects.filter(Q(transaction_date__lt=self.transaction_date) |
+                                              Q(transaction_date=self.transaction_date,
+                                                transaction_date_id__lt=self.transaction_date_id)) \
+            .order_by("transaction_date", "transaction_date_id").last()
+
+    def get_next_cashtransaction(self):
+        return CashTransaction.objects.filter(Q(transaction_date__gt=self.transaction_date) |
+                                              Q(transaction_date=self.transaction_date,
+                                                transaction_date_id__gt=self.transaction_date_id)) \
+            .order_by("transaction_date", "transaction_date_id").last()
+
     def __str__(self):
         return "{} [id:{}] {} ({})".format(self.transaction_date,
                                            self.transaction_id,
@@ -134,8 +150,7 @@ class CashTransaction(models.Model):
             self.transaction_id = (CashTransaction.objects.aggregate(models.Max('transaction_id'))
                                    .get('transaction_id__max') or 0) + 1
 
-        previous_cashtransaction = CashTransaction.objects.filter(transaction_date__lt=self.transaction_date) \
-            .order_by("transaction_date").last()
+        previous_cashtransaction = self.get_previous_cashtransaction()
         if self.is_stored_by_account:
             if previous_cashtransaction:
                 self.transaction_coin_001 = self.account_coin_001 - previous_cashtransaction.account_coin_001
@@ -227,8 +242,7 @@ class CashTransaction(models.Model):
         ret = super().save(*args, **kwargs)
 
         # update later CashTransaction recursive
-        next_cashtransaction = CashTransaction.objects.filter(transaction_date__gt=self.transaction_date) \
-            .order_by("transaction_date").first()
+        next_cashtransaction = self.get_next_cashtransaction()
         if next_cashtransaction:
             print(next_cashtransaction)
             next_cashtransaction.save()
