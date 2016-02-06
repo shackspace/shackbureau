@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     ## own apps
     'usermanagement',
     'districtcourt',
+    'cashaccounting',
 )
 
 MIDDLEWARE_CLASSES = (
