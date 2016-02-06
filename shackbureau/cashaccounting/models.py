@@ -143,11 +143,11 @@ class CashTransaction(models.Model):
 
     def __str__(self):
         return "{} - {} [id:{}] {} ({} / {})".format(self.transaction_date,
-                                                self.transaction_date_id,
-                                                self.transaction_id,
-                                                self.description,
-                                                self.account_sum,
-                                                self.transaction_sum)
+                                                     self.transaction_date_id,
+                                                     self.transaction_id,
+                                                     self.description,
+                                                     self.account_sum,
+                                                     self.transaction_sum)
 
     def save(self, *args, **kwargs):
         if not self.transaction_id:
@@ -274,4 +274,11 @@ class CashTransaction(models.Model):
         if next_cashtransaction:
             next_cashtransaction.save()
             return ret
+        return ret
+
+    def delete(self, *args, **kwargs):
+        ret = super().delete(*args, **kwargs)
+        next_cashtransaction = self.get_next_cashtransaction()
+        if next_cashtransaction:
+            next_cashtransaction.save()
         return ret

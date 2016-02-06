@@ -34,6 +34,18 @@ class TestMember:
         cashtransaction_fixture_4.save()
         self.validate_cashtransactions()
 
+    def test_transaction_delete_first(self, cashtransaction_fixture_1, cashtransaction_fixture_2,
+                                      cashtransaction_fixture_3, cashtransaction_fixture_4):
+        for _ in range(4):
+            CashTransaction.objects.order_by('transaction_date', 'transaction_date_id').first().delete()
+            self.validate_cashtransactions()
+
+    def test_transaction_delete_last(self, cashtransaction_fixture_1, cashtransaction_fixture_2,
+                                     cashtransaction_fixture_3, cashtransaction_fixture_4):
+        for _ in range(4):
+            CashTransaction.objects.order_by('transaction_date', 'transaction_date_id').last().delete()
+            self.validate_cashtransactions()
+
     def validate_cashtransactions(self):
         cashtransaction = CashTransaction.objects.order_by('transaction_date', 'transaction_date_id').first()
         ctr = 0
