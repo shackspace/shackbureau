@@ -128,15 +128,17 @@ class CashTransaction(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     def get_previous_cashtransaction(self):
-        return CashTransaction.objects.filter(Q(transaction_date__lt=self.transaction_date) |
-                                              Q(transaction_date=self.transaction_date,
-                                                transaction_date_id__lt=self.transaction_date_id)) \
+        return CashTransaction.objects.exclude(id=self.id) \
+            .filter(Q(transaction_date__lt=self.transaction_date) |
+                    Q(transaction_date=self.transaction_date,
+                      transaction_date_id__lt=self.transaction_date_id)) \
             .order_by("transaction_date", "transaction_date_id").last()
 
     def get_next_cashtransaction(self):
-        return CashTransaction.objects.filter(Q(transaction_date__gt=self.transaction_date) |
-                                              Q(transaction_date=self.transaction_date,
-                                                transaction_date_id__gt=self.transaction_date_id)) \
+        return CashTransaction.objects.exclude(id=self.id) \
+            .filter(Q(transaction_date__gt=self.transaction_date) |
+                    Q(transaction_date=self.transaction_date,
+                      transaction_date_id__gt=self.transaction_date_id)) \
             .order_by("transaction_date", "transaction_date_id").first()
 
     def __str__(self):
