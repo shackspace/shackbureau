@@ -209,120 +209,36 @@ def admin_fixture():
 
 
 @pytest.fixture
-def cashtransaction_fixture_1(user_fixture):
+def cashtransaction_fixtures(user_fixture):
     from cashaccounting.models import CashTransaction
     from datetime import date
 
-    cashtransaction, created = CashTransaction.objects.get_or_create(
-        transaction_date=date(2016, 2, 1),
-        transaction_date_id=1,
-        description="cashtransaction_fixture_1",
-        is_stored_by_account=False,
-        transaction_coin_001=randint(0, 100),
-        transaction_coin_002=randint(0, 100),
-        transaction_coin_005=randint(0, 100),
-        transaction_coin_010=randint(0, 100),
-        transaction_coin_020=randint(0, 100),
-        transaction_coin_050=randint(0, 100),
-        transaction_coin_100=randint(0, 100),
-        transaction_coin_200=randint(0, 100),
-        transaction_bill_005=randint(0, 100),
-        transaction_bill_010=randint(0, 100),
-        transaction_bill_020=randint(0, 100),
-        transaction_bill_050=randint(0, 100),
-        transaction_bill_100=randint(0, 100),
-        transaction_bill_200=randint(0, 100),
-        transaction_bill_500=randint(0, 100),
-        created_by=user_fixture,
-    )
-    return cashtransaction
-
-
-@pytest.fixture
-def cashtransaction_fixture_2(user_fixture):
-    from cashaccounting.models import CashTransaction
-    from datetime import date
-
-    cashtransaction, created = CashTransaction.objects.get_or_create(
-        transaction_date=date(2016, 2, 1),
-        transaction_date_id=2,
-        description="cashtransaction_fixture_2",
-        is_stored_by_account=False,
-        transaction_coin_001=randint(0, 100),
-        transaction_coin_002=randint(0, 100),
-        transaction_coin_005=randint(0, 100),
-        transaction_coin_010=randint(0, 100),
-        transaction_coin_020=randint(0, 100),
-        transaction_coin_050=randint(0, 100),
-        transaction_coin_100=randint(0, 100),
-        transaction_coin_200=randint(0, 100),
-        transaction_bill_005=randint(0, 100),
-        transaction_bill_010=randint(0, 100),
-        transaction_bill_020=randint(0, 100),
-        transaction_bill_050=randint(0, 100),
-        transaction_bill_100=randint(0, 100),
-        transaction_bill_200=randint(0, 100),
-        transaction_bill_500=randint(0, 100),
-        created_by=user_fixture,
-    )
-    return cashtransaction
-
-
-@pytest.fixture
-def cashtransaction_fixture_3(user_fixture):
-    from cashaccounting.models import CashTransaction
-    from datetime import date
-
-    cashtransaction, created = CashTransaction.objects.get_or_create(
-        transaction_date=date(2016, 2, 2),
-        transaction_date_id=1,
-        description="cashtransaction_fixture_3",
-        is_stored_by_account=True,
-        account_coin_001=randint(0, 100),
-        account_coin_002=randint(0, 100),
-        account_coin_005=randint(0, 100),
-        account_coin_010=randint(0, 100),
-        account_coin_020=randint(0, 100),
-        account_coin_050=randint(0, 100),
-        account_coin_100=randint(0, 100),
-        account_coin_200=randint(0, 100),
-        account_bill_005=randint(0, 100),
-        account_bill_010=randint(0, 100),
-        account_bill_020=randint(0, 100),
-        account_bill_050=randint(0, 100),
-        account_bill_100=randint(0, 100),
-        account_bill_200=randint(0, 100),
-        account_bill_500=randint(0, 100),
-        created_by=user_fixture,
-    )
-    return cashtransaction
-
-
-@pytest.fixture
-def cashtransaction_fixture_4(user_fixture):
-    from cashaccounting.models import CashTransaction
-    from datetime import date
-
-    cashtransaction, created = CashTransaction.objects.get_or_create(
-        transaction_date=date(2016, 2, 2),
-        transaction_date_id=2,
-        description="cashtransaction_fixture_4",
-        is_stored_by_account=False,
-        transaction_coin_001=randint(0, 100),
-        transaction_coin_002=randint(0, 100),
-        transaction_coin_005=randint(0, 100),
-        transaction_coin_010=randint(0, 100),
-        transaction_coin_020=randint(0, 100),
-        transaction_coin_050=randint(0, 100),
-        transaction_coin_100=randint(0, 100),
-        transaction_coin_200=randint(0, 100),
-        transaction_bill_005=randint(0, 100),
-        transaction_bill_010=randint(0, 100),
-        transaction_bill_020=randint(0, 100),
-        transaction_bill_050=randint(0, 100),
-        transaction_bill_100=randint(0, 100),
-        transaction_bill_200=randint(0, 100),
-        transaction_bill_500=randint(0, 100),
-        created_by=user_fixture,
-    )
-    return cashtransaction
+    cashtransactions = []
+    for i in range(10):
+        day, day_id = divmod(i, 2)
+        day += 1
+        day_id += 1
+        cashtransaction, created = CashTransaction.objects.get_or_create(
+            transaction_date=date(2016, 2, day),
+            transaction_date_id=day_id,
+            description="cashtransaction_fixture_1",
+            is_stored_by_account=not bool(randint(0, 3)),
+            transaction_coin_001=randint(0, 100),
+            transaction_coin_002=randint(0, 100),
+            transaction_coin_005=randint(0, 100),
+            transaction_coin_010=randint(0, 100),
+            transaction_coin_020=randint(0, 100),
+            transaction_coin_050=randint(0, 100),
+            transaction_coin_100=randint(0, 100),
+            transaction_coin_200=randint(0, 100),
+            transaction_bill_005=randint(0, 100),
+            transaction_bill_010=randint(0, 100),
+            transaction_bill_020=randint(0, 100),
+            transaction_bill_050=randint(0, 100),
+            transaction_bill_100=randint(0, 10),
+            transaction_bill_200=randint(0, 10),
+            transaction_bill_500=randint(0, 10),
+            created_by=user_fixture,
+        )
+        cashtransactions.append(cashtransaction)
+    return cashtransactions

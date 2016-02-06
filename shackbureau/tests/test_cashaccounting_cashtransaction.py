@@ -1,50 +1,98 @@
 # coding=utf-8
 import pytest
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Max
 from decimal import Decimal
 from cashaccounting.models import CashTransaction
 from datetime import date
+from random import choice, randint
 
 
 @pytest.mark.django_db
 class TestMember:
+    def test_cashtransaction_fixtures(self, cashtransaction_fixtures):
+        assert len(cashtransaction_fixtures) > 0
+        for cashtransaction in cashtransaction_fixtures:
+            assert isinstance(cashtransaction, CashTransaction)
 
-    def test_transaction_sum(self, cashtransaction_fixture_1, cashtransaction_fixture_2,
-                             cashtransaction_fixture_3, cashtransaction_fixture_4):
+    def test_transaction_sum(self, cashtransaction_fixtures):
         self.validate_cashtransactions()
 
-    def test_transaction_reorder(self, cashtransaction_fixture_1, cashtransaction_fixture_2,
-                                 cashtransaction_fixture_3, cashtransaction_fixture_4):
-        new_date = date(2016, 2, 5)
+    def test_transaction_reorder(self, cashtransaction_fixtures):
+        new_date = date(2016, 3, 5)
         order = [3, 4, 2, 1]
-        cashtransaction_fixture_1.transaction_date = new_date
-        cashtransaction_fixture_1.transaction_date_id = order[0]
-        cashtransaction_fixture_1.save()
-        self.validate_cashtransactions()
-        cashtransaction_fixture_2.transaction_date = new_date
-        cashtransaction_fixture_2.transaction_date_id = order[1]
-        cashtransaction_fixture_2.save()
-        self.validate_cashtransactions()
-        cashtransaction_fixture_3.transaction_date = new_date
-        cashtransaction_fixture_3.transaction_date_id = order[2]
-        cashtransaction_fixture_3.save()
-        self.validate_cashtransactions()
-        cashtransaction_fixture_4.transaction_date = new_date
-        cashtransaction_fixture_4.transaction_date_id = order[3]
-        cashtransaction_fixture_4.save()
-        self.validate_cashtransactions()
+        for i in range(4):
+            cashtransaction = cashtransaction_fixtures[-4 + i]
+            cashtransaction.transaction_date = new_date
+            cashtransaction.transaction_date_id = order[i]
+            cashtransaction.save()
+            self.validate_cashtransactions()
 
-    def test_transaction_delete_first(self, cashtransaction_fixture_1, cashtransaction_fixture_2,
-                                      cashtransaction_fixture_3, cashtransaction_fixture_4):
+    def test_transaction_delete_first(self, cashtransaction_fixtures):
         for _ in range(4):
             CashTransaction.objects.order_by('transaction_date', 'transaction_date_id').first().delete()
             self.validate_cashtransactions()
 
-    def test_transaction_delete_last(self, cashtransaction_fixture_1, cashtransaction_fixture_2,
-                                     cashtransaction_fixture_3, cashtransaction_fixture_4):
+    def test_transaction_delete_last(self, cashtransaction_fixtures):
         for _ in range(4):
             CashTransaction.objects.order_by('transaction_date', 'transaction_date_id').last().delete()
             self.validate_cashtransactions()
+
+    def test_transaction_bulk_delete(self, cashtransaction_fixtures):
+        number_of_cashtransactions = CashTransaction.objects.count()
+        for _ in range(10):
+            cashtransaction = choice(cashtransaction_fixtures)
+            CashTransaction.objects.filter(transaction_date=cashtransaction.transaction_date).delete()
+            self.validate_cashtransactions()
+        assert number_of_cashtransactions > CashTransaction.objects.count()
+
+    def test_transaction_bulk_update(self, cashtransaction_fixtures):
+        for _ in range(10):
+            cashtransaction = choice(cashtransaction_fixtures)
+            CashTransaction.objects.filter(transaction_date=cashtransaction.transaction_date) \
+                .update(transaction_coin_200=150)
+            self.validate_cashtransactions()
+
+    def test_transaction_bulk_create(self, cashtransaction_fixtures, user_fixture):
+        # for _ in range(10):
+        #     cashtransaction = choice(cashtransaction_fixtures)
+        #     CashTransaction.objects.filter(transaction_date=cashtransaction.transaction_date) \
+        #         .update(transaction_coin_200=150)
+        #     self.validate_cashtransactions()
+        #         cashtransactions = []
+        cashtransactions = []
+        transaction_id = CashTransaction.objects.aggregate(Max("transaction_id")).get("transaction_id__max") or 0
+        for i in range(10):
+            day, day_id = divmod(i, 2)
+            day += 1
+            day_id += 1
+            cashtransaction = CashTransaction()
+            cashtransaction.transaction_id = transaction_id + i + 1
+            cashtransaction.transaction_date = date(2016, 5, day)
+            cashtransaction.transaction_date_id = day_id
+            cashtransaction.description = "cashtransaction fixture {}".format(i)
+            cashtransaction.is_stored_by_account = not bool(randint(0, 3))
+            cashtransaction.transaction_coin_001 = randint(0, 100)
+            cashtransaction.transaction_coin_002 = randint(0, 100)
+            cashtransaction.transaction_coin_005 = randint(0, 100)
+            cashtransaction.transaction_coin_010 = randint(0, 100)
+            cashtransaction.transaction_coin_020 = randint(0, 100)
+            cashtransaction.transaction_coin_050 = randint(0, 100)
+            cashtransaction.transaction_coin_100 = randint(0, 100)
+            cashtransaction.transaction_coin_200 = randint(0, 100)
+            cashtransaction.transaction_bill_005 = randint(0, 100)
+            cashtransaction.transaction_bill_010 = randint(0, 100)
+            cashtransaction.transaction_bill_020 = randint(0, 100)
+            cashtransaction.transaction_bill_050 = randint(0, 100)
+            cashtransaction.transaction_bill_100 = randint(0, 10)
+            cashtransaction.transaction_bill_200 = randint(0, 10)
+            cashtransaction.transaction_bill_500 = randint(0, 10)
+            cashtransaction.transaction_sum = 0
+            cashtransaction.account_sum = 0
+            cashtransaction.created_by = user_fixture
+            cashtransactions.append(cashtransaction)
+        CashTransaction.objects.bulk_create(cashtransactions)
+        self.validate_cashtransactions()
+
 
     def validate_cashtransactions(self):
         cashtransaction = CashTransaction.objects.order_by('transaction_date', 'transaction_date_id').first()

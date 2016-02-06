@@ -1,15 +1,44 @@
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
+from django.db.models.query import QuerySet
 
 from decimal import Decimal
+
+
+class NoBulkOperationsQuerySet(QuerySet):
+    def delete(self):
+        for obj in self:
+            obj.delete()
+
+    def update(self, *args, **kwargs):
+        ret = super(NoBulkOperationsQuerySet, self).update(*args, **kwargs)
+        for obj in self:
+            obj.save()
+        return ret
+
+    def update_or_create(self, *args, **kwargs):
+        obj, created = super(NoBulkOperationsQuerySet, self).update_or_create(*args, **kwargs)
+        obj.save()
+        return obj, created
+
+    def bulk_create(self, objs, batch_size=None):
+        # new_objs = super(NoBulkOperationsQuerySet, self).bulk_create(objs, batch_size=batch_size)
+        for obj in objs:
+            obj.save()
+        return objs
+
+
+class NoBulkOperationsManager(models.Manager):
+    def get_queryset(self):
+        return NoBulkOperationsQuerySet(self.model)
 
 
 class CashTransaction(models.Model):
 
     class Meta:
         ordering = ('-transaction_date', '-transaction_date_id')
-        unique_together = (('transaction_date', 'transaction_date_id'))
+        unique_together = (('transaction_date', 'transaction_date_id'), )
 
     transaction_id = models.IntegerField(verbose_name="id", unique=True)
 
@@ -126,6 +155,8 @@ class CashTransaction(models.Model):
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    objects = NoBulkOperationsManager()
 
     def get_previous_cashtransaction(self):
         return CashTransaction.objects.exclude(id=self.id) \
@@ -277,8 +308,10 @@ class CashTransaction(models.Model):
         return ret
 
     def delete(self, *args, **kwargs):
+        print("delete")
         ret = super().delete(*args, **kwargs)
         next_cashtransaction = self.get_next_cashtransaction()
         if next_cashtransaction:
+            print(next_cashtransaction)
             next_cashtransaction.save()
         return ret
