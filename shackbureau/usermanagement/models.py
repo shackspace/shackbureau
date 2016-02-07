@@ -331,7 +331,7 @@ class MemberDocument(models.Model):
     description = models.CharField(max_length=255)
     data_file = models.FileField(upload_to='member_documents')
     comment = models.TextField(blank=True, null=True)
-    tag = models.ManyToManyField(MemberDocumentTag, blank=True, null=True)
+    tag = models.ManyToManyField(MemberDocumentTag, blank=True,)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
