@@ -132,8 +132,21 @@ class MembershipInlineFormset(forms.models.BaseInlineFormSet):
                     membership_valid_from = form.cleaned_data.get("valid_from").replace(day=1)
                     if membership_valid_from in valid_from:
                         muliple_valid_from.add(membership_valid_from)
+                        form.add_error("valid_from", "dublicated date")
                     else:
                         valid_from.add(membership_valid_from)
+
+                    membership_fee_monthly = form.cleaned_data.get("membership_fee_monthly")
+                    membership_type = form.cleaned_data.get("membership_type")
+                    if membership_fee_monthly < 20 and membership_type == "full":
+                        form.add_error('membership_fee_monthly',
+                                       "Membership Full must have a membership fee greater or equal 20.00")
+                    if membership_fee_monthly >= 20 and membership_type == "reduced":
+                        form.add_error('membership_fee_monthly',
+                                       "Membership reduced must have a membership fee lower than 20.00")
+                    if membership_fee_monthly < 0:
+                        form.add_error('membership_fee_monthly',
+                                       "Negative membership fee is not allowed")
             except AttributeError:
                 # annoyingly, if a subform is invalid Django explicity raises
                 # an AttributeError for cleaned_data
