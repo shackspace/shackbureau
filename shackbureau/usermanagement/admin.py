@@ -8,6 +8,8 @@ from .models import (
     Member,
     Membership,
     MemberSpecials,
+    MemberDocument,
+    MemberDocumentTag,
     MemberTrackingCode,
 )
 from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset
@@ -59,6 +61,19 @@ class MembershipInline(admin.TabularInline):
                        'created_by',)
 
 
+class MemberDocumentInline(admin.TabularInline):
+    model = MemberDocument
+    extra = 0
+    fields = ('description',
+              'data_file',
+              'comment',
+              'tag',
+              )
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
+
+
 @admin.register(Member)
 class MemberAdmin(VersionAdmin):
     list_display = ("member_id", 'is_active', "name", "surname", 'nickname',
@@ -81,6 +96,7 @@ class MemberAdmin(VersionAdmin):
                        )
     inlines = [
         MembershipInline,
+        MemberDocumentInline,
     ]
     form = MemberForm
     actions = None
@@ -109,12 +125,20 @@ class MemberAdmin(VersionAdmin):
         formset.save(commit=False)
         for f in formset.forms:
             obj = f.instance
-            if not getattr(obj, 'valid_from', False):
-                # don't save if valid_from is not set
-                continue
-            if not getattr(obj, 'created_by', False):
-                obj.created_by = request.user
-            obj.save()
+            if isinstance(obj, Membership):
+                if not getattr(obj, 'valid_from', False):
+                    # don't save if valid_from is not set
+                    continue
+                if not getattr(obj, 'created_by', False):
+                    obj.created_by = request.user
+                obj.save()
+            if isinstance(obj, MemberDocument):
+                if not getattr(obj, 'data_file', False):
+                    # don't save without a file
+                    continue
+                if not getattr(obj, 'created_by', False):
+                    obj.created_by = request.user
+                obj.save()
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -176,7 +200,7 @@ class BankTransactionUploadAdmin(admin.ModelAdmin):
 
 
 @admin.register(BankTransactionLog)
-class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
+class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
     def add_transaction(self):
         if not self.is_matched and not self.is_resolved:
             return u"<a target='_blank' href='/admin/usermanagement/accounttransaction/add/?" + \
@@ -215,7 +239,7 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, admin.ModelAdmin):
 
 
 @admin.register(MemberSpecials)
-class MemberSpecialsAdmin(admin.ModelAdmin):
+class MemberSpecialsAdmin(VersionAdmin):
     list_display = ('member', 'is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
                     'has_selgros_card', 'has_shack_iron_key', 'has_safe_key', 'has_loeffelhardt_account',
                     'signed_DSV',)
@@ -247,3 +271,35 @@ class MemberTrackingCodeAdmin(admin.ModelAdmin):
     list_display = ('member', 'uuid', 'validated')
     list_filter = ('validated',)
     search_fields = ("member__name", "member__surname", "member__nickname")
+
+
+@admin.register(MemberDocument)
+class MemberDocumentAdmin(admin.ModelAdmin):
+    list_display = ('data_file', 'member', 'description', 'tag_list')
+    list_display_links = list_display
+    list_filter = ('tag', 'member', )
+    search_fields = ('member__name', 'member__surname', 'member__nickname', 'member__member_id',
+                     'data_file', 'description', 'comment')
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
+
+
+@admin.register(MemberDocumentTag)
+class MemberDocumentTagAdmin(VersionAdmin):
+    list_display = ('tag', )
+    list_display_links = list_display
+    search_fields = ('tag', )
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)

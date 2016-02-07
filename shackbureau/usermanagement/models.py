@@ -312,6 +312,35 @@ class Membership(models.Model):
         return result
 
 
+class MemberDocumentTag(models.Model):
+    tag = models.CharField(max_length=255, unique=True)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def __str__(self):
+        return self.tag
+
+
+class MemberDocument(models.Model):
+    member = models.ForeignKey(Member)
+    description = models.CharField(max_length=255)
+    data_file = models.FileField(upload_to='member_documents')
+    comment = models.TextField(blank=True, null=True)
+    tag = models.ManyToManyField(MemberDocumentTag, blank=True, null=True)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def tag_list(self):
+        return ", ".join([str(tag) for tag in self.tag.all()])
+
+    def __str__(self):
+        return "{}({})".format(self.data_file, self.member)
+
+
 class AccountTransaction(models.Model):
 
     member = models.ForeignKey(Member)
