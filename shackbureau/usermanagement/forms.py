@@ -61,7 +61,7 @@ class MemberForm(forms.ModelForm):
         payment_type = cleaned_data.get("payment_type")
 
         if payment_type == "SEPA":
-            sepa_fields = ('iban_issue_date',
+            sepa_fields = (# 'iban_issue_date',
                            'iban_fullname',
                            'iban_address',
                            'iban_zip_code',
