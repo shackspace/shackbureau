@@ -94,3 +94,12 @@ class Command(BaseCommand):
             print("\n### Members without revoked memberspecials")
         for memberspecial in memberspecials:
             print("{} has no revoked memberspecials mail".format(memberspecial.member))
+
+        # check keyholder without nickname
+        memberspecials = MemberSpecials.objects \
+            .filter(member__is_active=True, is_keyholder=True) \
+            .filter(Q(member__nickname__isnull=True) | Q(member__nickname=""))
+        if memberspecials:
+            print("\n### Keyholder without nickname")
+        for memberspecial in memberspecials:
+            print("{} is keyholder and has no nickname".format(memberspecial.member))
