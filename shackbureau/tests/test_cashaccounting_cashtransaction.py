@@ -8,7 +8,7 @@ from random import choice, randint
 
 
 @pytest.mark.django_db
-class TestMember:
+class TestCashTransaction:
     def test_cashtransaction_fixtures(self, cashtransaction_fixtures):
         assert len(cashtransaction_fixtures) > 0
         for cashtransaction in cashtransaction_fixtures:
@@ -53,12 +53,6 @@ class TestMember:
             self.validate_cashtransactions()
 
     def test_transaction_bulk_create(self, cashtransaction_fixtures, user_fixture):
-        # for _ in range(10):
-        #     cashtransaction = choice(cashtransaction_fixtures)
-        #     CashTransaction.objects.filter(transaction_date=cashtransaction.transaction_date) \
-        #         .update(transaction_coin_200=150)
-        #     self.validate_cashtransactions()
-        #         cashtransactions = []
         cashtransactions = []
         transaction_id = CashTransaction.objects.aggregate(Max("transaction_id")).get("transaction_id__max") or 0
         for i in range(10):
@@ -71,21 +65,21 @@ class TestMember:
             cashtransaction.transaction_date_id = day_id
             cashtransaction.description = "cashtransaction fixture {}".format(i)
             cashtransaction.is_stored_by_account = not bool(randint(0, 3))
-            cashtransaction.transaction_coin_001 = randint(0, 100)
-            cashtransaction.transaction_coin_002 = randint(0, 100)
-            cashtransaction.transaction_coin_005 = randint(0, 100)
-            cashtransaction.transaction_coin_010 = randint(0, 100)
-            cashtransaction.transaction_coin_020 = randint(0, 100)
-            cashtransaction.transaction_coin_050 = randint(0, 100)
-            cashtransaction.transaction_coin_100 = randint(0, 100)
-            cashtransaction.transaction_coin_200 = randint(0, 100)
-            cashtransaction.transaction_bill_005 = randint(0, 100)
-            cashtransaction.transaction_bill_010 = randint(0, 100)
-            cashtransaction.transaction_bill_020 = randint(0, 100)
-            cashtransaction.transaction_bill_050 = randint(0, 100)
-            cashtransaction.transaction_bill_100 = randint(0, 10)
-            cashtransaction.transaction_bill_200 = randint(0, 10)
-            cashtransaction.transaction_bill_500 = randint(0, 10)
+            cashtransaction.transaction_coin_001 = randint(-100, 100)
+            cashtransaction.transaction_coin_002 = randint(-100, 100)
+            cashtransaction.transaction_coin_005 = randint(-100, 100)
+            cashtransaction.transaction_coin_010 = randint(-100, 100)
+            cashtransaction.transaction_coin_020 = randint(-100, 100)
+            cashtransaction.transaction_coin_050 = randint(-100, 100)
+            cashtransaction.transaction_coin_100 = randint(-100, 100)
+            cashtransaction.transaction_coin_200 = randint(-100, 100)
+            cashtransaction.transaction_bill_005 = randint(-100, 100)
+            cashtransaction.transaction_bill_010 = randint(-100, 100)
+            cashtransaction.transaction_bill_020 = randint(-100, 100)
+            cashtransaction.transaction_bill_050 = randint(-100, 100)
+            cashtransaction.transaction_bill_100 = randint(-100, 10)
+            cashtransaction.transaction_bill_200 = randint(-100, 10)
+            cashtransaction.transaction_bill_500 = randint(-100, 10)
             cashtransaction.transaction_sum = 0
             cashtransaction.account_sum = 0
             cashtransaction.created_by = user_fixture
