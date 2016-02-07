@@ -172,6 +172,40 @@ class CashTransaction(models.Model):
                       transaction_date_id__gt=self.transaction_date_id)) \
             .order_by("transaction_date", "transaction_date_id").first()
 
+    def get_negative_account_states(self):
+        negative_account_states = dict()
+        if self.account_coin_001 < 0:
+            negative_account_states["account_coin_001"] = self.account_coin_001
+        if self.account_coin_002 < 0:
+            negative_account_states["account_coin_002"] = self.account_coin_002
+        if self.account_coin_005 < 0:
+            negative_account_states["account_coin_005"] = self.account_coin_005
+        if self.account_coin_010 < 0:
+            negative_account_states["account_coin_010"] = self.account_coin_010
+        if self.account_coin_020 < 0:
+            negative_account_states["account_coin_020"] = self.account_coin_020
+        if self.account_coin_050 < 0:
+            negative_account_states["account_coin_050"] = self.account_coin_050
+        if self.account_coin_100 < 0:
+            negative_account_states["account_coin_100"] = self.account_coin_100
+        if self.account_coin_200 < 0:
+            negative_account_states["account_coin_200"] = self.account_coin_200
+        if self.account_bill_005 < 0:
+            negative_account_states["account_bill_005"] = self.account_bill_005
+        if self.account_bill_010 < 0:
+            negative_account_states["account_bill_010"] = self.account_bill_010
+        if self.account_bill_020 < 0:
+            negative_account_states["account_bill_020"] = self.account_bill_020
+        if self.account_bill_050 < 0:
+            negative_account_states["account_bill_050"] = self.account_bill_050
+        if self.account_bill_100 < 0:
+            negative_account_states["account_bill_100"] = self.account_bill_100
+        if self.account_bill_200 < 0:
+            negative_account_states["account_bill_200"] = self.account_bill_200
+        if self.account_bill_500 < 0:
+            negative_account_states["account_bill_500"] = self.account_bill_500
+        return negative_account_states
+
     def __str__(self):
         return "{} - {} [id:{}] {} ({} / {})".format(self.transaction_date,
                                                      self.transaction_date_id,
