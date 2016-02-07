@@ -7,7 +7,6 @@ from django.conf import settings
 from django.db import models
 from localflavor.generic.models import IBANField, BICField
 from django.db.models import Q
-from .utils2 import last_day_of_month
 
 
 class MemberManager(models.Manager):
@@ -183,6 +182,7 @@ class Member(models.Model):
         if self.join_date and not self.join_date.day == 1:
             self.join_date = self.join_date.replace(day=1)
         if self.leave_date:
+            from .utils import last_day_of_month
             self.leave_date = last_day_of_month(self.leave_date)
         if self.is_cancellation_confirmed:
             # if the membership is cancelled the member isn't active anymore
