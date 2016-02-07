@@ -95,6 +95,13 @@ class Command(BaseCommand):
         for memberspecial in memberspecials:
             print("{} has no revoked memberspecials mail".format(memberspecial.member))
 
+        # check inactive meber without cancellation_confirmed
+        members = Member.objects.filter(is_active=False, is_cancellation_confirmed=False)
+        if members:
+            print("\n### inactive members without confirmed cancellation")
+        for member in members:
+            print("{} cancellation is not confirmed".format(member))
+
         # check keyholder without nickname
         memberspecials = MemberSpecials.objects \
             .filter(member__is_active=True, is_keyholder=True) \
