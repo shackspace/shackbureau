@@ -16,26 +16,22 @@ def send_welcome_email(email_address, context):
     return ret
 
 
-def send_payment_email(member):
-    membership_fee = None
-    membership_interval = None
-    membership = Membership.objects.get_current_membership(member, member.join_date)
-    if membership:
-        membership_fee = membership.membership_fee_monthly * membership.membership_fee_interval
-        membership_interval = "alle {} Monate".format(membership.membership_fee_interval)
-        if membership.membership_fee_interval == 1:
-            membership_interval = "monatlich"
-        if membership.membership_fee_interval == 12:
-            membership_interval = "jährlich"
+def send_payment_email(membership):
+    membership_fee = membership.membership_fee_monthly * membership.membership_fee_interval
+    membership_interval = "alle {} Monate".format(membership.membership_fee_interval)
+    if membership.membership_fee_interval == 1:
+        membership_interval = "monatlich"
+    if membership.membership_fee_interval == 12:
+        membership_interval = "jährlich"
 
-    context = Context({"member": member,
+    context = Context({"member": membership.member,
                        "membership": membership,
                        "membership_fee": membership_fee,
                        "membership_interval": membership_interval})
     content = get_template('payment_mail.txt').render(context)
 
-    email = EmailMessage('Payment für {} {}'.format(member.name,
-                                                    member.surname),
+    email = EmailMessage('Payment für {} {}'.format(membership.member.name,
+                                                    membership.member.surname),
                          content, 'vorstand@shackspace.de',
                          [settings.CASHMASTER_MAILADDR])
     ret = email.send()

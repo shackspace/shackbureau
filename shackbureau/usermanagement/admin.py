@@ -90,7 +90,7 @@ class MemberAdmin(VersionAdmin):
                        'created_by',
                        'is_registration_to_mailinglists_sent',
                        'is_welcome_mail_sent',
-                       'is_payment_instruction_sent',
+                       # 'is_payment_instruction_sent',
                        'is_cancellation_mail_sent_to_cashmaster',
                        'is_revoke_memberspecials_mail_sent',
                        )

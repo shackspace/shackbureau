@@ -152,9 +152,6 @@ class Member(models.Model):
     is_welcome_mail_sent = models.BooleanField(
         default=False)
 
-    is_payment_instruction_sent = models.BooleanField(
-        default=False)
-
     is_registration_to_mailinglists_sent = models.BooleanField(
         default=False)
 
@@ -201,11 +198,6 @@ class Member(models.Model):
             from .utils import add_to_mailman
             add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
             self.is_registration_to_mailinglists_sent = True
-        if not self.is_payment_instruction_sent and self.is_active:
-            from .views import send_payment_email
-            ret = send_payment_email(self)
-            if ret:
-                self.is_payment_instruction_sent = True
         if not self.is_active and not self.is_revoke_memberspecials_mail_sent:
             from .views import send_revoke_memberspecials_mail
             ret = send_revoke_memberspecials_mail(self)
@@ -295,6 +287,9 @@ class Membership(models.Model):
         choices=((1, '1'), (12, '12')), default=1,
         help_text="Pays for N months at once")
 
+    is_payment_instruction_sent = models.BooleanField(
+        default=False)
+
     objects = MembershipManager()
 
     modified = models.DateTimeField(auto_now=True)
@@ -309,6 +304,11 @@ class Membership(models.Model):
     def save(self, *args, **kwargs):
         if self.valid_from and not self.valid_from.day == 1:
             self.valid_from = self.valid_from.replace(day=1)
+        if not self.is_payment_instruction_sent:
+            from .views import send_payment_email
+            ret = send_payment_email(self)
+            if ret:
+                self.is_payment_instruction_sent = True
         # FIXME: first valid_from MUST be join_date!
         result = super().save(*args, **kwargs)
         Membership.objects.fix_or_create_claims(self.member)
