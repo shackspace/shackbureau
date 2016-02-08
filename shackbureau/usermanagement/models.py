@@ -123,7 +123,7 @@ class Member(models.Model):
     iban_issue_date = models.DateField(
         null=True, blank=True,
         verbose_name="IBAN Issue Date",
-        help_text="The issue date of the direct debit mandate")
+        help_text="The issue date of the direct debit mandate. (1970-01-01 means there is no issue date in the database )")
 
     iban_fullname = models.CharField(
         null=True, blank=True,
