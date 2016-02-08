@@ -2,6 +2,7 @@ from django.template import Context
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
 from django.conf import settings
+from .models import Membership
 from .utils import member_statistic
 
 
@@ -28,10 +29,17 @@ def send_payment_email(membership):
     else:
         action = "Update"
 
+    all_memberships = Membership.objects.filter(member=membership.member).order_by("valid_from")
+    all_memberships = list(all_memberships)
+    if not membership in all_memberships:
+        all_memberships.append(membership)
+    all_memberships = sorted(all_memberships, key=lambda x: x.valid_from)
+
     context = Context({"member": membership.member,
                        "membership": membership,
                        "membership_fee": membership_fee,
-                       "membership_interval": membership_interval})
+                       "membership_interval": membership_interval,
+                       "all_memberships": all_memberships})
     if action.lower() == "new":
         template = get_template('payment_mail_new_member.txt')
     else:

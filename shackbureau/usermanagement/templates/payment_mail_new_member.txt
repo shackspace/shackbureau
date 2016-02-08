@@ -3,11 +3,11 @@ Hallo Schatzmeister,
 ein neues Mitglied wurde eingetragen.
 Dieses heisst {{ member.name }} {{ member.surname }}.
 
-Eintrittsdatum:   {{ member.join_date }}
+Eintrittsdatum:   {{ member.join_date.isoformat }}
 {% if member.payment_type|lower == 'sepa' %}
 Es hat uns ermächtig die Mitglidbeiträge einzuziehen. \o/
 
-Mandatsdatum:     {{ member.iban_issue_date }}
+Mandatsdatum:     {{ member.iban_issue_date.isoformat }}
 
 Mandatsreferenz:  SHACKEVBEITRAGID{{ member.member_id }}
 Mandatsgrund:     shack e.V. Mitgliedsbeitrag ID {{ member.member_id }}
@@ -23,9 +23,14 @@ IBAN:             {{ member.iban }}
 {% else %}
 Das Mitglied wird seinen Mitgliedsbeitrag an uns ueberweisen.
 {% endif %}
-Betrag:           {{ membership_fee }}
+Mitgliedsbeitrag: {{ membership_fee }}
 Interval:         {{ membership_interval }}
-Gültig ab:        {{ membership.valid_from }}
+Gültig ab:        {{ membership.valid_from.isoformat }}
+
+
+Alle Beitragssätze des Mitglieds:
+{% for ms in all_memberships %}{{ ms.valid_from.isoformat }} - {{ ms.membership_fee_monthly }}
+{% endfor %}
 
 LG
 
