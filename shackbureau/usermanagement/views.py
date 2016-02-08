@@ -2,7 +2,6 @@ from django.template import Context
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
 from django.conf import settings
-from usermanagement.models import Membership, MemberSpecials
 from .utils import member_statistic
 
 
@@ -24,14 +23,25 @@ def send_payment_email(membership):
     if membership.membership_fee_interval == 12:
         membership_interval = "jährlich"
 
+    if membership.valid_from == membership.member.join_date:
+        action = "New"
+    else:
+        action = "Update"
+
     context = Context({"member": membership.member,
                        "membership": membership,
                        "membership_fee": membership_fee,
                        "membership_interval": membership_interval})
-    content = get_template('payment_mail.txt').render(context)
+    if action.lower() == "new":
+        template = get_template('payment_mail_new_member.txt')
+    else:
+        template = get_template('payment_mail_update_member.txt')
 
-    email = EmailMessage('Payment für {} {}'.format(membership.member.name,
-                                                    membership.member.surname),
+    content = template.render(context)
+
+    email = EmailMessage('{} payment für {} {}'.format(action,
+                                                        membership.member.name,
+                                                        membership.member.surname),
                          content, 'vorstand@shackspace.de',
                          [settings.CASHMASTER_MAILADDR])
     ret = email.send()

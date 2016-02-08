@@ -1,0 +1,33 @@
+Hallo Schatzmeister,
+
+ein Mitglied hat seinen Beitragssatz geändert.
+Dieses heisst {{ member.name }} {{ member.surname }}.
+
+Eintrittsdatum:   {{ member.join_date }}
+{% if member.payment_type|lower == 'sepa' %}
+Es hat uns ermächtig die Mitglidbeiträge einzuziehen. \o/
+
+Mandatsdatum:     {{ member.iban_issue_date }}
+
+Mandatsreferenz:  SHACKEVBEITRAGID{{ member.member_id }}
+Mandatsgrund:     shack e.V. Mitgliedsbeitrag ID {{ member.member_id }}
+
+
+Kontoinhaber:     {{ member.iban_fullname }}
+Straße:           {{ member.iban_address }}
+Postleitzahl:     {{ member.iban_zip_code }}
+Ort:              {{ member.iban_city }}
+                  
+BIC:              {{ member.bic }}
+IBAN:             {{ member.iban }}
+{% else %}
+Das Mitglied wird seinen Mitgliedsbeitrag an uns ueberweisen.
+{% endif %}
+Mitgliedsbeitrag: {{ membership_fee }}
+Interval:         {{ membership_interval }}
+Gültig ab:        {{ membership.valid_from }}
+
+LG
+
+shackbureau
+https://github.com/shackspace/shackbureau

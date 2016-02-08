@@ -23,12 +23,9 @@ IBAN:             {{ member.iban }}
 {% else %}
 Das Mitglied wird seinen Mitgliedsbeitrag an uns ueberweisen.
 {% endif %}
-{% if membership %}
-{% if membership_fee %}Betrag:           {{ membership_fee }}{% endif %}
-{% if membership_interval %}Interval:         {{ membership_interval }}{% endif %}
-{% else %}
-ES KONNTEN KEIN AKTUELLER BEITRAGSSATZ ERMITTELT WERDEN!!!
-{% endif %}
+Betrag:           {{ membership_fee }}
+Interval:         {{ membership_interval }}
+Gültig ab:        {{ membership.valid_from }}
 
 LG
 
