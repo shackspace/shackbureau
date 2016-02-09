@@ -21,7 +21,7 @@ $('#id_is_keyholder').change(function(){
 });
 
 function ssh_key_fields() {
-    return $('.field-ssh_public_key');
+    return $('.field-ssh_public_key, .field-is_registration_to_key_mailinglist_sent');
 }
 
 });
