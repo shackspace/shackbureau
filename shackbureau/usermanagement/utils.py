@@ -116,7 +116,7 @@ def blz_to_bic(blz):
 def subscribe_to_mailinglist(mailinglist, emailaddress):
     from django.conf import settings
     if not settings.MAILMAN_API_USER or not settings.MAILMAN_API_PASSWORD:
-        print("add_to_mailman not possible ({} - {})\n".format(mailinglist, emailaddress) +
+        print("subscribe_to_mailinglist not possible ({} - {})\n".format(mailinglist, emailaddress) +
               "please add MAILMAN_API_USER and MAILMAN_API_PASSWORD to production settings")
         return
 
@@ -125,6 +125,35 @@ def subscribe_to_mailinglist(mailinglist, emailaddress):
                       verify=False)
     assert r.status_code == 200
 
+
+def remove_from_mailinglist(mailinglist, emailaddress):
+    from django.conf import settings
+    if not settings.MAILMAN_API_USER or not settings.MAILMAN_API_PASSWORD:
+        print("remove_from_mailinglist not possible ({} - {})\n".format(mailinglist, emailaddress) +
+              "please add MAILMAN_API_USER and MAILMAN_API_PASSWORD to production settings")
+        return
+
+    r = requests.delete("https://shackspace.de/mlm-api/lists.shackspace.de/{}/{}".format(mailinglist, emailaddress),
+                        auth=(settings.MAILMAN_API_USER, settings.MAILMAN_API_PASSWORD),
+                        verify=False)
+    assert r.status_code == 200
+
+
+def is_on_mailinglist(mailinglist, emailaddress):
+    from django.conf import settings
+    if not settings.MAILMAN_API_USER or not settings.MAILMAN_API_PASSWORD:
+        print("is_on_mailinglist not possible ({} - {})\n".format(mailinglist, emailaddress) +
+              "please add MAILMAN_API_USER and MAILMAN_API_PASSWORD to production settings")
+        return
+
+    r = requests.get("https://shackspace.de/mlm-api/lists.shackspace.de/{}/{}".format(mailinglist, emailaddress),
+                     auth=(settings.MAILMAN_API_USER, settings.MAILMAN_API_PASSWORD),
+                     verify=False)
+    assert r.status_code == 200
+    if r.text == emailaddress:
+        return True
+    else:
+        return False
 
 def add_to_mailman(mailaddr, mitgliederml=True):
     if mitgliederml:
