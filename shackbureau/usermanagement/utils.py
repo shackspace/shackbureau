@@ -63,7 +63,6 @@ def import_old_shit(filename):
             member_data['created_by'] = User.objects.first()
 
             member_data['is_welcome_mail_sent'] = True
-            member_data['is_payment_instruction_sent'] = True
             member_data['is_registration_to_mailinglists_sent'] = True
 
             print('#' * 40)
@@ -83,6 +82,7 @@ def import_old_shit(filename):
             membership['membership_fee_monthly'] = Decimal(dataset['beitrag'].replace(' €', ''))
             valid_from = datetime.strptime(dataset['eintritt'], "%Y-%m-%d").date()
             membership['created_by'] = User.objects.first()
+            membership['is_payment_instruction_sent'] = True
 
             Membership.objects.update_or_create(member=member,
                                                 valid_from=valid_from,
