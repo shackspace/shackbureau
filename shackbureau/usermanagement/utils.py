@@ -113,22 +113,23 @@ def blz_to_bic(blz):
     return bics[blz]
 
 
-def add_to_mailman(mailaddr, mitgliederml=True):
+def subscribe_to_mailinglist(mailinglist, emailaddress):
     from django.conf import settings
     if not settings.MAILMAN_API_USER or not settings.MAILMAN_API_PASSWORD:
-        print("add_to_mailman not possible\nplease add MAILMAN_API_USER and MAILMAN_API_PASSWORD to production settings")
+        print("add_to_mailman not possible ({} - {})\n".format(mailinglist, emailaddress) +
+              "please add MAILMAN_API_USER and MAILMAN_API_PASSWORD to production settings")
         return
 
-    if mitgliederml:
-        r = requests.post("https://shackspace.de/mlm-api/lists.shackspace.de/mitglieder/{}".format(mailaddr),
-                          auth=(settings.MAILMAN_API_USER, settings.MAILMAN_API_PASSWORD),
-                          verify=False)
-        assert r.status_code == 200
-
-    r = requests.post("https://shackspace.de/mlm-api/lists.shackspace.de/mitglieder-announce/{}".format(mailaddr),
+    r = requests.post("https://shackspace.de/mlm-api/lists.shackspace.de/{}/{}".format(mailinglist, emailaddress),
                       auth=(settings.MAILMAN_API_USER, settings.MAILMAN_API_PASSWORD),
                       verify=False)
     assert r.status_code == 200
+
+
+def add_to_mailman(mailaddr, mitgliederml=True):
+    if mitgliederml:
+        subscribe_to_mailinglist("mitglieder", mailaddr)
+    subscribe_to_mailinglist("mitglieder-announce", mailaddr)
 
 
 class TransactionLogProcessor:
