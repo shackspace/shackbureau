@@ -79,13 +79,6 @@ class Command(BaseCommand):
         for member in members:
             print("{} has no registration to mailinglists".format(member))
 
-        # check payment instruction mail
-        members = Member.objects.filter(is_payment_instruction_sent=False)
-        if members:
-            print("\n### Members without payment_instruction")
-        for member in members:
-            print("{} has no payment instruction mail".format(member))
-
         # check revoke memberspecials mail
         memberspecials = MemberSpecials.objects.filter(member__is_active=False).\
             filter(member__is_revoke_memberspecials_mail_sent=False)
@@ -110,3 +103,10 @@ class Command(BaseCommand):
             print("\n### Keyholder without nickname")
         for memberspecial in memberspecials:
             print("{} is keyholder and has no nickname".format(memberspecial.member))
+
+        # check memberships without is_payment_instruction_sent
+        memberships = Membership.objects.filter(is_payment_instruction_sent=False)
+        if memberships:
+            print('\n### Memberships without payment instruction sent')
+        for membership in memberships:
+            print('{} has a membership without payment instruction sent: {}'.format(membership.member, membership))
