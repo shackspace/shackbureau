@@ -456,6 +456,9 @@ class MemberSpecials(models.Model):
         null=True, blank=True,
         help_text="The format ist forced into one line, with single whitespaces as seperators")
 
+    is_registration_to_key_mailinglist_sent = models.BooleanField(
+        default=False)
+
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
@@ -474,15 +477,21 @@ class MemberSpecials(models.Model):
             # format ssh-key in on line seperated by single whitespaces
             self.ssh_public_key = " ".join(self.ssh_public_key.strip().split())
 
+        if self.is_keyholder and not self.is_registration_to_key_mailinglist_sent:
+            from .utils import subscribe_to_mailinglist
+            subscribe_to_mailinglist("key", self.member.email)
+            self.is_registration_to_key_mailinglist_sent = True
+
         return super().save(*args, **kwargs)
 
     def active_specials(self, ignore=None):
         if ignore is None:
-            ignore = ['signed_DSV', 'ssh_public_key']
-        ignore = ignore + ['created', 'modified', 'created_by_id', 'id', 'member_id']  # add internal information to ignore
+            ignore = ['signed_DSV', 'ssh_public_key', "is_registration_to_key_mailinglist_sent"]
+        # add internal information to ignore
+        ignore = ignore + ['created', 'modified', 'created_by_id', 'id', 'member_id']
         specials = dict(self.__dict__)
 
-        specials = [(k, v) for k, v in specials.items() if not k[0] == "_" and not k in ignore and v]
+        specials = [(k, v) for k, v in specials.items() if not k[0] == "_" and k not in ignore and v]
         return dict(specials)
 
 

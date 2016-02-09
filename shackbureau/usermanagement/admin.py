@@ -246,10 +246,11 @@ class MemberSpecialsAdmin(VersionAdmin):
     list_display_links = list_display
     list_filter = ('member__is_active', 'is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
                    'has_selgros_card', 'has_shack_iron_key', 'has_safe_key', 'has_loeffelhardt_account',
-                   'signed_DSV',)
+                   'signed_DSV', 'is_registration_to_key_mailinglist_sent',)
     search_fields = ("member__name", "member__surname", "member__nickname", "member__member_id")
     actions = None
-    readonly_fields = ('modified',
+    readonly_fields = ('is_registration_to_key_mailinglist_sent',
+                       'modified',
                        'created',
                        'created_by',)
     form = MemberSpecialsForm
