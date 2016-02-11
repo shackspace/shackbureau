@@ -53,7 +53,8 @@ class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
 class MembershipInline(admin.TabularInline):
     model = Membership
     formset = MembershipInlineFormset
-    extra = 1
+    extra = 0
+    min_num = 1
     fields = ('valid_from', 'membership_type',
               'membership_fee_monthly', 'membership_fee_interval',)
     readonly_fields = ('modified',
@@ -90,10 +91,47 @@ class MemberAdmin(VersionAdmin):
                        'created_by',
                        'is_registration_to_mailinglists_sent',
                        'is_welcome_mail_sent',
-                       # 'is_payment_instruction_sent',
                        'is_cancellation_mail_sent_to_cashmaster',
                        'is_revoke_memberspecials_mail_sent',
                        )
+    fieldsets = [
+        ('', {
+            'fields': ['comment',
+                       'join_date']}),
+        ('Address', {
+            'fields': ['form_of_address',
+                       'name',
+                       'nickname',
+                       'surname',
+                       'address1', 'address2',
+                       'zip_code', 'city',
+                       'country',
+                       'is_underaged',
+                       'email',
+                       'date_of_birth', ]
+        }),
+        ('Payment', {
+            'fields': ['payment_type',
+                       'iban_issue_date',
+                       'iban_fullname',
+                       'iban_address',
+                       'iban_zip_code',
+                       'iban_city',
+                       'iban_country',
+                       'iban_institute',
+                       'bic',
+                       'iban', ]
+        }),
+        ('Memberstate', {
+            'fields': ['is_active',
+                       'leave_date',
+                       'is_cancellation_confirmed', ]
+        }),
+        ('Additional information', {
+            'fields': readonly_fields,
+            'classes': ['collapse', ]}),
+    ]
+
     inlines = [
         MembershipInline,
         MemberDocumentInline,
@@ -101,6 +139,7 @@ class MemberAdmin(VersionAdmin):
     form = MemberForm
     actions = None
     history_latest_first = True
+    save_on_top = True
 
     def copy_paste_information(self, obj):
         copy_paste = ["{} {}".format(obj.name, obj.surname),
@@ -117,9 +156,6 @@ class MemberAdmin(VersionAdmin):
                       obj.bic or "",
                       obj.iban or ""]
         return "\n".join(copy_paste)
-
-    def show_additional_information(self, obj):
-        return False
 
     def save_formset(self, request, form, formset, change):
         formset.save(commit=False)
@@ -139,6 +175,7 @@ class MemberAdmin(VersionAdmin):
                 if not getattr(obj, 'created_by', False):
                     obj.created_by = request.user
                 obj.save()
+            formset.save_m2m()
 
     def has_delete_permission(self, request, obj=None):
         return False

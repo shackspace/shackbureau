@@ -44,27 +44,6 @@ function leave_fields() {
   return $('.field-leave_date, .field-is_cancellation_confirmed');
 }
 
-//hide additionals_fields
-$('#id_show_additional_information').show(function(){
-  if(this.checked) {
-    additional_fields().show();
-  } else {
-    additional_fields().hide();
-  }
-});
-
-$('#id_show_additional_information').change(function(){
-  if(this.checked) {
-    additional_fields().show();
-  } else {
-    additional_fields().hide();
-  }
-});
-
-function additional_fields() {
-  return $('.field-member_id, .field-copy_paste_information, .field-modified, .field-created, .field-created_by, .field-is_registration_to_mailinglists_sent, .field-is_welcome_mail_sent, .field-is_payment_instruction_sent, .field-is_cancellation_mail_sent_to_cashmaster, .field-is_revoke_memberspecials_mail_sent');
-}
-
 });
 
 
