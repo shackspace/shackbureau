@@ -150,10 +150,11 @@ def is_on_mailinglist(mailinglist, emailaddress):
                      auth=(settings.MAILMAN_API_USER, settings.MAILMAN_API_PASSWORD),
                      verify=False)
     assert r.status_code == 200
-    if r.text == emailaddress:
+    if r.text.strip() == emailaddress:
         return True
     else:
         return False
+
 
 def add_to_mailman(mailaddr, mitgliederml=True):
     if mitgliederml:
