@@ -14,7 +14,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y python3-pip\
     git\
     postgresql-client\
     libfreetype6-dev\
-    curl
+    curl\
+    texlive-base\
+    texlive-lang-german
 
 # Set the locale
 RUN locale-gen en_US.UTF-8  
