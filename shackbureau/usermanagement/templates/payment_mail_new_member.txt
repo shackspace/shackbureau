@@ -32,6 +32,8 @@ Alle Beitragssätze des Mitglieds:
 {% for ms in all_memberships %}{{ ms.valid_from.isoformat }} - {{ ms.membership_fee_monthly }}
 {% endfor %}
 
+Diese Änderung wurde von {{ membership.created_by.username }} veranlasst.
+
 LG
 
 shackbureau

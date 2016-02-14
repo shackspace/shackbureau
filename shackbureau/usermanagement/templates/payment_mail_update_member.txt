@@ -7,7 +7,7 @@ Eintrittsdatum:   {{ member.join_date.isoformat }}
 {% if member.payment_type|lower == 'sepa' %}
 Es hat uns ermächtig die Mitglidbeiträge einzuziehen. \o/
 
-Mandatsdatum:     {{ member.iban_issue_date.isoformat }}
+Mandatsdatum:     {% if not member.iban_issue_date.isoformat == "1970-01-01" %}{{ member.iban_issue_date.isoformat }}{% else %}None{% endif %}
 
 Mandatsreferenz:  SHACKEVBEITRAGID{{ member.member_id }}
 Mandatsgrund:     shack e.V. Mitgliedsbeitrag ID {{ member.member_id }}
@@ -30,6 +30,8 @@ Gültig ab:        {{ membership.valid_from.isoformat }}
 Alle Beitragssätze des Mitglieds:
 {% for ms in all_memberships %}{{ ms.valid_from.isoformat }} - {{ ms.membership_fee_monthly }}
 {% endfor %}
+
+Diese Änderung wurde von {{ membership.created_by.username }} veranlasst.
 
 LG
 
