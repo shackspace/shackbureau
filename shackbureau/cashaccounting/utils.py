@@ -1,17 +1,10 @@
-from django.conf import settings
-
-from os import path
 from datetime import date
 import csv
 
 from cashaccounting.models import CashTransaction
 
 
-def export_cashaccounting_csv(year):
-    cashtransactions = CashTransaction.objects.filter(transaction_date__year=year) \
-        .order_by('transaction_date', 'transaction_date_id')
-    export_path = path.join(settings.EXPORT_ROOT, "cashaccounting_{}.csv".format(year))
-
+def export_cashaccounting_csv(year, export_file):
     def write_header_into_csv(csv_writer):
         csv_writer.writerow(['Datum',
                              'Komentar',
@@ -86,32 +79,38 @@ def export_cashaccounting_csv(year):
                              cashtransaction.account_sum,
                              ])
 
-    with open(export_path, 'w') as export_file:
-        csv_writer = csv.writer(export_file, csv.excel)
-        write_header_into_csv(csv_writer)
-        if cashtransactions:
-            previous_ct = cashtransactions[0].get_previous_cashtransaction()
-            if previous_ct:
-                previous_ct.description = "Übertrag aus {}".format(year - 1)
-                previous_ct.transaction_date = date(year, 1, 1)
-                previous_ct.transaction_coin_001 = previous_ct.account_coin_001
-                previous_ct.transaction_coin_002 = previous_ct.account_coin_002
-                previous_ct.transaction_coin_005 = previous_ct.account_coin_005
-                previous_ct.transaction_coin_010 = previous_ct.account_coin_010
-                previous_ct.transaction_coin_020 = previous_ct.account_coin_020
-                previous_ct.transaction_coin_050 = previous_ct.account_coin_050
-                previous_ct.transaction_coin_100 = previous_ct.account_coin_100
-                previous_ct.transaction_coin_200 = previous_ct.account_coin_200
-                previous_ct.transaction_bill_005 = previous_ct.account_bill_005
-                previous_ct.transaction_bill_010 = previous_ct.account_bill_010
-                previous_ct.transaction_bill_020 = previous_ct.account_bill_020
-                previous_ct.transaction_bill_050 = previous_ct.account_bill_050
-                previous_ct.transaction_bill_100 = previous_ct.account_bill_100
-                previous_ct.transaction_bill_200 = previous_ct.account_bill_200
-                previous_ct.transaction_bill_500 = previous_ct.account_bill_500
-                previous_ct.transaction_sum = previous_ct.account_sum
-                write_ashtransactions_into_csv(csv_writer, previous_ct)
-        for ct in cashtransactions:
-            write_ashtransactions_into_csv(csv_writer, ct)
+    cashtransactions = CashTransaction.objects.filter(transaction_date__year=year) \
+        .order_by('transaction_date', 'transaction_date_id')
+    export_file.close()
+    export_file.file.close()
+    export_file.open('w')
+    csv_writer = csv.writer(export_file, csv.excel)
+    write_header_into_csv(csv_writer)
+    if cashtransactions:
+        previous_ct = cashtransactions[0].get_previous_cashtransaction()
+        if previous_ct:
+            previous_ct.description = "Übertrag aus {}".format(year - 1)
+            previous_ct.transaction_date = date(year, 1, 1)
+            previous_ct.transaction_coin_001 = previous_ct.account_coin_001
+            previous_ct.transaction_coin_002 = previous_ct.account_coin_002
+            previous_ct.transaction_coin_005 = previous_ct.account_coin_005
+            previous_ct.transaction_coin_010 = previous_ct.account_coin_010
+            previous_ct.transaction_coin_020 = previous_ct.account_coin_020
+            previous_ct.transaction_coin_050 = previous_ct.account_coin_050
+            previous_ct.transaction_coin_100 = previous_ct.account_coin_100
+            previous_ct.transaction_coin_200 = previous_ct.account_coin_200
+            previous_ct.transaction_bill_005 = previous_ct.account_bill_005
+            previous_ct.transaction_bill_010 = previous_ct.account_bill_010
+            previous_ct.transaction_bill_020 = previous_ct.account_bill_020
+            previous_ct.transaction_bill_050 = previous_ct.account_bill_050
+            previous_ct.transaction_bill_100 = previous_ct.account_bill_100
+            previous_ct.transaction_bill_200 = previous_ct.account_bill_200
+            previous_ct.transaction_bill_500 = previous_ct.account_bill_500
+            previous_ct.transaction_sum = previous_ct.account_sum
+            write_ashtransactions_into_csv(csv_writer, previous_ct)
+    for ct in cashtransactions:
+        print(ct)
+        write_ashtransactions_into_csv(csv_writer, ct)
 
-    return export_path
+    export_file.close()
+    return export_file

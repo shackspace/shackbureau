@@ -1,7 +1,8 @@
 from django.db import models
 from django.db.models import Q
-from django.conf import settings
 from django.db.models.query import QuerySet
+from django.utils import timezone
+from django.conf import settings
 
 from decimal import Decimal
 
@@ -342,10 +343,41 @@ class CashTransaction(models.Model):
         return ret
 
     def delete(self, *args, **kwargs):
-        print("delete")
         ret = super().delete(*args, **kwargs)
         next_cashtransaction = self.get_next_cashtransaction()
         if next_cashtransaction:
-            print(next_cashtransaction)
             next_cashtransaction.save()
         return ret
+
+
+class CashAccountingExport(models.Model):
+    year = models.PositiveIntegerField(unique=True)
+    data_file = models.FileField(upload_to='cashaccounting_export', null=True, blank=True)
+    data_file_date = models.DateTimeField(null=True, blank=True)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def update_export_file(self):
+        from .utils import export_cashaccounting_csv
+        from django.core.files.base import ContentFile
+        if not self.data_file:
+            self.data_file = ContentFile("")
+            self.data_file.name = "cashaccounting_export_{}.csv".format(self.year)
+        export_file = export_cashaccounting_csv(self.year, self.data_file)
+        self.data_file_date = timezone.now()
+        self.data_file = export_file
+
+    def save(self, *args, **kwargs):
+        self.update_export_file()
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.data_file:
+            import os
+            try:
+                os.remove(self.data_file.path)
+            except FileNotFoundError as e:
+                pass
+        return super().delete(*args, **kwargs)
