@@ -351,13 +351,23 @@ class CashTransaction(models.Model):
 
 
 class CashAccountingExport(models.Model):
+    class Meta:
+        ordering = ('-year', )
+
     year = models.PositiveIntegerField(unique=True)
-    data_file = models.FileField(upload_to='cashaccounting_export', null=True, blank=True)
-    data_file_date = models.DateTimeField(null=True, blank=True)
+    data_file = models.FileField(upload_to='cashaccounting_export',
+                                 verbose_name="Export file",
+                                 null=True,
+                                 blank=True)
+    data_file_date = models.DateTimeField(verbose_name="Timestamp of export file",
+                                          null=True,
+                                          blank=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    objects = NoBulkOperationsManager()
 
     def update_export_file(self):
         from .utils import export_cashaccounting_csv
@@ -378,6 +388,6 @@ class CashAccountingExport(models.Model):
             import os
             try:
                 os.remove(self.data_file.path)
-            except FileNotFoundError as e:
+            except FileNotFoundError:
                 pass
         return super().delete(*args, **kwargs)
