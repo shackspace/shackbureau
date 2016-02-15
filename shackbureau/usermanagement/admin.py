@@ -208,7 +208,7 @@ class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
         # claims are always negative. all others are positive
         original_amount = obj.amount
         obj.amount = abs(obj.amount)
-        if obj.booking_type == 'claim':
+        if obj.booking_type in ('claim', 'charge back'):
             obj.amount = obj.amount * -1
         if obj.amount != original_amount:
             messages.add_message(request, messages.WARNING,

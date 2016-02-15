@@ -362,6 +362,7 @@ class AccountTransaction(models.Model):
                                         ('fee_claim', 'Forderung (automatischer Mitgliedsbeitrag)'),
                                         ('deposit', 'Einzahlung'),
                                         ('credit', 'Gutschrift'),
+                                        ('charge back', 'Rücklastschrift')
                                     ))
     payment_reference = models.TextField()
     transaction_hash = models.TextField(null=True, blank=True)
@@ -378,9 +379,9 @@ class AccountTransaction(models.Model):
                                        self.booking_date)
 
     def save(self, *args, **kwargs):
-        # claims are always negative. all others are positive
+        # claims and charge backs are always negative. all others are positive
         self.amount = abs(self.amount)
-        if 'claim' in self.booking_type:
+        if self.booking_type in ('claim', 'charge back'):
             self.amount = self.amount * -1
         if self.send_nagging_mail:
             from .views import send_nagging_email
