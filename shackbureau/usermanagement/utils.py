@@ -188,12 +188,13 @@ class TransactionLogProcessor:
                     member = members.first()
                     uid = member.member_id
             reference = d.get('Buchungstext')
+            amount = Decimal(d.get('Umsatz Haben').replace(',', '.') or 0) - Decimal(d.get('Umsatz Soll').replace(',', '.') or 0)
             BankTransactionLog.objects.create(
                 upload=banktransaction,
                 reference=reference,
                 member=member,
                 error=error, score=0,
-                amount=Decimal(d.get('Umsatz Haben').replace(',', '.')),
+                amount=amount,
                 booking_date=datetime.strptime(d.get('Datum'), '%d.%m.%Y').date(),
                 is_matched=bool(uid),
                 is_resolved=bool(uid),
@@ -202,7 +203,7 @@ class TransactionLogProcessor:
             if member:
                 defaults = {
                     'transaction_type': 'membership fee',
-                    'amount': Decimal(d.get('Umsatz Haben').replace(',', '.')),
+                    'amount': amount,
                     'created_by': banktransaction.created_by,
                     'payment_reference': reference
                 }
