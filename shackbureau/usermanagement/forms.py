@@ -20,6 +20,7 @@ class TextInputWithActionWidget(forms.TextInput):
 class MemberForm(forms.ModelForm):
     class Meta(object):
         model = Member
+
         fields = [
             'comment',
             'join_date',

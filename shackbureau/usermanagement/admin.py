@@ -221,7 +221,7 @@ class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
 
 
 @admin.register(BankTransactionUpload)
-class BankTransactionUploadAdmin(admin.ModelAdmin):
+class BankTransactionUploadAdmin(VersionAdmin):
     actions = None
     readonly_fields = ('modified',
                        'created',
@@ -248,10 +248,11 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
     add_transaction.short_description = ''
     add_transaction.allow_tags = True
 
-    list_display = ('is_matched', 'is_resolved', 'member', "reference", add_transaction, "upload")
+    list_display = ('is_matched', 'is_resolved', 'booking_date', 'member',
+                    "reference", "amount", add_transaction, "upload")
     list_display_links = list_display
     list_filter = ("is_matched", 'is_resolved', "score")
-    search_fields = ("member__name", "member__surname")
+    search_fields = ("reference", "member__name", "member__surname")
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
@@ -305,14 +306,14 @@ class MemberSpecialsAdmin(VersionAdmin):
 
 
 @admin.register(MemberTrackingCode)
-class MemberTrackingCodeAdmin(admin.ModelAdmin):
+class MemberTrackingCodeAdmin(VersionAdmin):
     list_display = ('member', 'uuid', 'validated')
     list_filter = ('validated',)
     search_fields = ("member__name", "member__surname", "member__nickname")
 
 
 @admin.register(MemberDocument)
-class MemberDocumentAdmin(admin.ModelAdmin):
+class MemberDocumentAdmin(VersionAdmin):
     list_display = ('data_file', 'member', 'description', 'tag_list')
     list_display_links = list_display
     list_filter = ('tag', 'member', )
@@ -321,6 +322,7 @@ class MemberDocumentAdmin(admin.ModelAdmin):
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
+    filter_horizontal = ('tag', )
 
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'created_by', False):
