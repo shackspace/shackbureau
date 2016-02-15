@@ -11,6 +11,7 @@ from .models import (
     MemberDocument,
     MemberDocumentTag,
     MemberTrackingCode,
+    Balance,
 )
 from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset
 from django.contrib import messages
@@ -27,7 +28,8 @@ class OrderMemberByNameMixin():
 class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
     search_fields = ("member__member_id",
                      "member__name",
-                     "member__surname")
+                     "member__surname",
+                     "member__nickname")
     list_display = ("member",
                     "valid_from",
                     'membership_type',
@@ -222,6 +224,8 @@ class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
 
 @admin.register(BankTransactionUpload)
 class BankTransactionUploadAdmin(VersionAdmin):
+    list_display = ("data_file", "data_type", "status")
+    list_display_links = list_display
     actions = None
     readonly_fields = ('modified',
                        'created',
@@ -277,7 +281,7 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
 
 
 @admin.register(MemberSpecials)
-class MemberSpecialsAdmin(VersionAdmin):
+class MemberSpecialsAdmin(OrderMemberByNameMixin, VersionAdmin):
     list_display = ('member', 'is_keyholder', 'has_matomat_key', 'has_snackomat_key', 'has_metro_card',
                     'has_selgros_card', 'has_shack_iron_key', 'has_safe_key', 'has_loeffelhardt_account',
                     'signed_DSV',)
@@ -308,12 +312,13 @@ class MemberSpecialsAdmin(VersionAdmin):
 @admin.register(MemberTrackingCode)
 class MemberTrackingCodeAdmin(VersionAdmin):
     list_display = ('member', 'uuid', 'validated')
+    list_display_links = list_display
     list_filter = ('validated',)
     search_fields = ("member__name", "member__surname", "member__nickname")
 
 
 @admin.register(MemberDocument)
-class MemberDocumentAdmin(VersionAdmin):
+class MemberDocumentAdmin(OrderMemberByNameMixin, VersionAdmin):
     list_display = ('data_file', 'member', 'description', 'tag_list')
     list_display_links = list_display
     list_filter = ('tag', 'member', )
@@ -340,6 +345,25 @@ class MemberDocumentTagAdmin(VersionAdmin):
                        'created_by',)
 
     def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
+
+
+@admin.register(Balance)
+class BalanceAdmin(OrderMemberByNameMixin, VersionAdmin):
+    list_display = ('year', 'member', 'balance')
+    list_display_links = list_display
+    search_fields = ('member__name', 'member__surname', 'member__nickname')
+    readonly_fields = ('balance',
+                       'modified',
+                       'created',
+                       'created_by',)
+    list_filter = ('year', 'member')
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'balance', False):
+            obj.balance = 0
         if not getattr(obj, 'created_by', False):
             obj.created_by = request.user
         return super().save_model(request, obj, form, change)

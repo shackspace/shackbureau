@@ -225,7 +225,7 @@ class MembershipManager(models.Manager):
                    .order_by("-valid_from").first()
 
     def fix_or_create_claims(self, member):
-        for year in range(2015, datetime.date.today().year + 1 + 1):
+        for year in range(2014, datetime.date.today().year + 1 + 1):
             for month in range(1, 12 + 1):
                 current_day = datetime.date(year, month, 1)
                 membership = self.get_current_membership(member, current_day)
@@ -248,7 +248,7 @@ class MembershipManager(models.Manager):
                     continue
                 defaults = {
                     'transaction_type': 'membership fee',
-                    'amount': membership.membership_fee_monthly,
+                    'amount': - membership.membership_fee_monthly,
                     'created_by': User.objects.first(),
                     'payment_reference': 'Mitgliedsbeitragsforderung {}/{} ID {}'.format(
                         month, year, member.member_id
@@ -381,7 +381,7 @@ class AccountTransaction(models.Model):
     def save(self, *args, **kwargs):
         # claims and charge backs are always negative. all others are positive
         self.amount = abs(self.amount)
-        if self.booking_type in ('claim', 'charge back'):
+        if self.booking_type in ('claim', 'fee_claim', 'charge back'):
             self.amount = self.amount * -1
         if self.send_nagging_mail:
             from .views import send_nagging_email
@@ -508,9 +508,12 @@ class MemberTrackingCode(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
 
-class Balance:
+class Balance(models.Model):
     """ calculated balance for given user per year
     """
+    class Meta:
+        ordering = ('-year', 'member')
+        unique_together = (('year', 'member'), )
     member = models.ForeignKey("Member")
     balance = models.DecimalField(max_digits=8,
                                   decimal_places=2)
@@ -519,3 +522,20 @@ class Balance:
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def save(self, *args, **kwargs):
+        fee_claims = AccountTransaction.objects \
+            .filter(member=self.member, due_date__year=self.year,
+                    transaction_type='membership fee', booking_type='fee_claim') \
+            .aggregate(models.Sum('amount')).get('amount__sum') or 0
+        deposits = AccountTransaction.objects \
+            .filter(member=self.member, booking_date__year=self.year,
+                    transaction_type='membership fee', booking_type='deposit') \
+            .aggregate(models.Sum('amount')).get('amount__sum') or 0
+        charge_back = AccountTransaction.objects \
+            .filter(member=self.member, booking_date__year=self.year,
+                    transaction_type='membership fee', booking_type='charge back') \
+            .aggregate(models.Sum('amount')).get('amount__sum') or 0
+
+        self.balance = fee_claims + deposits + charge_back
+        return super().save(*args, **kwargs)
