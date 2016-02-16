@@ -207,12 +207,12 @@ class TransactionLogProcessor:
                     'created_by': banktransaction.created_by,
                     'payment_reference': reference
                 }
-                booking_date = datetime.strptime(d.get('Datum'), '%d.%m.%Y').date()
+                due_date = datetime.strptime(d.get('Datum'), '%d.%m.%Y').date()
                 transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
                 AccountTransaction.objects.update_or_create(
                     booking_type='deposit',
                     member=member,
-                    booking_date=booking_date,
+                    due_date=due_date,
                     transaction_hash=transation_hash,
                     defaults=defaults)
         banktransaction.status = 'done'
@@ -258,12 +258,12 @@ class TransactionLogProcessor:
                     'created_by': banktransaction.created_by,
                     'payment_reference': reference
                 }
-                booking_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
+                due_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
                 transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
                 AccountTransaction.objects.update_or_create(
                     booking_type='deposit',
                     member=member,
-                    booking_date=booking_date,
+                    due_date=due_date,
                     transaction_hash=transation_hash,
                     defaults=defaults)
 

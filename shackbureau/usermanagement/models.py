@@ -226,7 +226,11 @@ class MembershipManager(models.Manager):
 
     def fix_or_create_claims(self, member):
         for year in range(2014, datetime.date.today().year + 1 + 1):
-            for month in range(1, 12 + 1):
+            if year == 2014:
+                first_month = 3
+            else:
+                first_month = 1
+            for month in range(first_month, 12 + 1):
                 current_day = datetime.date(year, month, 1)
                 membership = self.get_current_membership(member, current_day)
                 if not membership:
@@ -524,18 +528,7 @@ class Balance(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     def save(self, *args, **kwargs):
-        fee_claims = AccountTransaction.objects \
-            .filter(member=self.member, due_date__year=self.year,
-                    transaction_type='membership fee', booking_type='fee_claim') \
+        self.balance = AccountTransaction.objects \
+            .filter(member=self.member, due_date__year=self.year, transaction_type='membership fee') \
             .aggregate(models.Sum('amount')).get('amount__sum') or 0
-        deposits = AccountTransaction.objects \
-            .filter(member=self.member, booking_date__year=self.year,
-                    transaction_type='membership fee', booking_type='deposit') \
-            .aggregate(models.Sum('amount')).get('amount__sum') or 0
-        charge_back = AccountTransaction.objects \
-            .filter(member=self.member, booking_date__year=self.year,
-                    transaction_type='membership fee', booking_type='charge back') \
-            .aggregate(models.Sum('amount')).get('amount__sum') or 0
-
-        self.balance = fee_claims + deposits + charge_back
         return super().save(*args, **kwargs)
