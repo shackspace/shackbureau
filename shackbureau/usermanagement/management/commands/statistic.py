@@ -18,16 +18,18 @@ class Command(BaseCommand):
 
         statistic = [stat._replace(date=stat.date.isoformat()) for stat in statistic]
 
+        print(';'.join(['date', 'members', 'joined', 'left', 'full', 'reduced']))
         for stat in statistic:
             # stat = stat._asdict()
             print(";".join([stat.date,
                             str(stat.members),
+                            str(stat.joined),
+                            str(stat.left),
                             str(stat.full),
                             str(stat.reduced),
                             str(stat.sum),
                             ]))
         import json
-        # import json
         import decimal
 
         def decimal_default(obj):
