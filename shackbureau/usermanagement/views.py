@@ -31,7 +31,7 @@ def send_payment_email(membership):
 
     all_memberships = Membership.objects.filter(member=membership.member).order_by("valid_from")
     all_memberships = list(all_memberships)
-    if not membership in all_memberships:
+    if membership not in all_memberships:
         all_memberships.append(membership)
     all_memberships = sorted(all_memberships, key=lambda x: x.valid_from)
 
@@ -40,10 +40,7 @@ def send_payment_email(membership):
                        "membership_fee": membership_fee,
                        "membership_interval": membership_interval,
                        "all_memberships": all_memberships})
-    if action.lower() == "new":
-        template = get_template('payment_mail_new_member.txt')
-    else:
-        template = get_template('payment_mail_update_member.txt')
+    template = get_template('payment_mail.txt')
 
     content = template.render(context)
 

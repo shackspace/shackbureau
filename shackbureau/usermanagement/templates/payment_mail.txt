@@ -1,13 +1,14 @@
 Hallo Schatzmeister,
 
-ein neues Mitglied wurde eingetragen.
+{% if membership.valid_from == member.join_date %}ein neues Mitglied wurde eingetragen.
+{% else %}ein Mitglied hat seinen Beitragssatz geändert.{% endif %}
 Dieses heisst {{ member.name }} {{ member.surname }}.
 
 Eintrittsdatum:   {{ member.join_date.isoformat }}
 {% if member.payment_type|lower == 'sepa' %}
 Es hat uns ermächtig die Mitglidbeiträge einzuziehen. \o/
 
-Mandatsdatum:     {{ member.iban_issue_date.isoformat }}
+Mandatsdatum:     {% if not member.iban_issue_date.isoformat == "1970-01-01" %}{{ member.iban_issue_date.isoformat }}{% else %}None{% endif %}
 
 Mandatsreferenz:  SHACKEVBEITRAGID{{ member.member_id }}
 Mandatsgrund:     shack e.V. Mitgliedsbeitrag ID {{ member.member_id }}
