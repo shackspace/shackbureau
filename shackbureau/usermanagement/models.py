@@ -186,12 +186,12 @@ class Member(models.Model):
             self.is_active = False
         if not self.is_cancellation_mail_sent_to_cashmaster and not self.is_active and self.payment_type == 'SEPA':
             from .views import send_cancellation_mail_to_cashmaster
-            ret = send_cancellation_mail_to_cashmaster(self.__dict__)
+            ret = send_cancellation_mail_to_cashmaster(self)
             if ret:
                 self.is_cancellation_mail_sent_to_cashmaster = True
         if not self.is_welcome_mail_sent and self.is_active:
             from .views import send_welcome_email
-            ret = send_welcome_email(self.email, self.__dict__)
+            ret = send_welcome_email(self)
             if ret:
                 self.is_welcome_mail_sent = True
         if not self.is_registration_to_mailinglists_sent and self.is_active:
@@ -215,6 +215,12 @@ class Member(models.Model):
         if self.nickname:
             return self.nickname
         return "{} {}.".format(self.name, self.surname[:2])
+
+    def get_mandate_reference(self):
+        return "SHACKEVBEITRAGID{:04d}".format(self.member_id)
+
+    def get_mandate_reason(self):
+        return "shack e.V. Mitgliedsbeitrag ID {:d}".format(self.member_id)
 
 
 class MembershipManager(models.Manager):

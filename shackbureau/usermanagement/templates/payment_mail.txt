@@ -10,8 +10,8 @@ Es hat uns ermächtig die Mitglidbeiträge einzuziehen. \o/
 
 Mandatsdatum:     {% if not member.iban_issue_date|date:"Y-m-d" == "1970-01-01" %}{{ member.iban_issue_date|date:"Y-m-d" }}{% else %}None{% endif %}
 
-Mandatsreferenz:  SHACKEVBEITRAGID{{ member.member_id }}
-Mandatsgrund:     shack e.V. Mitgliedsbeitrag ID {{ member.member_id }}
+Mandatsreferenz:  {{ member.get_mandate_reference }}
+Mandatsgrund:     {{ member.get_mandate_reason }}
 
 
 Kontoinhaber:     {{ member.iban_fullname }}

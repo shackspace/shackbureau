@@ -6,11 +6,11 @@ from .models import Membership
 from .utils import member_statistic
 
 
-def send_welcome_email(email_address, context):
-    content = get_template('welcome_mail.txt').render(Context(context))
+def send_welcome_email(member):
+    content = get_template('welcome_mail.txt').render(Context({'member': member}))
 
     email = EmailMessage('Willkommen im shack e.V.', content, 'vorstand@shackspace.de',
-                         [email_address],
+                         [member.email],
                          ['vorstand@shackspace.de'], reply_to=['vorstand@shackspace.de'])
     ret = email.send()
     return ret
@@ -56,11 +56,11 @@ def send_payment_email(membership):
     return ret
 
 
-def send_cancellation_mail_to_cashmaster(context):
-    content = get_template('payment_mail_on_cancellation.txt').render(Context(context))
+def send_cancellation_mail_to_cashmaster(member):
+    content = get_template('payment_mail_on_cancellation.txt').render(Context({'member': member}))
 
-    email = EmailMessage('Payment cancelation für {} {}'.format(context.get('name'),
-                                                                context.get('surname')),
+    email = EmailMessage('Payment cancelation für {} {}'.format(member.name,
+                                                                member.surname),
                          content, 'vorstand@shackspace.de',
                          [settings.CASHMASTER_MAILADDR])
     ret = email.send()

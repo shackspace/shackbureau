@@ -8,23 +8,24 @@ from django.template.loader import get_template
 class TestMemberEmails:
 
     def test_welcome_mail_transfer(self, member_fixture_transfer):
-        mail_content = get_template('welcome_mail.txt').render(Context(member_fixture_transfer.__dict__))
+        mail_content = get_template('welcome_mail.txt').render(Context({'member': member_fixture_transfer}))
         assert mail_content.split('\n')[0] == 'Hallo {},'.format(member_fixture_transfer.name)
         assert 'überweise deinen Mitgliedsbeitrag' in mail_content
-        assert not 'SEPA-Lastschriftmandat' in mail_content
+        assert 'shack e.V. Mitgliedsbeitrag ID {}'.format(member_fixture_transfer.member_id) in mail_content
+        assert 'SEPA-Lastschriftmandat' not in mail_content
 
     def test_welcome_mail_sepa(self, member_fixture_sepa):
-        mail_content = get_template('welcome_mail.txt').render(Context(member_fixture_sepa.__dict__))
+        mail_content = get_template('welcome_mail.txt').render(Context({'member': member_fixture_sepa}))
         assert mail_content.split('\n')[0] == 'Hallo {},'.format(member_fixture_sepa.name)
-        assert not 'überweise deinen Mitgliedsbeitrag' in mail_content
+        assert 'überweise deinen Mitgliedsbeitrag' not in mail_content
         assert 'SEPA-Lastschriftmandat' in mail_content
         assert 'deine Mandatsreferenz lautet: ' + \
-            'SHACKEVBEITRAGID{}.'.format(member_fixture_sepa.member_id) in mail_content
+            'SHACKEVBEITRAGID{:04d}'.format(member_fixture_sepa.member_id) in mail_content
 
     def test_revoke_memberspecials_mail(self, member_fixture_keymember, member_fixture_memberspecials):
         ignore_fields = ["modified", 'signed_DSV', 'ssh_public_key', 'created',
                          'modified', 'created_by_id', 'id :', 'member_id']
-        #test member_fixture_keymember
+        # test member_fixture_keymember
         specials = member_fixture_keymember.memberspecials.active_specials()
         content = get_template('revoke_memberspecials_mail.txt').render(Context({'specials': specials,
                                                                                  'member': member_fixture_keymember}))
@@ -38,8 +39,9 @@ class TestMemberEmails:
 
         # test member_fixture_memberspecials
         specials = member_fixture_memberspecials.memberspecials.active_specials()
-        content = get_template('revoke_memberspecials_mail.txt').render(Context({'specials': specials,
-                                                                                 'member': member_fixture_memberspecials}))
+        content = get_template('revoke_memberspecials_mail.txt') \
+            .render(Context({'specials': specials,
+                             'member': member_fixture_memberspecials}))
         for special in ["has_matomat_key : True",
                         "has_selgros_card : True",
                         "has_matomat_key : True",
@@ -63,9 +65,13 @@ class TestMemberEmails:
 
         import re
         assert re.search("Eintrittsdatum:\s+{}".format(membership_fixture_sepa.member.join_date.isoformat()), content)
-        assert re.search("Mandatsdatum:\s+{}".format(membership_fixture_sepa.member.iban_issue_date.isoformat()), content)
-        assert re.search("Mandatsreferenz:\s+SHACKEVBEITRAGID{}".format(membership_fixture_sepa.member.member_id), content)
-        assert re.search("Mandatsgrund:\s+shack e\.V\. Mitgliedsbeitrag ID {}".format(membership_fixture_sepa.member.member_id), content)
+        assert re.search("Mandatsdatum:\s+{}".format(membership_fixture_sepa.member.iban_issue_date.isoformat()),
+                         content)
+        assert re.search("Mandatsreferenz:\s+SHACKEVBEITRAGID{:04d}".format(membership_fixture_sepa.member.member_id),
+                         content)
+        assert re.search("Mandatsgrund:\s+shack e\.V\. Mitgliedsbeitrag ID {}"
+                         .format(membership_fixture_sepa.member.member_id),
+                         content)
         assert re.search("Kontoinhaber:\s+{}".format(membership_fixture_sepa.member.iban_fullname), content)
         assert re.search("Straße:\s+{}".format(membership_fixture_sepa.member.iban_address), content)
         assert re.search("Postleitzahl:\s+{}".format(membership_fixture_sepa.member.iban_zip_code), content)
@@ -79,7 +85,8 @@ class TestMemberEmails:
         elif membership_fixture_sepa.membership_fee_interval == 12:
             assert re.search("Interval:\s+jährlich", content)
         else:
-            assert re.search("Interval:\s+alle {} Monate".format(membership_fixture_sepa.membership_fee_interval), content)
+            assert re.search("Interval:\s+alle {} Monate".format(membership_fixture_sepa.membership_fee_interval),
+                             content)
         assert re.search("Gültig ab:\s+{}".format(membership_fixture_sepa.valid_from.isoformat()), content)
         for ms in membership_fixture_sepa.member.membership_set.all():
             assert re.search("{}\s+-\s+{}".format(ms.valid_from.isoformat(), ms.membership_fee_monthly), content)

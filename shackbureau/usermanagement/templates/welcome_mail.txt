@@ -1,16 +1,16 @@
-Hallo {{ name }},
+Hallo {{ member.name }},
 
 Willkommen im shackspace.
 
 
 Du solltest bereits automatisch auf unseren Mailinglisten eingetragen sein.
 Bevor du dort postet lies bitte Die Regeln zum Styleschutz auf Mailinglisten[1].
-{% if payment_type|lower == 'sepa' %}
+{% if member.payment_type|lower == 'sepa' %}
 Unser Kassenwart wird in den nächsten Tagen ein SEPA-Lastschriftmandat anlegen,
-deine Mandatsreferenz lautet: SHACKEVBEITRAGID{{ member_id }}.
+deine Mandatsreferenz lautet: {{ member.get_mandate_reference }}
 {% else %}
 Bitte überweise deinen Mitgliedsbeitrag mit dem Verwendungszweck:
-shack e.V. Mitgliedsbeitrag ID {{ member_id }}
+{{ member.get_mandate_reason }}
 Unsere Kontodaten findest du hier: 
 http://shackspace.de/wiki/doku.php?id=golden_bankaccount
 {% endif %}
