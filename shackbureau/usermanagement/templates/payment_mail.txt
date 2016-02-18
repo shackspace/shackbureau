@@ -4,11 +4,11 @@ Hallo Schatzmeister,
 {% else %}ein Mitglied hat seinen Beitragssatz geändert.{% endif %}
 Dieses heisst {{ member.name }} {{ member.surname }}.
 
-Eintrittsdatum:   {{ member.join_date.isoformat }}
+Eintrittsdatum:   {{ member.join_date|date:"Y-m-d" }}
 {% if member.payment_type|lower == 'sepa' %}
 Es hat uns ermächtig die Mitglidbeiträge einzuziehen. \o/
 
-Mandatsdatum:     {% if not member.iban_issue_date.isoformat == "1970-01-01" %}{{ member.iban_issue_date.isoformat }}{% else %}None{% endif %}
+Mandatsdatum:     {% if not member.iban_issue_date|date:"Y-m-d" == "1970-01-01" %}{{ member.iban_issue_date|date:"Y-m-d" }}{% else %}None{% endif %}
 
 Mandatsreferenz:  SHACKEVBEITRAGID{{ member.member_id }}
 Mandatsgrund:     shack e.V. Mitgliedsbeitrag ID {{ member.member_id }}
@@ -24,13 +24,13 @@ IBAN:             {{ member.iban }}
 {% else %}
 Das Mitglied wird seinen Mitgliedsbeitrag an uns ueberweisen.
 {% endif %}
-Mitgliedsbeitrag: {{ membership_fee }}
+Mitgliedsbeitrag: {{ membership_fee|floatformat:"2" }}
 Interval:         {{ membership_interval }}
-Gültig ab:        {{ membership.valid_from.isoformat }}
+Gültig ab:        {{ membership.valid_from|date:"Y-m-d" }}
 
 
 Alle Beitragssätze des Mitglieds:
-{% for ms in all_memberships %}{{ ms.valid_from.isoformat }} - {{ ms.membership_fee_monthly }}
+{% for ms in all_memberships|dictsort:"valid_from" %}{{ ms.valid_from|date:"Y-m-d" }} - {{ ms.membership_fee_monthly|floatformat:"2"|rjust:"5" }}
 {% endfor %}
 
 Diese Änderung wurde von {{ membership.created_by.username }} veranlasst.

@@ -56,3 +56,31 @@ class TestMemberEmails:
         # ignored fields
         for special in ignore_fields:
             assert special not in content
+
+    def test_payment_mail_sepa(self, membership_fixture_sepa, user_fixture):
+        from usermanagement.views import payment_mail_content
+        content = payment_mail_content(membership_fixture_sepa)
+
+        import re
+        assert re.search("Eintrittsdatum:\s+{}".format(membership_fixture_sepa.member.join_date.isoformat()), content)
+        assert re.search("Mandatsdatum:\s+{}".format(membership_fixture_sepa.member.iban_issue_date.isoformat()), content)
+        assert re.search("Mandatsreferenz:\s+SHACKEVBEITRAGID{}".format(membership_fixture_sepa.member.member_id), content)
+        assert re.search("Mandatsgrund:\s+shack e\.V\. Mitgliedsbeitrag ID {}".format(membership_fixture_sepa.member.member_id), content)
+        assert re.search("Kontoinhaber:\s+{}".format(membership_fixture_sepa.member.iban_fullname), content)
+        assert re.search("Straße:\s+{}".format(membership_fixture_sepa.member.iban_address), content)
+        assert re.search("Postleitzahl:\s+{}".format(membership_fixture_sepa.member.iban_zip_code), content)
+        assert re.search("Ort:\s+{}".format(membership_fixture_sepa.member.iban_city), content)
+        if membership_fixture_sepa.member.bic:
+            assert re.search("BIC:\s+{}".format(membership_fixture_sepa.member.bic), content)
+        assert re.search("IBAN:\s+{}".format(membership_fixture_sepa.member.iban), content)
+        assert re.search("Mitgliedsbeitrag:\s+\d+", content)
+        if membership_fixture_sepa.membership_fee_interval == 1:
+            assert re.search("Interval:\s+monatlich", content)
+        elif membership_fixture_sepa.membership_fee_interval == 12:
+            assert re.search("Interval:\s+jährlich", content)
+        else:
+            assert re.search("Interval:\s+alle {} Monate".format(membership_fixture_sepa.membership_fee_interval), content)
+        assert re.search("Gültig ab:\s+{}".format(membership_fixture_sepa.valid_from.isoformat()), content)
+        for ms in membership_fixture_sepa.member.membership_set.all():
+            assert re.search("{}\s+-\s+{}".format(ms.valid_from.isoformat(), ms.membership_fee_monthly), content)
+        assert "Diese Änderung wurde von {} veranlasst.".format(membership_fixture_sepa.created_by.username) in content

@@ -53,12 +53,25 @@ def member_fixture_sepa(user_fixture, join_date_fixture):
                                                    email=fake.free_email(),
                                                    join_date=join_date_fixture,
                                                    payment_type='sepa',
+                                                   iban_issue_date=join_date_fixture,
                                                    iban_fullname=fake.name(),
                                                    iban_address=fake.street_address(),
                                                    iban_zip_code=fake.postcode(),
                                                    iban_city=fake.city(),
                                                    created_by=user_fixture)
     return member
+
+
+@pytest.fixture
+def membership_fixture_sepa(user_fixture, member_fixture_sepa, join_date_fixture):
+    from usermanagement.models import Membership
+    membership, created = Membership.objects.get_or_create(member=member_fixture_sepa,
+                                                           valid_from=join_date_fixture,
+                                                           membership_fee_monthly=20,
+                                                           membership_type='Full',
+                                                           created_by=user_fixture)
+    membership.save()
+    return membership
 
 
 @pytest.fixture
@@ -214,7 +227,7 @@ def cashtransaction_fixtures(user_fixture):
     from datetime import date
 
     cashtransactions = []
-    for i in range(10):
+    for i in range(5):
         day, day_id = divmod(i, 2)
         day += 1
         day_id += 1

@@ -16,18 +16,13 @@ def send_welcome_email(email_address, context):
     return ret
 
 
-def send_payment_email(membership):
+def payment_mail_content(membership):
     membership_fee = membership.membership_fee_monthly * membership.membership_fee_interval
     membership_interval = "alle {} Monate".format(membership.membership_fee_interval)
     if membership.membership_fee_interval == 1:
         membership_interval = "monatlich"
     if membership.membership_fee_interval == 12:
         membership_interval = "jährlich"
-
-    if membership.valid_from == membership.member.join_date:
-        action = "New"
-    else:
-        action = "Update"
 
     all_memberships = Membership.objects.filter(member=membership.member).order_by("valid_from")
     all_memberships = list(all_memberships)
@@ -42,7 +37,15 @@ def send_payment_email(membership):
                        "all_memberships": all_memberships})
     template = get_template('payment_mail.txt')
 
-    content = template.render(context)
+    return template.render(context)
+
+
+def send_payment_email(membership):
+    if membership.valid_from == membership.member.join_date:
+        action = "New"
+    else:
+        action = "Update"
+    content = payment_mail_content(membership)
 
     email = EmailMessage('{} payment für {} {}'.format(action,
                                                         membership.member.name,
@@ -57,7 +60,7 @@ def send_cancellation_mail_to_cashmaster(context):
     content = get_template('payment_mail_on_cancellation.txt').render(Context(context))
 
     email = EmailMessage('Payment cancelation für {} {}'.format(context.get('name'),
-                                                    context.get('surname')),
+                                                                context.get('surname')),
                          content, 'vorstand@shackspace.de',
                          [settings.CASHMASTER_MAILADDR])
     ret = email.send()
