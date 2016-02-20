@@ -32,7 +32,7 @@ def import_old_shit(filename):
                     member_data['iban'] = kto
                     member_data['bic'] = dataset.get('blz')
 
-            member_data['member_id'] = dataset['id']
+            member_data['member_id'] = int(dataset['id'])
             member_data['surname'] = dataset['name']
             member_data['name'] = dataset['vorname']
             member_data['nickname'] = dataset.get('nickname')
