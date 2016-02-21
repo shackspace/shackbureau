@@ -1,0 +1,92 @@
+{% autoescape off %}
+{% verbatim %}
+\documentclass[a4paper]{dinbrief}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+
+\usepackage{marvosym}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{url}
+
+\address{
+  \begin{tabularx}{\textwidth}{Xr}
+    \begin{tabbing}
+      shack e.V.\\
+      Ulmerstr. 255\\
+      70327 Stuttgart\\
+      \Telefon \ \= \kill
+     % \Telefon \> +49 (0)711 21729823\\
+      %\Mobilefone \> +49 (0)171 1854655\\
+      \Letter \> \url{kontakt@shackspace.de}\\
+      \ComputerMouse \> \url{www.shackspace.de}\\
+    \end{tabbing} 
+    &
+    \multirow{2}{*}{\includegraphics[height=3cm]{logo_shack_brightbg}} \\
+  \end{tabularx}
+}
+\backaddress{shack e.V. \textbullet \ Ulmer Straße 255 \textbullet \ 70327 Stuttgart}
+
+%\yourmail{}
+%\sign{}
+%\makelabels
+%\phone{}{}
+\centeraddress
+\nowindowrules
+%\nowindowtics
+%\handling{}
+
+{% endverbatim %}
+
+\date{% templatetag openbrace %}{% if date %}{{ date  }}{% else %}\today{% endif %}{% templatetag closebrace %}
+\place{% templatetag openbrace %}{% if place %}{{ place  }}{% else %}Stuttgart{% endif %}{% templatetag closebrace %}
+\signature{% templatetag openbrace %}{% if signature %}{{ signature  }}{% else %}shackbureau{% endif %}{% templatetag closebrace %}
+
+{% verbatim %}
+
+\begin{document}
+\bottomtext{\footnotesize
+  \hrulefill\\
+  \begin{tabularx}{\textwidth}{XXX}
+      shack e.V. & Amtsgericht Stuttgart & IBAN  DE44430609677016809500\\ 
+      Ulmer Straße 255 & VR 720809 & BIC  GENODEM1GLS \\
+    70327 Stuttgart & &  Institut GLS Gemeinschaftsbank
+  \end{tabularx}
+}
+
+{% endverbatim %}
+
+\begin{% templatetag openbrace %}letter{% templatetag closebrace %}{% templatetag openbrace %}
+
+  {% if address %}
+    {{ address }}
+  {% else %}
+    {% lorem 2 w random %}\\
+    {% lorem 2 w random %}\\
+    {% lorem 2 w random %}
+  {% endif %}
+
+{% templatetag closebrace %}
+
+\subject{% templatetag openbrace %}{% if subject %}{{ subject }}{% else %}{% lorem 5 w %}{% endif %}{% templatetag closebrace %}
+
+\opening{% templatetag openbrace %}{% if opening %}{{ opening }}{% else %}Hallo {% lorem 1 w %}{% endif %}{% templatetag closebrace %}
+
+{% block content %}
+  {% if content %}
+    {{ content }}
+  {% else %}
+    {% lorem 3 %}
+  {% endif %}
+{% endblock content %}
+
+\closing{% templatetag openbrace %}{% if closing %}{{ closing }}{% else %}Mit freundlichen Grüßen{% endif %}{% templatetag closebrace %}
+
+{% verbatim %}
+\end{letter}
+\end{document}
+{% endverbatim %}
+{% endautoescape off %}
