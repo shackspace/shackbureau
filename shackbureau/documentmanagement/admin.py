@@ -6,7 +6,7 @@ from documentmanagement.models import Letter
 
 @admin.register(Letter)
 class LetterAdmin(VersionAdmin):
-    list_display = ('date', 'description', 'address',)
+    list_display = ('date', 'description', 'subject', 'address',)
     list_display_links = list_display
     search_fields = ('decription', 'address', 'content', 'subject')
     readonly_fields = ('data_file',
