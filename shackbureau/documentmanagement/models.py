@@ -2,7 +2,7 @@ from tempfile import TemporaryDirectory
 from django.core.files import File
 from django.db import models
 from django.conf import settings
-from .views import generate_letter
+from .views import generate_letter, generate_donation_receipt
 
 
 class Document(models.Model):
@@ -11,10 +11,8 @@ class Document(models.Model):
         abstract = True
 
     document_type = ""
-    template = ""
-    template_files = []
 
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=127, help_text="will be used for filename")
 
     def upload_to(self, filename):
         if self.document_type:
@@ -23,9 +21,7 @@ class Document(models.Model):
             return 'documentmanagement/{}'.format(filename)
 
     data_file = models.FileField(upload_to=upload_to)
-
     update_document = models.BooleanField(default=False)
-
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
@@ -61,12 +57,54 @@ class Letter(Document):
     document_type = "letter"
 
     address = models.TextField()
-    date = models.DateField(max_length=255)
+    date = models.DateField()
     place = models.CharField(max_length=255, default="Stuttgart")
     subject = models.CharField(max_length=255)
     opening = models.CharField(max_length=255, default="Sehr geehrte Damen und Herren,")
-    content = models.TextField(help_text="You can write latex here")
+    content = models.TextField(help_text="You can write LaTeX here!")
     closing = models.CharField(max_length=255, default="Mit freundlichen Grüßen")
     signature = models.CharField(max_length=255, default="Der Vorstand")
 
     generate_document = generate_letter
+
+
+class DonationReceipt(Document):
+    class Meta:
+        ordering = ('-date', )
+
+    document_type = "donationreceipt"
+
+    address = models.TextField()
+    date = models.DateField()
+    place = models.CharField(max_length=255, default="Stuttgart")
+    address_of_donator = models.TextField(null=True, blank=True, help_text="if empty, address will be use")
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    amount_in_words = models.CharField(max_length=255)
+    day_of_donation = models.DateField()
+    donation_type = models.CharField(
+        choices=(('benefits', 'Sachzuwendungen'),
+                 ('allowance in money', 'Geldzuwendungen')),
+        default='allowance in money',
+        max_length=25
+    )
+    is_waive_of_charge = models.BooleanField(
+        help_text="Es handelt sich um den Verzicht auf Erstattung von Aufwendungen"
+    )
+    description_of_benefits = models.TextField(
+        null=True, blank=True,
+        help_text="Genaue Bezeichnung der Sachzuwendung mit Alter, Zustand, Kaufpreis usw"
+    )
+    is_from_business_assets = models.BooleanField(
+        help_text="Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen. Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert) und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet."
+    )
+    is_from_private_assets = models.BooleanField(
+        help_text="Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen"
+    )
+    no_information_about_origin = models.BooleanField(
+        help_text="Der Zuwendende hat trotz Aufforderung keine Angaben zur Herkunft der Sachzuwendung gemacht."
+    )
+    has_documents_of_value = models.BooleanField(
+        help_text="Geeignete Unterlagen, die zur Wertermittlung gedient haben, z. B. Rechnung, Gutachten, liegen vor."
+    )
+
+    generate_document = generate_donation_receipt
