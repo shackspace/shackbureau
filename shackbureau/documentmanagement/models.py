@@ -1,4 +1,6 @@
 from tempfile import TemporaryDirectory
+from os import path
+from datetime import datetime
 from django.core.files import File
 from django.db import models
 from django.conf import settings
@@ -21,6 +23,7 @@ class Document(models.Model):
             return 'documentmanagement/{}'.format(filename)
 
     data_file = models.FileField(upload_to=upload_to)
+    last_update_of_data_file = models.DateTimeField(blank=True, null=True)
     update_document = models.BooleanField(default=False)
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -28,14 +31,14 @@ class Document(models.Model):
 
     def save_document(self):
         tempdirectory = TemporaryDirectory()
-        document, filename = self.generate_document(tempdirectory.name)
-        print(document, filename)
+        document = self.generate_document(tempdirectory.name)
         if document:
             with open(document, 'rb') as f:
-                self.data_file.save(filename, File(f))
+                self.data_file.save(path.basename(document), File(f))
+                self.last_update_of_data_file = datetime.now()
         tempdirectory.cleanup()
 
-    def generate_document(self):
+    def generate_document(*args, **kwargs):
         return None, None
 
     def save(self, *args, **kwargs):
@@ -74,10 +77,7 @@ class DonationReceipt(Document):
 
     document_type = "donationreceipt"
 
-    address = models.TextField()
-    date = models.DateField()
-    place = models.CharField(max_length=255, default="Stuttgart")
-    address_of_donator = models.TextField(null=True, blank=True, help_text="if empty, address will be use")
+    address_of_donator = models.TextField()
     amount = models.DecimalField(max_digits=8, decimal_places=2)
     amount_in_words = models.CharField(max_length=255)
     day_of_donation = models.DateField()
@@ -106,5 +106,8 @@ class DonationReceipt(Document):
     has_documents_of_value = models.BooleanField(
         help_text="Geeignete Unterlagen, die zur Wertermittlung gedient haben, z. B. Rechnung, Gutachten, liegen vor."
     )
+    date = models.DateField()
+    place = models.CharField(max_length=255, default="Stuttgart")
+    no_signature = models.BooleanField(default=True)
 
     generate_document = generate_donation_receipt

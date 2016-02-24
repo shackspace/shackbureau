@@ -1,6 +1,27 @@
-{% extends "documentmanagement/letter.tex" %}
+{% extends "documentmanagement/a4paper.tex" %}
 {% block content %}
 {% verbatim %}
+
+\begin{tabularx}{\textwidth}{|Xr|}
+  \hline
+  {\bf Aussteller} & \multirow{2}{*}{\includegraphics[height=4.5em]{img/logo_shack_brightbg}} \\ 
+  shack e.V. & \\
+  Ulmerstr. 255 & \\
+  70327 Stuttgart & \\
+  \hline
+\end{tabularx}
+
+
+{\bf
+{% endverbatim %}
+{% if donation_type == 'allowance in money' %}
+Bestätigung über Geldzuwendungen/Mitgliedsbeitrag
+{% elif donation_type == 'benefits' %}
+Bestätigung über Sachzuwendungen
+{% endif %}
+{% verbatim %}
+}
+  
 im Sinne des \S 10b des Einkommensteuergesetzes an eine der in \S 5 Abs. 1 Nr. 9 des
 Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen oder Vermögensmassen
 
@@ -8,17 +29,16 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
   \hline
   {\bf Name und Anschrift des Zuwendenden}\\
 {% endverbatim %}
-  {% if address_of_donator %}{{ address_of_donator }}{% else %}{{ address }}{% endif %}\\
+  {{ address_of_donator }}\\
 {% verbatim %}
   \hline
 \end{tabularx}
 
   \begin{tabular}{|c|c|c|}
     \hline
-    {\bf Betrag der Zuwendung - in Ziffern -} & {\bf - in Buchstaben -}      & {\bf Tag der Zuwendung}\\ 
-    % \hline
+    {\bf Betrag der Zuwendung - in Ziffern -} & {\bf - in Buchstaben -}   & {\bf Tag der Zuwendung}\\ 
 {% endverbatim %}
-    EUR {{ amount | floatformat:02 }}   & EUR {{ amount_in_words }} & {{ day_of_donation | date:"d.m.Y" }}\\
+    EUR {{ amount | floatformat:02 }}         & EUR {{ amount_in_words }} & {{ day_of_donation | date:"d.m.Y" }}\\
 {% verbatim %}
     \hline
   \end{tabular}
@@ -32,6 +52,8 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
   {% endif %}
 {% endif %}
 
+
+
 {% if donation_type == "benefits" %}
   {% verbatim %}
     \begin{tabularx}{\textwidth}{|X|}
@@ -43,27 +65,32 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
     \hline
   \end{tabularx}
   {% endverbatim %}
-
-
-  {% if is_from_business_assets %}[X]{% else %}[ ]{% endif %}
-  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen. Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert) und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet.
-
-  {% if is_from_private_assets %}[X]{% else %}[ ]{% endif %}
-  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen.
-
-  {% if no_information_about_origin %}[X]{% else %}[ ]{% endif %}
-  Der Zuwendende hat trotz Aufforderung keine Angaben zur Herkunft der Sachzuwendung gemacht.
-
-  {% if has_documents_of_value %}[X]{% else %}[ ]{% endif %}
-  Geeignete Unterlagen, die zur Wertermittlung gedient haben, z. B. Rechnung, Gutachten, liegen vor. 
 {% endif %}
 
 {% verbatim %}
-[X] Wir sind wegen Förderung der Volks- und Berufsbildung sowie der Studentenhilfe
+\begin{tabularx}{\textwidth}{cX}
+{% endverbatim %}
+{% if donation_type == "benefits" %}
+  {% if is_from_business_assets %}[X]{% else %}[ ]{% endif %} &
+  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen. Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert) und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet.\\
+
+  {% if is_from_private_assets %}[X]{% else %}[ ]{% endif %} &
+  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen.\\
+
+  {% if no_information_about_origin %}[X]{% else %}[ ]{% endif %} & 
+  Der Zuwendende hat trotz Aufforderung keine Angaben zur Herkunft der Sachzuwendung gemacht.\\
+
+  {% if has_documents_of_value %}[X]{% else %}[ ]{% endif %} &
+  Geeignete Unterlagen, die zur Wertermittlung gedient haben, z. B. Rechnung, Gutachten, liegen vor.\\
+{% endif %}
+
+{% verbatim %}
+  [X] & Wir sind wegen Förderung der Volks- und Berufsbildung sowie der Studentenhilfe
 nach dem Freistellungsbescheid des Finanzamtes Stuttgart, Steuernummer 99059/29935,
 vom 26.06.2015 für den letzten Veranlagungszeitraum 2013 nach \S 5 Abs. 1 Nr. 9 des
 Körperschaftsteuergesetzes von der Körperschaftsteuer und nach \S 3 Nr. 6 des
 Gewerbesteuergesetzes von der Gewerbesteuer befreit.
+\end{tabularx}
 
 
 \begin{tabularx}{\textwidth}{|X|}
@@ -73,18 +100,33 @@ Gewerbesteuergesetzes von der Gewerbesteuer befreit.
   \hline
 \end{tabularx}
 
+\vfill
 
+{% endverbatim %}
+
+{{ place }}, {{ date | date:"d.m.Y" }}
+{% if no_signature %}
+{% verbatim %}
+\begin{center}
 Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.
+\end{center}
+{% endverbatim %}
+{% else %}
+\hline \\
+(Ort, Datum und Unterschrift des Zuwendungsempfängers)
+{% endif %}
+
+{% verbatim %}
 
 \vfill
-{\footnotesize
+
+\bottomtext{\footnotesize
 {\bf Hinweis}\\
 Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder
 wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen
 steuerbegünstigten Zwecken verwendet werden, haftet für die Steuer, die dem Fiskus durch
 einen etwaigen Abzug der Zuwendungen beim Zuwendenden entgeht (\S 10b Abs. 4 EStG, \S 9 Abs. 3 KStG,
-\S 9 Nr. 5 GewStG).
-
+\S 9 Nr. 5 GewStG).\\
 Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt,
 wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der vorläufigen
 Bescheinigung länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt
