@@ -46,7 +46,7 @@ class LetterAdmin(VersionAdmin):
 @admin.register(DonationReceipt)
 class DonationReceiptAdmin(VersionAdmin):
     list_display = ('date', 'day_of_donation', 'description', 'donation_type',
-                    'address_of_donator', 'description_of_benefits', 'data_file')
+                    'address_of_donator', 'amount', 'description_of_benefits')
     list_display_links = list_display
     search_fields = ('description', 'address_of_donator', 'description_of_benefits')
     list_filter = ('donation_type',
@@ -68,10 +68,19 @@ class DonationReceiptAdmin(VersionAdmin):
             'fields': ('update_document', 'data_file', 'last_update_of_data_file')
         }),
         ('Content', {
-            'fields': ('address_of_donator', 'amount', 'amount_in_words', 'day_of_donation',
-                       'donation_type', 'is_waive_of_charge', 'description_of_benefits',
-                       'is_from_business_assets', 'is_from_private_assets', 'no_information_about_origin',
-                       'has_documents_of_value', 'date', 'place', 'no_signature')
+            'fields': ('address_of_donator',
+                       'amount',
+                       'day_of_donation',
+                       'donation_type',
+                       'is_waive_of_charge',
+                       'description_of_benefits',
+                       'is_from_business_assets',
+                       'is_from_private_assets',
+                       'no_information_about_origin',
+                       'has_documents_of_value',
+                       'date',
+                       'place',
+                       'no_signature')
         }),
         ('Meta information', {
             'fields': ('modified', 'created', 'created_by')

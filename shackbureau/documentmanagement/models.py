@@ -92,7 +92,6 @@ class DonationReceipt(Document):
 
     address_of_donator = models.TextField()
     amount = models.DecimalField(max_digits=8, decimal_places=2)
-    amount_in_words = models.CharField(max_length=255)
     day_of_donation = models.DateField()
     donation_type = models.CharField(
         choices=(('benefits', 'Sachzuwendungen'),
