@@ -1,10 +1,11 @@
 from tempfile import TemporaryDirectory
 from os import path
 from datetime import datetime
+from django.utils.text import slugify
 from django.core.files import File
 from django.db import models
 from django.conf import settings
-from .views import generate_letter, generate_donation_receipt, generate_data_protection_agreement
+from .utils import pdflatex
 
 
 class Document(models.Model):
@@ -13,6 +14,8 @@ class Document(models.Model):
         abstract = True
 
     document_type = ""
+    templat = None
+    additional_files = None
 
     description = models.CharField(max_length=127, help_text="will be used for filename")
 
@@ -41,8 +44,13 @@ class Document(models.Model):
                 self.last_update_of_data_file = datetime.now()
         tempdirectory.cleanup()
 
-    def generate_document(*args, **kwargs):
-        return None, None
+    def generate_document(self, tempdirectory):
+        return pdflatex(base_filename=slugify(self.description),
+                        template=self.template,
+                        context=self.__dict__,
+                        tempdirectory=tempdirectory,
+                        additional_files=self.additional_files
+                        )
 
     def save(self, *args, **kwargs):
         if not self.data_file or self.update_document:
@@ -61,6 +69,8 @@ class Letter(Document):
         ordering = ('-date', )
 
     document_type = "letter"
+    template = 'documentmanagement/letter.tex'
+    additional_files = (('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
 
     address = models.TextField()
     date = models.DateField()
@@ -71,14 +81,14 @@ class Letter(Document):
     closing = models.CharField(max_length=255, default="Mit freundlichen Grüßen")
     signature = models.CharField(max_length=255, default="Der Vorstand")
 
-    generate_document = generate_letter
-
 
 class DonationReceipt(Document):
     class Meta:
         ordering = ('-date', )
 
     document_type = "donationreceipt"
+    template = 'documentmanagement/donationreceipt.tex'
+    additional_files = (('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
 
     address_of_donator = models.TextField()
     amount = models.DecimalField(max_digits=8, decimal_places=2)
@@ -113,16 +123,14 @@ class DonationReceipt(Document):
     place = models.CharField(max_length=255, default="Stuttgart")
     no_signature = models.BooleanField(default=True)
 
-    generate_document = generate_donation_receipt
-
 
 class DataProtectionAgreement(Document):
     class Meta:
         ordering = ('-date', )
     document_type = "dataprotectionagreement"
+    template = 'documentmanagement/data_protection_agreement.tex'
+    additional_files = (('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
 
     address = models.TextField()
     date = models.DateField()
     place = models.CharField(max_length=255, default="Stuttgart")
-
-    generate_document = generate_data_protection_agreement
