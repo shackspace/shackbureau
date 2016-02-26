@@ -1,4 +1,5 @@
 {% extends "documentmanagement/a4paper.tex" %}
+{% load documentmanagement_latex %}
 {% block content %}
 {% verbatim %}
 
@@ -22,14 +23,14 @@ Bestätigung über Sachzuwendungen
 {% verbatim %}
 }
   
-im Sinne des \S 10b des Einkommensteuergesetzes an eine der in \S 5 Abs. 1 Nr. 9 des
+im Sinne des §10b des Einkommensteuergesetzes an eine der in §5 Abs. 1 Nr. 9 des
 Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen oder Vermögensmassen
 
 \begin{tabularx}{\textwidth}{|X|}
   \hline
   {\bf Name und Anschrift des Zuwendenden}\\
 {% endverbatim %}
-  {{ address_of_donator }}\\
+  {{ address_of_donator | latex_newlines }}\\
 {% verbatim %}
   \hline
 \end{tabularx}
@@ -60,7 +61,7 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
     \hline
     {\bf Genaue Bezeichnung der Sachzuwendung mit Alter, Zustand, Kaufpreis usw.}\\
   {% endverbatim %}
-    {{ description_of_benefits }}
+    {{ description_of_benefits | latex_newlines }}
   {% verbatim %}\\
     \hline
   \end{tabularx}
@@ -72,7 +73,9 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 {% endverbatim %}
 {% if donation_type == "benefits" %}
   {% if is_from_business_assets %}[X]{% else %}[ ]{% endif %} &
-  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen. Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert) und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet.\\
+  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen.
+  Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert)
+  und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet.\\
 
   {% if is_from_private_assets %}[X]{% else %}[ ]{% endif %} &
   Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen.\\
@@ -87,8 +90,8 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 {% verbatim %}
   [X] & Wir sind wegen Förderung der Volks- und Berufsbildung sowie der Studentenhilfe
 nach dem Freistellungsbescheid des Finanzamtes Stuttgart, Steuernummer 99059/29935,
-vom 26.06.2015 für den letzten Veranlagungszeitraum 2013 nach \S 5 Abs. 1 Nr. 9 des
-Körperschaftsteuergesetzes von der Körperschaftsteuer und nach \S 3 Nr. 6 des
+vom 26.06.2015 für den letzten Veranlagungszeitraum 2013 nach §5 Abs. 1 Nr. 9 des
+Körperschaftsteuergesetzes von der Körperschaftsteuer und nach §3 Nr. 6 des
 Gewerbesteuergesetzes von der Gewerbesteuer befreit.
 \end{tabularx}
 
@@ -125,12 +128,13 @@ Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.
 Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder
 wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen
 steuerbegünstigten Zwecken verwendet werden, haftet für die Steuer, die dem Fiskus durch
-einen etwaigen Abzug der Zuwendungen beim Zuwendenden entgeht (\S 10b Abs. 4 EStG, \S 9 Abs. 3 KStG,
-\S 9 Nr. 5 GewStG).\\
+einen etwaigen Abzug der Zuwendungen beim Zuwendenden entgeht (§10b Abs. 4 EStG, §9 Abs. 3 KStG,
+§9 Nr. 5 GewStG).\\
 Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt,
 wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der vorläufigen
 Bescheinigung länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt
 (BMF vom 15.12.1994 – BStBl I S. 884).
 }
+
 {% endverbatim %}
 {% endblock content %}

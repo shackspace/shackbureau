@@ -1,3 +1,4 @@
+{% load documentmanagement_latex %}
 {% autoescape off %}
 {% verbatim %}
 \documentclass[a4paper]{dinbrief}
@@ -59,12 +60,12 @@
 {% endverbatim %}
 
 \begin{% templatetag openbrace %}letter{% templatetag closebrace %}{% templatetag openbrace %}
-  {{ address }}
+  {{ address | latex_newlines }}
 {% templatetag closebrace %}
 
-{% if subject %}\subject{% templatetag openbrace %}{{ subject }}{% templatetag closebrace %}{% endif %}
+\subject{% templatetag openbrace %}{% block subject %}{{ subject }}{% endblock subject %}{% templatetag closebrace %}
 
-\opening{% templatetag openbrace %}{% if opening %}{{ opening }}{% endif %}{% templatetag closebrace %}
+\opening{% templatetag openbrace %}{% block opening %}{{ opening }}{% endblock opening %}{% templatetag closebrace %}
 
 {% block content %}
   {{ content }}

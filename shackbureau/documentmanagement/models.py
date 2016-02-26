@@ -4,7 +4,7 @@ from datetime import datetime
 from django.core.files import File
 from django.db import models
 from django.conf import settings
-from .views import generate_letter, generate_donation_receipt
+from .views import generate_letter, generate_donation_receipt, generate_data_protection_agreement
 
 
 class Document(models.Model):
@@ -24,7 +24,10 @@ class Document(models.Model):
 
     data_file = models.FileField(upload_to=upload_to)
     last_update_of_data_file = models.DateTimeField(blank=True, null=True)
-    update_document = models.BooleanField(default=False)
+    update_document = models.BooleanField(
+        default=False,
+        help_text="If you want to update the document after the first save you have to set this."
+    )
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
@@ -111,3 +114,15 @@ class DonationReceipt(Document):
     no_signature = models.BooleanField(default=True)
 
     generate_document = generate_donation_receipt
+
+
+class DataProtectionAgreement(Document):
+    class Meta:
+        ordering = ('-date', )
+    document_type = "dataprotectionagreement"
+
+    address = models.TextField()
+    date = models.DateField()
+    place = models.CharField(max_length=255, default="Stuttgart")
+
+    generate_document = generate_data_protection_agreement

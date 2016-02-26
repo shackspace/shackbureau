@@ -35,15 +35,9 @@ def pdflatex(base_filename, template, context, tempdirectory, additional_files=N
     return None
 
 
-def latex_newline(string):
-    return string.strip().replace('\r\n', '\\\\\r\n')
-
-
 def generate_letter(letter, tempdirectory):
     base_filename = slugify(letter.description)
     context_dict = dict(letter.__dict__)
-    if 'address' in context_dict:
-        context_dict['address'] = latex_newline(context_dict['address'])
 
     return pdflatex(base_filename=base_filename,
                     template='documentmanagement/letter.tex',
@@ -57,13 +51,20 @@ def generate_donation_receipt(donationreceipt, tempdirectory):
     base_filename = slugify(donationreceipt.description)
     context_dict = dict(donationreceipt.__dict__)
 
-    if 'address_of_donator' in context_dict:
-        context_dict['address_of_donator'] = latex_newline(context_dict['address_of_donator'])
-    if 'description_of_benefits' in context_dict:
-        context_dict['description_of_benefits'] = latex_newline(context_dict['description_of_benefits'])
-
     return pdflatex(base_filename=base_filename,
                     template='documentmanagement/donationreceipt.tex',
+                    context=context_dict,
+                    tempdirectory=tempdirectory,
+                    additional_files=(('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
+                    )
+
+
+def generate_data_protection_agreement(dataprotectionagreement, tempdirectory):
+    base_filename = slugify(dataprotectionagreement.description)
+    context_dict = dict(dataprotectionagreement.__dict__)
+
+    return pdflatex(base_filename=base_filename,
+                    template='documentmanagement/data_protection_agreement.tex',
                     context=context_dict,
                     tempdirectory=tempdirectory,
                     additional_files=(('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
