@@ -9,3 +9,4 @@ psycopg2
 pytest-django
 requests
 num2words
+docutils
