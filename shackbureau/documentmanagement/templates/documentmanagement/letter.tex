@@ -1,0 +1,80 @@
+{% load documentmanagement_latex %}
+{% autoescape off %}
+{% verbatim %}
+\documentclass[a4paper]{dinbrief}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+\usepackage{marvosym}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{url}
+
+\address{
+  \begin{tabularx}{\textwidth}{Xr}
+    \begin{tabbing}
+      shack e.V.\\
+      Ulmerstr. 255\\
+      70327 Stuttgart\\
+      \Telefon \ \= \kill
+      \Letter \> \url{vorstand@shackspace.de}\\
+      \ComputerMouse \> \url{www.shackspace.de}\\
+    \end{tabbing} 
+    &
+    \multirow{2}{*}{\includegraphics[height=3cm]{img/logo_shack_brightbg}} \\
+  \end{tabularx}
+}
+\backaddress{shack e.V. \textbullet \ Ulmer Straße 255 \textbullet \ 70327 Stuttgart}
+
+%\yourmail{}
+%\sign{}
+%\makelabels
+%\phone{}{}
+\centeraddress
+\nowindowrules
+%\nowindowtics
+%\handling{}
+
+{% endverbatim %}
+
+\date{% templatetag openbrace %}{{ date | date:"d.m.Y" }}{% templatetag closebrace %}
+{% if place %}\place{% templatetag openbrace %}{{ place }}{% templatetag closebrace %}{% endif %}
+{% if signature %}\signature{% templatetag openbrace %}{{ signature  }}{% templatetag closebrace %}{% endif %}
+
+{% verbatim %}
+
+\begin{document}
+\bottomtext{\footnotesize
+  \hrulefill\\
+  \begin{tabularx}{\textwidth}{XXX}
+    shack e.V.       & Amtsgericht Stuttgart & IBAN  DE44430609677016809500\\ 
+    Ulmer Straße 255 & VR 720809             & BIC  GENODEM1GLS\\
+    70327 Stuttgart  &                       & Institut GLS Gemeinschaftsbank
+  \end{tabularx}
+}
+
+{% endverbatim %}
+
+\begin{% templatetag openbrace %}letter{% templatetag closebrace %}{% templatetag openbrace %}
+  {{ address | latex_newlines }}
+{% templatetag closebrace %}
+
+\subject{% templatetag openbrace %}{% block subject %}{{ subject }}{% endblock subject %}{% templatetag closebrace %}
+
+\opening{% templatetag openbrace %}{% block opening %}{{ opening }}{% endblock opening %}{% templatetag closebrace %}
+
+{% block content %}
+  {{ content }}
+{% endblock content %}
+
+{% if closing %}\closing{% templatetag openbrace %}{{ closing }}{% templatetag closebrace %}{% endif %}
+
+{% verbatim %}
+\end{letter}
+\end{document}
+{% endverbatim %}
+{% endautoescape off %}

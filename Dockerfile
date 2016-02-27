@@ -16,6 +16,12 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y python3-pip\
     libfreetype6-dev\
     curl
 
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    texlive\
+    texlive-lang-german
+
+RUN apt-get install --no-install-recommends -y texlive-latex-extra
+
 # Set the locale
 RUN locale-gen en_US.UTF-8  
 ENV LANG en_US.UTF-8  

@@ -1,0 +1,54 @@
+{% extends "documentmanagement/letter.tex" %}
+{% load documentmanagement_latex %}
+
+{% block subject %}Datenschutzerklärung{% endblock subject%}	
+
+{% block content %}
+
+{% for line in address|striped_splitlines %}
+{{line}}{% if not forloop.last %}, {% endif %}{% endfor %}
+
+{% verbatim  %}
+
+wird hiermit auf die Wahrung des Datengeheimnisses nach §5 Bundesdatenschutzgesetz (BDSG)
+verpflichtet. Diese Verpflichtung besteht auch nach der Beendigung der Tätigkeit oder Mitgliedschaft
+im shack e.V. fort.
+
+Ich erkläre mit meiner Unterschrift, dass ich die durch den Vorstand des shack e.V. zugänglich
+gemachten Daten, die ich zur Unterstützung des Vorstandes benötige, vertraulich behandle, in keiner
+anderen Weise verwerte als es meine Unterstützungsarbeit erfordert und keinem Dritten zugänglich
+mache. Der Vorstand kann hierzu im Rahmen der gesetzlichen Möglichkeiten eine Ausnahme zulassen und
+wird mir dies ausdrücklich in geeigneter und nachvollziehbarer Form für den Einzelfall erklären.
+Sollte ich mehr Daten erhalten, als für meine Unterstützungsarbeit benötigt, gilt Selbiges.
+
+Mir ist auch bewusst, dass der shack e.V. und die betroffenen Personen bei Verstößen gegen die
+vorgenannten Pflichten zum Daten- und Geheimnisschutz zur sofortigen Geltendmachung von
+Schadensersatzansprüchen berechtigt sind.
+
+Verstöße gegen den Datenschutz können mit Geldbußen oder Geld- oder Freiheitsstrafen geahndet werden.
+Die Bußgeld- und Strafvorschriften des §§43 und 44 BDSG (Anlage) habe ich zur Kenntnis genommen.
+Ich verpflichte mich, sämtliche Handlungen zu unterlassen, welche zur Verwirklichung dieser Straftat
+führen können.
+
+Diese Datenschutzerklärung bleibt auch dann gültig, wenn ich den shack e.V. verlasse oder meine
+Unterstützungsarbeit niederlege, oder mich der Vorstand nicht mehr zur Unterstützung benötigt.
+
+Rechtliche Rahmenbedingungen:
+\begin{itemize}
+	\item Bundesdatenschutzgesetz §§5, 43, 44
+	\item Telekommunikationsgesetz §88
+	\item Strafgesetzbuch §§202, 202a, 202b, 202c, 206, 303a, 303b
+\end{itemize}
+
+Ich bestätige durch meine Unterschrift, dass ich diese Datenschutzerklärung gelesen und verstanden habe.
+
+\vspace{2cm}
+
+\begin{tabular}{lp{2em}l}
+	 \hspace{5cm}   && \hspace{5cm} \\\cline{1-1}\cline{3-3}
+	 Ort, Datum     && Unterschrift
+\end{tabular}
+
+{% endverbatim  %}
+
+{% endblock content %}
