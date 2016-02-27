@@ -1,11 +1,12 @@
 {% extends "documentmanagement/a4paper.tex" %}
+{% load i18n %}
 {% load documentmanagement_latex %}
 {% block content %}
 {% verbatim %}
 
 \begin{tabularx}{\textwidth}{|Xr|}
   \hline
-  {\bf Aussteller} & \multirow{2}{*}{\includegraphics[height=4.5em]{img/logo_shack_brightbg}} \\ 
+  {\bfseries Aussteller} & \multirow{2}{*}{\includegraphics[height=4.5em]{img/logo_shack_brightbg}} \\ 
   shack e.V. & \\
   Ulmerstr. 255 & \\
   70327 Stuttgart & \\
@@ -13,7 +14,7 @@
 \end{tabularx}
 
 
-{\bf
+{\bfseries
 {% endverbatim %}
 {% if donation_type == 'allowance in money' %}
 Bestätigung über Geldzuwendungen/Mitgliedsbeitrag
@@ -28,7 +29,7 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 
 \begin{tabularx}{\textwidth}{|X|}
   \hline
-  {\bf Name und Anschrift des Zuwendenden}\\
+  {\bfseries Name und Anschrift des Zuwendenden}\\
 {% endverbatim %}
   {{ address_of_donator | latex_newlines }}\\
 {% verbatim %}
@@ -37,9 +38,11 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 
 \begin{tabulary}{\textwidth}{|c|C|c|}
   \hline
-  {\bf Betrag der Zuwendung}          & {\bf - in Buchstaben -}       & {\bf Tag der Zuwendung}\\ 
+  {\bfseries Betrag der Zuwendung}  &  {\bfseries - in Buchstaben -}  &  {\bfseries Tag der Zuwendung}\\ 
 {% endverbatim %}
-  EUR {{ amount | floatformat:02 }}   & {{ amount | num2words:'de' }} & {{ day_of_donation | date:"d.m.Y" }}\\
+  {% language 'de' %}
+  EUR {{ amount|floatformat:2 }}  &  {{ amount | num2words:'de' }}  &  {{ day_of_donation | date:"d.m.Y" }}\\
+  {% endlanguage %}
 {% verbatim %}
   \hline
 \end{tabulary}
@@ -48,8 +51,8 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 
 {% if donation_type == "allowance in money" %}
   Es handelt sich um den Verzicht auf Erstattung von Aufwendungen:
-  {% if is_waive_of_charge %} Ja \boxtimes  Nein \square
-  {% else %} Ja \square  Nein \boxtimes
+  {% if is_waive_of_charge %} Ja $\boxtimes$ \  Nein $\square{}$
+  {% else %} Ja $\square$ \  Nein $\boxtimes{}$
   {% endif %}
 {% endif %}
 
@@ -59,7 +62,7 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
   {% verbatim %}
     \begin{tabularx}{\textwidth}{|X|}
     \hline
-    {\bf Genaue Bezeichnung der Sachzuwendung mit Alter, Zustand, Kaufpreis usw.}\\
+    {\bfseries Genaue Bezeichnung der Sachzuwendung mit Alter, Zustand, Kaufpreis usw.}\\
   {% endverbatim %}
     {{ description_of_benefits | latex_newlines }}
   {% verbatim %}\\
@@ -72,23 +75,23 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 \begin{tabularx}{\textwidth}{cX}
 {% endverbatim %}
 {% if donation_type == "benefits" %}
-  {% if is_from_business_assets %}\boxtimes{% else %}\square{% endif %} &
+  {% if is_from_business_assets %}$\boxtimes${% else %}$\square${% endif %} &
   Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen.
   Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert)
   und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet.\\
 
-  {% if is_from_private_assets %}\boxtimes{% else %}\square{% endif %} &
+  {% if is_from_private_assets %}$\boxtimes${% else %}$\square${% endif %} &
   Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen.\\
 
-  {% if no_information_about_origin %}\boxtimes{% else %}\square{% endif %} & 
+  {% if no_information_about_origin %}$\boxtimes${% else %}$\square${% endif %} & 
   Der Zuwendende hat trotz Aufforderung keine Angaben zur Herkunft der Sachzuwendung gemacht.\\
 
-  {% if has_documents_of_value %}\boxtimes{% else %}\square{% endif %} &
+  {% if has_documents_of_value %}$\boxtimes${% else %}$\square${% endif %} &
   Geeignete Unterlagen, die zur Wertermittlung gedient haben, z. B. Rechnung, Gutachten, liegen vor.\\
 {% endif %}
 
 {% verbatim %}
-  \boxtimes & Wir sind wegen Förderung der Volks- und Berufsbildung sowie der Studentenhilfe
+  $\boxtimes$ & Wir sind wegen Förderung der Volks- und Berufsbildung sowie der Studentenhilfe
 nach dem Freistellungsbescheid des Finanzamtes Stuttgart, Steuernummer 99059/29935,
 vom 26.06.2015 für den letzten Veranlagungszeitraum 2013 nach §5 Abs. 1 Nr. 9 des
 Körperschaftsteuergesetzes von der Körperschaftsteuer und nach §3 Nr. 6 des
@@ -123,8 +126,7 @@ Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.
 
 \vfill
 
-\bottomtext{\footnotesize
-{\bf Hinweis}\\
+{\footnotesize{\bfseries Hinweis}\\
 Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder
 wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen
 steuerbegünstigten Zwecken verwendet werden, haftet für die Steuer, die dem Fiskus durch

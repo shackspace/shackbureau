@@ -67,7 +67,7 @@ class DonationReceiptAdmin(VersionAdmin):
         ('Document', {
             'fields': ('update_document', 'data_file', 'last_update_of_data_file')
         }),
-        ('Content', {
+        ('Donation information', {
             'fields': ('address_of_donator',
                        'amount',
                        'day_of_donation',
@@ -77,8 +77,10 @@ class DonationReceiptAdmin(VersionAdmin):
                        'is_from_business_assets',
                        'is_from_private_assets',
                        'no_information_about_origin',
-                       'has_documents_of_value',
-                       'date',
+                       'has_documents_of_value',)
+        }),
+        ('Signature', {
+            'fields': ('date',
                        'place',
                        'no_signature')
         }),
