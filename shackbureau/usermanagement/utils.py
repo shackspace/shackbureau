@@ -6,6 +6,7 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from django.db import models
 
@@ -376,3 +377,10 @@ def last_day_of_month(given_date):
     new_date = given_date.replace(day=28) + timedelta(days=5)
     new_date = new_date.replace(day=1) - timedelta(days=1)
     return new_date
+
+
+def get_shackbureau_user():
+    user_model = get_user_model()
+    shackbureau, created = user_model.objects.get_or_create(username='shackbureau',
+                                                            defaults={'is_active': False})
+    return shackbureau
