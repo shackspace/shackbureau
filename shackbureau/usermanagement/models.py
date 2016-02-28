@@ -222,6 +222,16 @@ class Member(models.Model):
     def get_mandate_reason(self):
         return "shack e.V. Mitgliedsbeitrag ID {:d}".format(self.member_id)
 
+    def get_postal_address(self):
+        postal_address = "{} {}\n{}\n{}\n{} {}".format(self.name or "",
+                                                       self.surname or "",
+                                                       self.address1 or "",
+                                                       self.address2 or "",
+                                                       self.zip_code or "",
+                                                       self.city or "")
+        postal_address = "\n".join([line for line in postal_address.splitlines() if line.strip()])
+        return postal_address
+
 
 class MembershipManager(models.Manager):
 
