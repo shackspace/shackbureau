@@ -15,6 +15,12 @@ class MemberManager(models.Manager):
                    .filter(Q(is_active=True) | Q(leave_date__gt=date))\
                    .order_by("member_id")
 
+    def get_active_members_in_year(self, year):
+        from datetime import date
+        return self.filter(join_date__lte=date(year, 12, 31))\
+                   .filter(Q(is_active=True) | Q(leave_date__gte=date(year, 1, 1)))\
+                   .order_by("member_id")
+
     def get_joined_members(self, date):
         return self.filter(join_date=date)
 
@@ -231,6 +237,13 @@ class Member(models.Model):
                                                        self.city or "")
         postal_address = "\n".join([line for line in postal_address.splitlines() if line.strip()])
         return postal_address
+
+    def get_payed_membership_fee(self, year):
+        sum_fee = AccountTransaction.objects \
+            .filter(member=self, due_date__year=year, transaction_type='membership fee') \
+            .filter(Q(booking_type='deposit') | Q(booking_type='charge back')) \
+            .aggregate(models.Sum('amount')).get('amount__sum') or 0
+        return sum_fee
 
 
 class MembershipManager(models.Manager):
