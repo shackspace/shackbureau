@@ -255,3 +255,48 @@ def cashtransaction_fixtures(user_fixture):
         )
         cashtransactions.append(cashtransaction)
     return cashtransactions
+
+
+@pytest.fixture
+def letter_fixture(user_fixture):
+    from documentmanagement.models import Letter
+    from datetime import date
+    letter = Letter()
+    letter.description = "Karl Koch"
+    letter.address = "Karl Koch\nUlmer Straße 255\n70327 Stuttgart"
+    letter.content = "this is a letter."
+    letter.date = date.today()
+    letter.subject = "This is the subject of the letter"
+    letter.created_by = user_fixture
+    letter.save()
+    return letter
+
+
+@pytest.fixture
+def donationreceipt_fixture(user_fixture):
+    from documentmanagement.models import DonationReceipt
+    from datetime import date
+    from decimal import Decimal
+    donationreceipt = DonationReceipt()
+    donationreceipt.address_of_donator = "Karl Koch\nUlmer Straße 255\n70327 Stuttgart"
+    donationreceipt.amount = Decimal('133.37')
+    donationreceipt.created_by = user_fixture
+    donationreceipt.date = date.today()
+    donationreceipt.day_of_donation = date.today()
+    donationreceipt.description = "Karl Koch"
+    donationreceipt.donation_type = 'allowance in money'
+    donationreceipt.save()
+    return donationreceipt
+
+
+@pytest.fixture
+def dataprotectionagreement_fixture(user_fixture):
+    from documentmanagement.models import DataProtectionAgreement
+    from datetime import date
+    dataprotectionagreement = DataProtectionAgreement()
+    dataprotectionagreement.address = "Karl Koch\nUlmer Straße 255\n70327 Stuttgart"
+    dataprotectionagreement.date = date.today()
+    dataprotectionagreement.description = "Karl Koch"
+    dataprotectionagreement.created_by = user_fixture
+    dataprotectionagreement.save()
+    return dataprotectionagreement

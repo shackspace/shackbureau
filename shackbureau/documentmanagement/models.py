@@ -100,6 +100,7 @@ class DonationReceipt(Document):
         max_length=25
     )
     is_waive_of_charge = models.BooleanField(
+        default=False,
         help_text="Es handelt sich um den Verzicht auf Erstattung von Aufwendungen"
     )
     description_of_benefits = models.TextField(
@@ -107,15 +108,19 @@ class DonationReceipt(Document):
         help_text="Genaue Bezeichnung der Sachzuwendung mit Alter, Zustand, Kaufpreis usw"
     )
     is_from_business_assets = models.BooleanField(
+        default=False,
         help_text="Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen. Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert) und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet."
     )
     is_from_private_assets = models.BooleanField(
+        default=False,
         help_text="Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen"
     )
     no_information_about_origin = models.BooleanField(
+        default=False,
         help_text="Der Zuwendende hat trotz Aufforderung keine Angaben zur Herkunft der Sachzuwendung gemacht."
     )
     has_documents_of_value = models.BooleanField(
+        default=False,
         help_text="Geeignete Unterlagen, die zur Wertermittlung gedient haben, z. B. Rechnung, Gutachten, liegen vor."
     )
     date = models.DateField()
