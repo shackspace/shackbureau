@@ -202,6 +202,7 @@ class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
+    date_hierarchy = 'due_date'
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -261,6 +262,7 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     actions = ['set_resolved_entry']
+    date_hierarchy = 'booking_date'
 
     def set_resolved_entry(self, request, queryset):
         rows_updated = queryset.update(is_resolved=True)
