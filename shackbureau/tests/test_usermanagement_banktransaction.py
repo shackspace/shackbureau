@@ -9,7 +9,7 @@ class TestbankTransactionUploadParser:
 
     # it's real data, biatch
     @pytest.mark.parametrize(('reference', 'expected', 'score'), [
-        ('shack e.V. Mitgliedsbeitrag ID 666 Dauerauftrag:         54', 666, 1),
+        ('shack e.V. Mitgliedsbeitrag ID  666 Dauerauftrag:         54', 666, 1),
         ('Beitrag MItglied 724             ', 724, 6),
         ('Beitrag shack AAAA AAAAAAA 466 AAAAAAA AAAA           ', False, 99),
         ('Beitrag shack AAAAAAAAAAAAA AAA 91            ', False, 99),
@@ -30,6 +30,10 @@ class TestbankTransactionUploadParser:
         ('shack e.V. Mitgliedsbeitrag ID 111 Dauerauftrag:         61           ', 111, 1),
         ('shack e.V. Mitgliedsbeitrag ID 172 AAAAAAA AAAAAA Dauerauftrag:         70          ', 172, 1),
         ('shack e.V. Mitgliedsbeitrag ID 492 Dauerauftrag:         23           ', 492, 1),
+        ('ID262 ZR1              ', 262, 8),
+        ('ID 348, ZR 1, Mitglieds- be      itrag, DIESER MONAT, AAAAA AAAA       ', 348, 9),
+        ('MITGLIEDSBEITRAG ID.274              ', 274, 10),
+        ('MITGLIEDSBEITRAG ID:275              ', 275, 10),
     ])
     def test_reference_parser(self, reference, expected, score):
         from usermanagement.utils import TransactionLogProcessor

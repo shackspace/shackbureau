@@ -179,6 +179,8 @@ class TransactionLogProcessor:
         reader.__next__()  # first line is meta of accountant
         header = reader.__next__()  # second line is header
         for line in reader:
+            if not line:
+                continue
             d = dict(zip(header, line))
             member = None
             uid = None
@@ -226,6 +228,8 @@ class TransactionLogProcessor:
                             delimiter=";", quotechar='"')
         header = reader.__next__()
         for line in reader:
+            if not line:
+                continue
             d = dict(zip(header, line))
             reference = ''
             for key in sorted(header):
@@ -275,13 +279,16 @@ class TransactionLogProcessor:
         reference = reference.lower()
 
         regexes = (
-            r'.*mitgliedsbeitrag\s+id\s+(?P<ID>\d{1,3})\s.*',
-            r'.*id\s+(?P<ID>\d{1,3})\smitgliedsbeitrag.*',
-            r'.*id\s+(?P<ID>\d{1,3})\s.*',
-            r'.*mitgliedsbeitrag.*id\s+(?P<ID>\d{1,3})\s.*',
-            r'.*mitgliedsbeitrag\s+(?P<ID>\d{1,3})\s.*',
-            r'.*beitrag\s+mitglied\s+(?P<ID>\d{1,3})\s.*',
-            r'.*mitgliedsbeitrag.*\s+(?P<ID>\d{1,3})[^\d].*',
+            r'.*mitgliedsbeitrag\s+id\s+(?P<ID>\d{1,4})\s.*',
+            r'.*id\s+(?P<ID>\d{1,4})\smitgliedsbeitrag.*',
+            r'.*id\s+(?P<ID>\d{1,4})\s.*',
+            r'.*mitgliedsbeitrag.*id\s+(?P<ID>\d{1,4})\s.*',
+            r'.*mitgliedsbeitrag\s+(?P<ID>\d{1,4})\s.*',
+            r'.*beitrag\s+mitglied\s+(?P<ID>\d{1,4})\s.*',
+            r'.*mitgliedsbeitrag.*\s+(?P<ID>\d{1,4})[^\d].*',
+            r'.*id(?P<ID>\d{1,4})\s+zr\d+.*',
+            r'.*id\s+(?P<ID>\d{1,4}),\s+zr\s+\d+.*',
+            r'.*mitgliedsbeitrag\s+id[.:-_](?P<ID>\d{1,4})\s.*',
         )
 
         for score, regex in enumerate(regexes, 1):
