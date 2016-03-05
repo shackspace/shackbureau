@@ -423,7 +423,17 @@ class AccountTransaction(models.Model):
             from .views import send_nagging_email
             send_nagging_email(self.member.email, self.member.__dict__)
             self.send_nagging_mail = False
+            Log.objects.create(log_type='nagging mail', comment=self.member.email)
         return super().save(*args, **kwargs)
+
+
+class Log(models.Model):
+    log_type = models.CharField(max_length=255)
+    comment = models.TextField(null=True, blank=True)
+    timestamp = models.DateField(default=datetime.datetime.now)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 class BankTransactionUpload(models.Model):
