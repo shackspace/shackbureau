@@ -1,6 +1,6 @@
 from tempfile import TemporaryDirectory
 from os import path
-from datetime import datetime
+import datetime
 from django.utils.text import slugify
 from django.core.files import File
 from django.db import models
@@ -41,7 +41,7 @@ class Document(models.Model):
         if document:
             with open(document, 'rb') as f:
                 self.data_file.save(path.basename(document), File(f))
-                self.last_update_of_data_file = datetime.now()
+                self.last_update_of_data_file = datetime.datetime.now()
         tempdirectory.cleanup()
 
     def generate_document(self, tempdirectory):
@@ -73,7 +73,7 @@ class Letter(Document):
     additional_files = (('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
 
     address = models.TextField()
-    date = models.DateField()
+    date = models.DateField(default=datetime.date.today)
     place = models.CharField(max_length=255, default="Stuttgart")
     subject = models.CharField(max_length=255)
     opening = models.CharField(max_length=255, default="Sehr geehrte Damen und Herren,")
@@ -123,7 +123,7 @@ class DonationReceipt(Document):
         default=False,
         help_text="Geeignete Unterlagen, die zur Wertermittlung gedient haben, z. B. Rechnung, Gutachten, liegen vor."
     )
-    date = models.DateField()
+    date = models.DateField(default=datetime.datetime.today)
     place = models.CharField(max_length=255, default="Stuttgart")
     no_signature = models.BooleanField(default=True)
 
@@ -136,5 +136,5 @@ class DataProtectionAgreement(Document):
     additional_files = (('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
 
     address = models.TextField()
-    date = models.DateField()
+    date = models.DateField(default=datetime.date.today)
     place = models.CharField(max_length=255, default="Stuttgart")
