@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 
 from django.db import models
 
-from .models import Member, Membership, BankTransactionLog, AccountTransaction, MemberSpecials
+from .models import Member, Membership, BankTransactionLog, AccountTransaction, MemberSpecials, Log
 
 
 def import_old_shit(filename):
@@ -310,7 +310,8 @@ def update_keymember(member_id, ssh_key):
 
 def member_statistic(year=None, month=None):
     from collections import namedtuple
-    MemberSatistic = namedtuple('MemberStatistic', ['date', 'members', 'joined', 'left', 'full', 'reduced', 'sum', 'fees'])
+    MemberSatistic = namedtuple('MemberStatistic', ['date', 'members', 'joined', 'left', 'full',
+                                                    'reduced', 'sum', 'fees', 'nagging_mail'])
     statistic = []
 
     if year:
@@ -321,7 +322,8 @@ def member_statistic(year=None, month=None):
             start_date = date(year, 1, 1)
             end_date = date(year, 12, 1)
     else:
-        start_date = (Member.objects.aggregate(models.Min('join_date')).get('join_date__min') or date.today()).replace(day=1)
+        start_date = (Member.objects.aggregate(models.Min('join_date'))
+                      .get('join_date__min') or date.today()).replace(day=1)
         end_date = date.today().replace(day=1)
 
     def duration(start_date, end_date):
@@ -339,10 +341,13 @@ def member_statistic(year=None, month=None):
         members = Member.objects.get_active_members(current_date)
         joined_members = Member.objects.get_joined_members(current_date)
         left_members = Member.objects.get_left_members(current_date)
+        nagging_mail = Log.objects.filter(timestamp__year=current_date.year,
+                                          timestamp__month=current_date.month,
+                                          log_type="nagging mail").count()
 
-        amount_of_members = len(members)
-        amount_of_joined_members = len(joined_members)
-        amount_of_left_members = len(left_members)
+        amount_of_members = members.count()
+        amount_of_joined_members = joined_members.count()
+        amount_of_left_members = left_members.count()
 
         membership_full = 0
         membership_reduced = 0
@@ -373,7 +378,8 @@ def member_statistic(year=None, month=None):
                                         membership_full,
                                         membership_reduced,
                                         sum_of_fees,
-                                        fees))
+                                        fees,
+                                        nagging_mail))
 
     if month:
         return statistic[0]

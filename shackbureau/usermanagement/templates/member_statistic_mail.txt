@@ -7,5 +7,8 @@ Austritte zum Ende des Monats: {{ statistic.left }}
 Vollzahler: {{ statistic.full }}
 Ermäßigt: {{ statistic.reduced }}
 
+{% if statistic.nagging_mail %}Emails versendet wegen schlechtem Verwendungszweck in Überweisung: {{statistic.nagging_mail}}
+
+{% endif %}
 Diese Statistik wurde ihnen präsentiert vom shackbureau
 https://github.com/shackspace/shackbureau
