@@ -25,7 +25,7 @@ class Command(BaseCommand):
         """
         opening = "Hallo {name},"
         subject = "Deine Mitgliedsdaten"
-        filename = "membertracking_{date}_{id}_{surname}_{name}"
+        filename = "membertracking_{date}_{id:04d}_{surname}_{name}"
         additional_files = (('static/img/logo_shack_brightbg.pdf', 'img/logo_shack_brightbg.pdf'), )
 
         shackbureau_user = get_shackbureau_user()
