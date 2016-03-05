@@ -1,8 +1,8 @@
-Mitglieder Statistik {{ statistic.date.isoformat | slice:":7"}}
+Mitglieder Statistik {{ statistic.date | date:"Y-m"}}
 
 Aktive Mitglieder: {{ statistic.members }}
-Eintritte: {{ statistic.joined }}
-Austritte: {{ statistic.left }}
+Eintritte zum Anfang des Monats: {{ statistic.joined }}
+Austritte zum Ende des Monats: {{ statistic.left }}
 
 Vollzahler: {{ statistic.full }}
 Ermäßigt: {{ statistic.reduced }}

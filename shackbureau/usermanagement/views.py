@@ -102,7 +102,7 @@ def send_member_statistic_mail(year, month):
 
     content = get_template('member_statistic_mail.txt').render(Context({'statistic': statistic}))
 
-    email = EmailMessage('Mitglieder Statistik {}-{}'.format(year, month),
+    email = EmailMessage('Mitglieder Statistik {:04d}-{:02d}'.format(year, month),
                          content, 'vorstand@shackspace.de',
                          ['mitglieder@shackspace.de'],
                          [])
