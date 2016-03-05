@@ -379,6 +379,9 @@ class MemberDocument(models.Model):
 
 class AccountTransaction(models.Model):
 
+    class Meta:
+        ordering = ('-due_date', )
+
     member = models.ForeignKey(Member)
     amount = models.DecimalField(max_digits=8,
                                  decimal_places=2)
@@ -558,6 +561,7 @@ class Balance(models.Model):
 
     def save(self, *args, **kwargs):
         self.balance = AccountTransaction.objects \
+            .filter(due_date__lte=datetime.date.today()) \
             .filter(member=self.member, due_date__year=self.year) \
             .aggregate(models.Sum('amount')).get('amount__sum') or 0
         return super().save(*args, **kwargs)
