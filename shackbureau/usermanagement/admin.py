@@ -315,8 +315,8 @@ class MemberSpecialsAdmin(OrderMemberByNameMixin, VersionAdmin):
 class MemberTrackingCodeAdmin(VersionAdmin):
     list_display = ('member', 'uuid', 'validated')
     list_display_links = list_display
-    list_filter = ('validated',)
-    search_fields = ("member__name", "member__surname", "member__nickname")
+    list_filter = ('validated', 'member__is_active')
+    search_fields = ("member__name", "member__surname", "member__nickname", "member__email")
 
 
 @admin.register(MemberDocument)
