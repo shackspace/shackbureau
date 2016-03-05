@@ -1,6 +1,9 @@
 from num2words import num2words as lib_num2words
+from datetime import date
+
 from django import template
 from django.template.defaultfilters import stringfilter
+from django.template.defaultfilters import date as defaultfilter_date
 
 register = template.Library()
 
@@ -25,3 +28,11 @@ def num2words(value, arg='en'):
         return value
     except NotImplementedError:
         return ""
+
+
+@register.filter
+def date_or_string(value, arg=None):
+    if isinstance(value, date):
+        return defaultfilter_date(value, arg)
+    else:
+        return str(value)

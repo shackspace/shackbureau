@@ -41,7 +41,7 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
   {\bfseries Betrag der Zuwendung}  &  {\bfseries - in Buchstaben -}  &  {\bfseries Tag der Zuwendung}\\ 
 {% endverbatim %}
   {% language 'de' %}
-  EUR {{ amount|floatformat:2 }}  &  {{ amount | num2words:'de' }}  &  {{ day_of_donation | date:"d.m.Y" }}\\
+  EUR {{ amount|floatformat:2 }}  &  {{ amount | num2words:'de' }}  &  {{ day_of_donation | date_or_string:"d.m.Y" }}\\
   {% endlanguage %}
 {% verbatim %}
   \hline
