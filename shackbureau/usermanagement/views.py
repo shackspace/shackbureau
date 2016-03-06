@@ -67,13 +67,15 @@ def send_cancellation_mail_to_cashmaster(member):
     return ret
 
 
-def send_nagging_email(email_address, context):
-    content = get_template('nagging_mail.txt').render(Context(context))
+def send_nagging_email(accounttransaction):
+    member = accounttransaction.member
+    content = get_template('nagging_mail.txt').render(Context({'accounttransaction': accounttransaction,
+                                                               'member': member}))
 
-    email = EmailMessage('Nagging für {} {}'.format(context.get('name'),
-                                                    context.get('surname')),
-                         content, 'vorstand@shackspace.de',
-                         [email_address],
+    email = EmailMessage('Bitte Verwendungszweck anpassen',
+                         content,
+                         'vorstand@shackspace.de',
+                         [member.email],
                          ['vorstand@shackspace.de'], reply_to=['vorstand@shackspace.de'])
     ret = email.send()
     return ret

@@ -421,7 +421,7 @@ class AccountTransaction(models.Model):
             self.amount = self.amount * -1
         if self.send_nagging_mail:
             from .views import send_nagging_email
-            send_nagging_email(self.member.email, self.member.__dict__)
+            send_nagging_email(self)
             self.send_nagging_mail = False
         return super().save(*args, **kwargs)
 

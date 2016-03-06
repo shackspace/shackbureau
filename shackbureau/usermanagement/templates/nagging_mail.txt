@@ -1,1 +1,13 @@
-Hier könnte ihr Text stehen.
+Hallo {{ member.name }},
+
+wir konnten deinen Mitgliedsbeitrag für den shack e.V. vom {{ accounttransaction.due_date | date:"d.m.Y" }} nicht automatisch verbuchen.
+
+Bitte überweise in Zukunft mit folgendem Verwendungszweck:
+
+{{ member.get_mandate_reason }}
+
+
+LG
+
+shackbureau
+https://github.com/shackspace/shackbureau
