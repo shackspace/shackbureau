@@ -9,9 +9,11 @@ from .utils import member_statistic
 def send_welcome_email(member):
     content = get_template('welcome_mail.txt').render(Context({'member': member}))
 
-    email = EmailMessage('Willkommen im shack e.V.', content, 'vorstand@shackspace.de',
-                         [member.email],
-                         ['vorstand@shackspace.de'], reply_to=['vorstand@shackspace.de'])
+    email = EmailMessage(subject='Willkommen im shack e.V.',
+                         body=content,
+                         to=[member.email],
+                         cc=['vorstand@shackspace.de'],
+                         )
     ret = email.send()
     return ret
 
@@ -47,11 +49,11 @@ def send_payment_email(membership):
         action = "Update"
     content = payment_mail_content(membership)
 
-    email = EmailMessage('{} payment für {} {}'.format(action,
-                                                        membership.member.name,
-                                                        membership.member.surname),
-                         content, 'vorstand@shackspace.de',
-                         [settings.CASHMASTER_MAILADDR])
+    email = EmailMessage(subject='{} payment für {} {}'.format(action,
+                                                               membership.member.name,
+                                                               membership.member.surname),
+                         body=content,
+                         to=[settings.CASHMASTER_MAILADDR])
     ret = email.send()
     return ret
 
@@ -59,10 +61,10 @@ def send_payment_email(membership):
 def send_cancellation_mail_to_cashmaster(member):
     content = get_template('payment_mail_on_cancellation.txt').render(Context({'member': member}))
 
-    email = EmailMessage('Payment cancelation für {} {}'.format(member.name,
-                                                                member.surname),
-                         content, 'vorstand@shackspace.de',
-                         [settings.CASHMASTER_MAILADDR])
+    email = EmailMessage(subject='Payment cancelation für {} {}'.format(member.name,
+                                                                        member.surname),
+                         body=content,
+                         to=[settings.CASHMASTER_MAILADDR])
     ret = email.send()
     return ret
 
@@ -72,11 +74,10 @@ def send_nagging_email(accounttransaction):
     content = get_template('nagging_mail.txt').render(Context({'accounttransaction': accounttransaction,
                                                                'member': member}))
 
-    email = EmailMessage('Bitte Verwendungszweck anpassen',
-                         content,
-                         'vorstand@shackspace.de',
-                         [member.email],
-                         ['vorstand@shackspace.de'], reply_to=['vorstand@shackspace.de'])
+    email = EmailMessage(subject='Bitte Verwendungszweck anpassen',
+                         body=content,
+                         to=[member.email],
+                         cc=['vorstand@shackspace.de'])
     ret = email.send()
     return ret
 
@@ -91,10 +92,9 @@ def send_revoke_memberspecials_mail(member):
     content = get_template('revoke_memberspecials_mail.txt').render(Context({'specials': specials,
                                                                              'member': member}))
 
-    email = EmailMessage('Revoke Memberspecials for {}'.format(member),
-                         content, 'vorstand@shackspace.de',
-                         ['tt-vorstand@shackspace.de'],
-                         [])
+    email = EmailMessage(subject='Revoke Memberspecials for {}'.format(member),
+                         body=content,
+                         to=['tt-vorstand@shackspace.de'])
     ret = email.send()
     return ret
 
@@ -104,9 +104,8 @@ def send_member_statistic_mail(year, month):
 
     content = get_template('member_statistic_mail.txt').render(Context({'statistic': statistic}))
 
-    email = EmailMessage('Mitglieder Statistik {:04d}-{:02d}'.format(year, month),
-                         content, 'vorstand@shackspace.de',
-                         ['mitglieder@shackspace.de'],
-                         [])
+    email = EmailMessage(subject='Mitglieder Statistik {:04d}-{:02d}'.format(year, month),
+                         body=content,
+                         to=['mitglieder@shackspace.de'])
     ret = email.send()
     return ret

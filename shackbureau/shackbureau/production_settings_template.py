@@ -8,3 +8,4 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = r""
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "vorstand@shackspace.de"
