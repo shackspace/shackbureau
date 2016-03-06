@@ -1,5 +1,7 @@
 {{ member }} hat uns leider verlassen.
 
+Austrittsdatum: {{ member.leave_date | date:'Y-m-d' }}
+
 er hat noch specials. bitte holt sie euch zurück:
 
 {% for k, v in specials.items %}{{ k }} : {{ v }}
