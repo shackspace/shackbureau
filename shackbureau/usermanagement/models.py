@@ -543,6 +543,9 @@ class MemberTrackingCode(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
+    def __str__(self):
+        return "Tracking Code {}".format(self.member)
+
 
 class Balance(models.Model):
     """ calculated balance for given user per year
