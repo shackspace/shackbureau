@@ -19,9 +19,9 @@ class Command(BaseCommand):
 
         template = "documentmanagement/letter.tex"
         content = """
-        für den Abgleich deiner Mitgliedsdaten konnten wir dich per Email unter \\url{{{email}}} nicht erreichen.
+        beim Abgleich deiner Mitgliedsdaten konnten wir dich per Email unter \\url{{{email}}} nicht erreichen.
 
-        Bitte melde dich bei uns per Email unter \\url{{vorstad@shackspace.de}}, damit wir deine Daten abgleichen können.
+        Bitte melde dich bei uns unter \\url{{vorstad@shackspace.de}}, damit wir deine Daten abgleichen können.
         """
         opening = "Hallo {name},"
         subject = "Deine Mitgliedsdaten"
