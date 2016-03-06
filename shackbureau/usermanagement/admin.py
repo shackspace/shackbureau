@@ -85,7 +85,7 @@ class MemberAdmin(VersionAdmin):
     search_fields = ("member_id", "name", "surname", "nickname", "email")
     list_filter = ("payment_type", "is_underaged", 'is_active',
                    "membership__membership_fee_monthly",
-                   "membership__membership_type")
+                   "membership__membership_type", "memberdocument__tag")
     readonly_fields = ('member_id',
                        'copy_paste_information',
                        'modified',
