@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from .models import Member, Membership, BankTransactionLog, AccountTransaction, MemberSpecials
+from districtcourt.models import Debitor, DistrictcourtAccountTransaction
 
 
 def import_old_shit(filename):
@@ -164,6 +165,17 @@ def add_to_mailman(mailaddr, mitgliederml=True):
 
 
 class TransactionLogProcessor:
+    def __init__(self):
+        self.debitors = Debitor.objects.all().values('pk', 'record_token', 'record_token_line_2')
+
+        def build_regex(record_token):
+            record_token = [re.escape(element) for element in record_token.lower().split()]
+            regex = r".*" + r'\s*'.join(record_token) + ".*"
+            return regex
+
+        for i in range(len(self.debitors)):
+            self.debitors[i]['regex'] = build_regex(self.debitors[i]['record_token'])
+            self.debitors[i]['regex_line_2'] = build_regex(self.debitors[i]['record_token_line_2'])
 
     def process(self, banktransaction):
         if banktransaction.data_type == 'bank_csv':
@@ -238,6 +250,7 @@ class TransactionLogProcessor:
 
             uid, score = self.reference_parser(reference)
             member = None
+            debitor = self.get_debitor_by_record_token(reference)
             error = None
             try:
                 if uid:
@@ -248,6 +261,7 @@ class TransactionLogProcessor:
                 upload=banktransaction,
                 reference=reference,
                 member=member,
+                debitor=debitor,
                 error=error, score=score,
                 amount=Decimal(d.get('Betrag').replace(',', '.')),
                 booking_date=datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date(),
@@ -268,6 +282,20 @@ class TransactionLogProcessor:
                 AccountTransaction.objects.update_or_create(
                     booking_type='deposit',
                     member=member,
+                    due_date=due_date,
+                    transaction_hash=transation_hash,
+                    defaults=defaults)
+            elif debitor:
+                defaults = {
+                    'amount': Decimal(d.get('Betrag').replace(',', '.')),
+                    'created_by': banktransaction.created_by,
+                    'payment_reference': reference
+                }
+                due_date = datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date()
+                transation_hash = hashlib.sha256((';'.join(line)).encode('utf-8')).hexdigest()
+                DistrictcourtAccountTransaction.objects.update_or_create(
+                    booking_type='deposit',
+                    debitor=debitor,
                     due_date=due_date,
                     transaction_hash=transation_hash,
                     defaults=defaults)
@@ -297,6 +325,13 @@ class TransactionLogProcessor:
                 return (int(hit.groupdict().get('ID')), score)
 
         return (False, 99)
+
+    def get_debitor_by_record_token(self, reference):
+        reference = "".join(reference.lower().split())
+        for debitor in self.debitors:
+            if re.match(debitor['regex'], reference):
+                return Debitor.objects.get(pk=debitor['pk'])
+        return None
 
 
 def update_keymember(member_id, ssh_key):

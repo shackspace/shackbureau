@@ -5,6 +5,7 @@ import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
+@pytest.mark.django_db
 class TestbankTransactionUploadParser:
 
     # it's real data, biatch
