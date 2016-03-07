@@ -459,6 +459,7 @@ class BankTransactionLog(models.Model):
     upload = models.ForeignKey("BankTransactionUpload")
     reference = models.TextField()
     member = models.ForeignKey("Member", null=True, blank=True)
+    debitor = models.ForeignKey("districtcourt.Debitor", null=True, blank=True, verbose_name="Districtcourt debitor")
     is_matched = models.BooleanField(default=True)
     is_resolved = models.BooleanField(default=True)
     score = models.IntegerField()
