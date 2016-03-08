@@ -337,7 +337,7 @@ class TransactionLogProcessor:
 def update_keymember(member_id, ssh_key):
     member = Member.objects.get(member_id=member_id)
     member_special, created = MemberSpecials.objects.get_or_create(member=member,
-                                                                   defaults={'created_by': User.objects.get(username="admin")})
+                                                                   defaults={'created_by': get_shackbureau_user()})
     member_special.is_keyholder = True
     member_special.ssh_public_key = ssh_key
     member_special.save()

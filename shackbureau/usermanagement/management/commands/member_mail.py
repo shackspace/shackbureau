@@ -3,7 +3,8 @@ from django.core.management import BaseCommand
 from django.template import Context
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
-from django.contrib.auth.models import User
+
+from usermanagement.utils import get_shackbureau_user
 
 
 class Command(BaseCommand):
@@ -18,7 +19,7 @@ class Command(BaseCommand):
                 continue
 
             uuid, created = MemberTrackingCode.objects.get_or_create(member=member,
-                                                                     created_by=User.objects.get(username="admin"))
+                                                                     created_by=get_shackbureau_user())
             context = {
                 'uuid': uuid,
                 'member': member,
