@@ -108,3 +108,23 @@ class DistrictcourtAccountTransaction(models.Model):
         if 'claim' in self.booking_type:
             self.amount = self.amount * -1
         return super().save(*args, **kwargs)
+
+
+class DistrictcourtBalance(models.Model):
+    class Meta:
+        ordering = ('debitor', )
+    debitor = models.OneToOneField(Debitor)
+    balance = models.DecimalField(max_digits=8,
+                                  decimal_places=2)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    def save(self, *args, **kwargs):
+        self.balance = DistrictcourtAccountTransaction.objects.filter(debitor=self.debitor) \
+            .aggregate(models.Sum('amount')).get('amount__sum') or 0
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Balance {}".format(self.debitor)
