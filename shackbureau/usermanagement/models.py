@@ -557,6 +557,8 @@ class Balance(models.Model):
     member = models.ForeignKey("Member")
     balance = models.DecimalField(max_digits=8,
                                   decimal_places=2)
+    accumulated_balance = models.DecimalField(max_digits=8,
+                                              decimal_places=2)
     year = models.PositiveIntegerField()
 
     modified = models.DateTimeField(auto_now=True)
@@ -564,8 +566,12 @@ class Balance(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     def save(self, *args, **kwargs):
-        self.balance = AccountTransaction.objects \
-            .filter(due_date__lte=datetime.date.today()) \
-            .filter(member=self.member, due_date__year=self.year) \
-            .aggregate(models.Sum('amount')).get('amount__sum') or 0
+        self.balance = AccountTransaction.objects.filter(due_date__lte=datetime.date.today()) \
+                                                 .filter(member=self.member, due_date__year=self.year) \
+                                                 .aggregate(models.Sum('amount')).get('amount__sum') or 0
+        self.accumulated_balance = (Balance.objects.filter(member=self.member, year__lt=self.year)
+                                    .aggregate(models.Sum('balance')).get('balance__sum') or 0) + self.balance
         return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Balance {} <{}>".format(self.year, self.member)

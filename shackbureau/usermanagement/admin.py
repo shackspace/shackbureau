@@ -354,10 +354,11 @@ class MemberDocumentTagAdmin(VersionAdmin):
 
 @admin.register(Balance)
 class BalanceAdmin(OrderMemberByNameMixin, VersionAdmin):
-    list_display = ('year', 'member', 'balance')
+    list_display = ('year', 'member', 'balance', 'accumulated_balance')
     list_display_links = list_display
     search_fields = ('member__name', 'member__surname', 'member__nickname')
     readonly_fields = ('balance',
+                       'accumulated_balance',
                        'modified',
                        'created',
                        'created_by',)
