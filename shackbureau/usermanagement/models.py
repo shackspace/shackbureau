@@ -288,6 +288,7 @@ class MembershipManager(models.Manager):
                     member=member,
                     due_date=datetime.date(year, month, 1),
                     defaults=defaults)
+        Balance.objects.fix_or_create_balances(member)
 
 
 class Membership(models.Model):
