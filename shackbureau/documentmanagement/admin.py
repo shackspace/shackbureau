@@ -7,7 +7,7 @@ from .forms import DonationReceiptForm
 
 @admin.register(Letter)
 class LetterAdmin(VersionAdmin):
-    list_display = ('date', 'description', 'subject', 'address',)
+    list_display = ('description', 'date', 'address', 'subject', 'signature')
     list_display_links = list_display
     search_fields = ('description', 'address', 'content', 'subject')
     readonly_fields = ('data_file',
@@ -45,7 +45,7 @@ class LetterAdmin(VersionAdmin):
 
 @admin.register(DonationReceipt)
 class DonationReceiptAdmin(VersionAdmin):
-    list_display = ('date', 'day_of_donation', 'description', 'donation_type',
+    list_display = ('description', 'date', 'day_of_donation', 'donation_type',
                     'address_of_donator', 'amount', 'description_of_benefits')
     list_display_links = list_display
     search_fields = ('description', 'address_of_donator', 'description_of_benefits')
@@ -108,7 +108,7 @@ class DonationReceiptAdmin(VersionAdmin):
 
 @admin.register(DataProtectionAgreement)
 class DataProtectionAgreementAdmin(VersionAdmin):
-    list_display = ('date', 'description', 'address',)
+    list_display = ('description', 'date', 'address',)
     list_display_links = list_display
     search_fields = ('description', 'address')
     readonly_fields = ('data_file',
