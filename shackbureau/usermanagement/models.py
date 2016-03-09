@@ -268,13 +268,7 @@ class MembershipManager(models.Manager):
                                               .filter(due_date=current_day).delete()
                     continue
 
-                if member.leave_date and member.leave_date.year == year:
-                    if month + 1 > member.leave_date.month:
-                        AccountTransaction.objects.filter(member=member)\
-                                                  .filter(booking_type='fee_claim')\
-                                                  .filter(due_date=current_day).delete()
-                        continue
-                if member.leave_date and member.leave_date.year < year:
+                if member.leave_date and current_day > member.leave_date:
                     AccountTransaction.objects.filter(member=member)\
                                               .filter(booking_type='fee_claim')\
                                               .filter(due_date=current_day).delete()

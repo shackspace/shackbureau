@@ -33,8 +33,8 @@ def memberships_fixture_change_type(memberships_fixture_very_simple, first_of_th
 
 
 @pytest.fixture
-def memberships_fixture_with_leave(member_fixture_transfer, first_of_this_month, first_of_next_month):
-    member_fixture_transfer.leave_date = first_of_next_month
+def memberships_fixture_with_leave(member_fixture_transfer, first_of_this_month, last_of_next_month):
+    member_fixture_transfer.leave_date = last_of_next_month
     member_fixture_transfer.save()
     member_fixture_transfer.membership_set.create(
         valid_from=first_of_this_month,
@@ -97,7 +97,7 @@ class TestMemberShipManager:
     def test_membership_created_with_leave(self, memberships_fixture_with_leave):
         x = memberships_fixture_with_leave.first()
         # joined this month. leave next month
-        expected_months = 1
+        expected_months = 2
         assert x.member.accounttransaction_set.count() == expected_months
 
     def test_membership_booking_date_persists_on_update(self, memberships_fixture_very_simple, first_of_next_month):

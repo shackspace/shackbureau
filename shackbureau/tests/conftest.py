@@ -42,6 +42,14 @@ def first_of_next_month(first_of_this_month):
 
 
 @pytest.fixture
+def last_of_next_month(first_of_next_month):
+    td = first_of_next_month
+    td = td.replace(month=td.month + 1)
+    td = td - datetime.timedelta(days=1)
+    return td
+
+
+@pytest.fixture
 def member_fixture_sepa(user_fixture, join_date_fixture):
     fake = Factory.create('de_DE')
     from usermanagement.models import Member
