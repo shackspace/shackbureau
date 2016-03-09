@@ -10,7 +10,9 @@ from django.db.models import Q
 
 
 class MemberManager(models.Manager):
-    def get_active_members(self, date):
+    def get_active_members(self, date=None):
+        if date is None:
+            date = datetime.date.today()
         return self.filter(join_date__lte=date)\
                    .filter(Q(is_active=True) | Q(leave_date__gt=date))\
                    .order_by("member_id")
@@ -406,7 +408,7 @@ class AccountTransaction(models.Model):
         return "{}: {} {} [{}]".format(self.member,
                                        self.transaction_type,
                                        self.booking_type,
-                                       self.booking_date)
+                                       self.due_date)
 
     def save(self, *args, **kwargs):
         # claims and charge backs are always negative. all others are positive
@@ -486,10 +488,10 @@ class MemberSpecials(models.Model):
     signed_DSV = models.BooleanField(default=False)
     ssh_public_key = models.TextField(
         null=True, blank=True,
-        help_text="The format ist forced into one line, with single whitespaces as seperators")
+        help_text="The format ist forced into one line, with single whitespaces as seperators"
+    )
 
-    is_registration_to_key_mailinglist_sent = models.BooleanField(
-        default=False)
+    is_registration_to_key_mailinglist_sent = models.BooleanField(default=False)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
