@@ -542,6 +542,29 @@ class MemberTrackingCode(models.Model):
         return "Tracking Code {}".format(self.member)
 
 
+class BalanceManager(models.Manager):
+    def fix_or_create_balances(self, member):
+        from .utils import get_shackbureau_user
+
+        transaction_dates = AccountTransaction.objects.filter(member=member)\
+                                                      .aggregate(models.Max('due_date'), models.Min('due_date'))
+        due_date_min = transaction_dates.get('due_date__min')
+        due_date_max = transaction_dates.get('due_date__max')
+
+        if not due_date_min and not due_date_max:
+            Balance.objects.filter(member=member).delete()
+            return
+
+        first_year = due_date_min.year
+        last_year = min(due_date_max.year, datetime.date.today().year)
+
+        Balance.objects.filter(member=member).filter(Q(year__lt=first_year) | Q(year__gt=last_year)).delete()
+        for year in range(first_year, last_year + 1):
+            Balance.objects.update_or_create(member=member,
+                                             year=year,
+                                             defaults={'created_by': get_shackbureau_user()})
+
+
 class Balance(models.Model):
     """ calculated balance for given user per year
     """
@@ -558,6 +581,8 @@ class Balance(models.Model):
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    objects = BalanceManager()
 
     def save(self, *args, **kwargs):
         self.balance = AccountTransaction.objects.filter(due_date__lte=datetime.date.today()) \
