@@ -5,7 +5,7 @@ from .models import Debitor, DistrictcourtAccountTransaction, DistrictcourtBalan
 
 
 @admin.register(Debitor)
-class MemberAdmin(VersionAdmin):
+class DebitorAdmin(VersionAdmin):
     list_display = ("debitor_id", "districtcourt", "record_token", "record_token_line_2", "name", "is_done",)
     list_display_links = list_display
     search_fields = list_display

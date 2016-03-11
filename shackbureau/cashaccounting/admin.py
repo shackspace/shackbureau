@@ -15,6 +15,9 @@ class CashTransactionAdmin(VersionAdmin):
 
     readonly_fields = ("transaction_sum", "account_sum", "transaction_id", "modified", "created_by", "created")
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'created_by', False):
             obj.created_by = request.user
@@ -30,6 +33,9 @@ class CashAccountingExportAdmin(VersionAdmin):
     list_display_links = list_display
     readonly_fields = ('data_file', 'data_file_date', 'created_by', 'modified', 'created')
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'created_by', False):
             obj.created_by = request.user
@@ -38,7 +44,6 @@ class CashAccountingExportAdmin(VersionAdmin):
     def update_export_file(self, request, queryset):
         for cashaccountingexport in queryset:
             cashaccountingexport.update_export_file()
-            print("file updated")
             cashaccountingexport.save()
     update_export_file.short_description = "Update export file"
     actions = [update_export_file]

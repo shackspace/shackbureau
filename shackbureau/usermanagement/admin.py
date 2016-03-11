@@ -51,6 +51,9 @@ class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
             obj.created_by = request.user
         return super().save_model(request, obj, form, change)
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class MembershipInline(admin.TabularInline):
     model = Membership
@@ -318,6 +321,9 @@ class MemberTrackingCodeAdmin(VersionAdmin):
     list_filter = ('validated', 'member__is_active')
     search_fields = ("member__name", "member__surname", "member__nickname", "member__email")
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(MemberDocument)
 class MemberDocumentAdmin(OrderMemberByNameMixin, VersionAdmin):
@@ -330,6 +336,9 @@ class MemberDocumentAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     filter_horizontal = ('tag', )
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'created_by', False):
@@ -345,6 +354,9 @@ class MemberDocumentTagAdmin(VersionAdmin):
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'created_by', False):
@@ -370,3 +382,6 @@ class BalanceAdmin(OrderMemberByNameMixin, VersionAdmin):
         if not getattr(obj, 'created_by', False):
             obj.created_by = request.user
         return super().save_model(request, obj, form, change)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
