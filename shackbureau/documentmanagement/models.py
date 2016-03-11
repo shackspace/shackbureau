@@ -1,7 +1,7 @@
 from tempfile import TemporaryDirectory
 from os import path
 import datetime
-from django.utils.text import slugify
+from django.utils.text import get_valid_filename
 from django.core.files import File
 from django.db import models
 from django.conf import settings
@@ -45,7 +45,7 @@ class Document(models.Model):
         tempdirectory.cleanup()
 
     def generate_document(self, tempdirectory):
-        return pdflatex(base_filename=slugify(self.description),
+        return pdflatex(base_filename=get_valid_filename(self.description),
                         template=self.template,
                         context=self.__dict__,
                         tempdirectory=tempdirectory,
