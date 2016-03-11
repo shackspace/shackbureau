@@ -41,6 +41,7 @@ class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
+    raw_id_fields = ('member', )
 
     def membership_fee(self, obj):
         return "{} / {}".format(obj.membership_fee_monthly,
@@ -200,12 +201,13 @@ class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
     list_display = ('member', 'booking_date', 'due_date', 'booking_type',
                     'transaction_type', 'amount', 'payment_reference')
     list_filter = ('transaction_type', 'booking_type', 'booking_date', 'due_date', 'member', )
-    search_fields = ('member__name', 'member__surname', 'member__nickname', 'payment_reference', )
+    search_fields = ('member__name', 'member__surname', 'member__nickname', 'payment_reference', 'transaction_hash')
     actions = None
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
     date_hierarchy = 'due_date'
+    raw_id_fields = ('member', )
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -266,6 +268,7 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created_by',)
     actions = ['set_resolved_entry']
     date_hierarchy = 'booking_date'
+    raw_id_fields = ('member', )
 
     def set_resolved_entry(self, request, queryset):
         rows_updated = queryset.update(is_resolved=True)
@@ -301,6 +304,7 @@ class MemberSpecialsAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     form = MemberSpecialsForm
+    raw_id_fields = ('member', )
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -320,6 +324,7 @@ class MemberTrackingCodeAdmin(VersionAdmin):
     list_display_links = list_display
     list_filter = ('validated', 'member__is_active')
     search_fields = ("member__name", "member__surname", "member__nickname", "member__email")
+    raw_id_fields = ('member', )
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -336,6 +341,7 @@ class MemberDocumentAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     filter_horizontal = ('tag', )
+    raw_id_fields = ('member', )
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -375,6 +381,7 @@ class BalanceAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     list_filter = ('year', 'member')
+    raw_id_fields = ('member', )
 
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'balance', False):
