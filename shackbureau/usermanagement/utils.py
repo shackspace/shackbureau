@@ -266,8 +266,8 @@ class TransactionLogProcessor:
                 amount=Decimal(d.get('Betrag').replace(',', '.')),
                 booking_date=datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date(),
                 transaction_owner=d.get('Auftraggeber/Empfänger'),
-                is_matched=bool(uid),
-                is_resolved=bool(uid),
+                is_matched=bool(uid) or bool(debitor),
+                is_resolved=bool(uid) or bool(debitor),
                 created_by=banktransaction.created_by
             )
             if member:
