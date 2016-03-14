@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
+from ajax_select import urls as ajax_select_urls
 
 admin.site.site_header = 'shackspace membership management'
 admin.site.site_title = 'shackspace membership management'
@@ -26,4 +27,5 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/admin/', permanent=False)),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^ajax_select/', include(ajax_select_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

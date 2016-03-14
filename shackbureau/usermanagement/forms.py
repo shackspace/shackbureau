@@ -1,6 +1,7 @@
 from django import forms
 from .models import Member, MemberSpecials
 from django.utils.safestring import mark_safe
+import ajax_select
 
 
 class TextInputWithActionWidget(forms.TextInput):
@@ -109,6 +110,8 @@ class MemberSpecialsForm(forms.ModelForm):
             # readonly
             'created_by',
         ]
+
+    member = ajax_select.fields.AutoCompleteSelectField('member')
 
     def clean(self):
         cleaned_data = super(MemberSpecialsForm, self).clean()

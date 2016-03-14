@@ -1,5 +1,7 @@
 from django.contrib import admin
 from reversion import VersionAdmin
+from django.contrib import messages
+from ajax_select import make_ajax_form
 
 from .models import (
     AccountTransaction,
@@ -14,7 +16,6 @@ from .models import (
     Balance,
 )
 from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset
-from django.contrib import messages
 
 
 class OrderMemberByNameMixin():
@@ -86,7 +87,7 @@ class MemberAdmin(VersionAdmin):
     list_display = ("member_id", 'is_active', "name", "surname", 'nickname',
                     'is_underaged')
     list_display_links = list_display
-    search_fields = ("member_id", "name", "surname", "nickname", "email")
+    search_fields = ("=member_id", "name", "surname", "nickname", "email")
     list_filter = ("payment_type", "is_underaged", 'is_active',
                    "membership__membership_fee_monthly",
                    "membership__membership_type", "memberdocument__tag")
@@ -207,7 +208,7 @@ class AccountTransactionAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     date_hierarchy = 'due_date'
-    raw_id_fields = ('member', )
+    form = make_ajax_form(MemberSpecials, {'member': 'member'})
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -268,7 +269,7 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created_by',)
     actions = ['set_resolved_entry']
     date_hierarchy = 'booking_date'
-    raw_id_fields = ('member', )
+    form = make_ajax_form(MemberSpecials, {'member': 'member'})
 
     def set_resolved_entry(self, request, queryset):
         rows_updated = queryset.update(is_resolved=True)
@@ -304,7 +305,6 @@ class MemberSpecialsAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     form = MemberSpecialsForm
-    raw_id_fields = ('member', )
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -324,7 +324,7 @@ class MemberTrackingCodeAdmin(VersionAdmin):
     list_display_links = list_display
     list_filter = ('validated', 'member__is_active')
     search_fields = ("member__name", "member__surname", "member__nickname", "member__email")
-    raw_id_fields = ('member', )
+    form = make_ajax_form(MemberSpecials, {'member': 'member'})
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -341,7 +341,7 @@ class MemberDocumentAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     filter_horizontal = ('tag', )
-    raw_id_fields = ('member', )
+    form = make_ajax_form(MemberSpecials, {'member': 'member'})
 
     def has_delete_permission(self, request, obj=None):
         return False
@@ -381,7 +381,7 @@ class BalanceAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created',
                        'created_by',)
     list_filter = ('year', 'member')
-    raw_id_fields = ('member', )
+    form = make_ajax_form(MemberSpecials, {'member': 'member'})
 
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'balance', False):

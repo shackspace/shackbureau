@@ -10,3 +10,4 @@ pytest-django
 requests
 num2words
 docutils
+django-ajax-selects

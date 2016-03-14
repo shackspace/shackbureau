@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'localflavor',
     'reversion',
+    'ajax_select',
     ## own apps
     'usermanagement',
     'districtcourt',
