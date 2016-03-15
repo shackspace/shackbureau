@@ -42,7 +42,7 @@ class MembershipAdmin(OrderMemberByNameMixin, VersionAdmin):
     readonly_fields = ('modified',
                        'created',
                        'created_by',)
-    raw_id_fields = ('member', )
+    form = make_ajax_form(MemberSpecials, {'member': 'member'})
 
     def membership_fee(self, obj):
         return "{} / {}".format(obj.membership_fee_monthly,
