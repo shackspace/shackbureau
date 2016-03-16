@@ -29,8 +29,8 @@ class DistrictcourtAccountTransactionAdmin(VersionAdmin):
     list_display = ("debitor", 'due_date', 'booking_date', 'amount', 'payment_reference')
     list_display_links = list_display
     search_fields = (
-        # "debitor__record_token",
-        # "debitor__record_token_line2",
+        "debitor__record_token",
+        "debitor__record_token_line_2",
         "debitor__name",
         'payment_reference',
     )
