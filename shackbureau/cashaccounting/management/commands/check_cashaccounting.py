@@ -8,9 +8,6 @@ class Command(BaseCommand):
 
     help = "check CashAccounting."
 
-    # def add_arguments(self, parser):
-    #     parser.add_argument('year', type=int)
-
     def handle(self, *args, **options):
         cashtransactions = CashTransaction.objects.all().order_by('transaction_date', 'transaction_date_id')
         for cashtransaction in cashtransactions:

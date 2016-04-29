@@ -10,9 +10,6 @@ class Command(BaseCommand):
 
     help = "Export CashAccounting."
 
-    # def add_arguments(self, parser):
-    #     parser.add_argument('year', type=int)
-
     def handle(self, *args, **options):
         cashtransaction_aggregate = CashTransaction.objects.aggregate(Min('transaction_date'), Max('transaction_date'))
         first_date = cashtransaction_aggregate.get('transaction_date__min')
