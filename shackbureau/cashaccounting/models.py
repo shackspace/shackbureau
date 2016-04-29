@@ -96,122 +96,27 @@ class CashTransaction(models.Model):
         unique_together = (('transaction_date', 'transaction_date_id'), )
 
     transaction_id = models.IntegerField(verbose_name="id", unique=True)
-
     transaction_date = models.DateField()
-
     transaction_date_id = models.IntegerField(verbose_name="Transaction of the Day", default=1)
-
     description = models.CharField(max_length=255)
-
     is_stored_by_account = models.BooleanField(default=False)
 
-    transaction_coin_001 = models.IntegerField(help_text="amount of 1 cent coins",
-                                               verbose_name="transaction 1 cent",
-                                               default=0)
-    transaction_coin_002 = models.IntegerField(help_text="amount of 2 cent coins",
-                                               verbose_name="transaction 2 cent",
-                                               default=0)
-    transaction_coin_005 = models.IntegerField(help_text="amount of 5 cent coins",
-                                               verbose_name="transaction 5 cent",
-                                               default=0)
-    transaction_coin_010 = models.IntegerField(help_text="amount of 10 cent coins",
-                                               verbose_name="transaction 10 cent",
-                                               default=0)
-    transaction_coin_020 = models.IntegerField(help_text="amount of 20 cent coins",
-                                               verbose_name="transaction 20 cent",
-                                               default=0)
-    transaction_coin_050 = models.IntegerField(help_text="amount of 50 cent coins",
-                                               verbose_name="transaction 50 cent",
-                                               default=0)
-    transaction_coin_100 = models.IntegerField(help_text="amount of 1 euro coins",
-                                               verbose_name="transaction 1 euro",
-                                               default=0)
-    transaction_coin_200 = models.IntegerField(help_text="amount of 2 euro coins",
-                                               verbose_name="transaction 2 euro",
-                                               default=0)
-
-    transaction_bill_005 = models.IntegerField(help_text="amount of 5 euro bills",
-                                               verbose_name="transaction 5 euro",
-                                               default=0)
-    transaction_bill_010 = models.IntegerField(help_text="amount of 10 euro bills",
-                                               verbose_name="transaction 10 euro",
-                                               default=0)
-    transaction_bill_020 = models.IntegerField(help_text="amount of 20 euro bills",
-                                               verbose_name="transaction 20 euro",
-                                               default=0)
-    transaction_bill_050 = models.IntegerField(help_text="amount of 50 euro bills",
-                                               verbose_name="transaction 50 euro",
-                                               default=0)
-    transaction_bill_100 = models.IntegerField(help_text="amount of 100 euro bills",
-                                               verbose_name="transaction 100 euro",
-                                               default=0)
-    transaction_bill_200 = models.IntegerField(help_text="amount of 200 euro bills",
-                                               verbose_name="transaction 200 euro",
-                                               default=0)
-    transaction_bill_500 = models.IntegerField(help_text="amount of 500 euro bills",
-                                               verbose_name="transaction 500 euro",
-                                               default=0)
-
-    account_coin_001 = models.IntegerField(help_text="amount of 1 cent coins",
-                                           verbose_name="account 1 cent",
-                                           default=0)
-    account_coin_002 = models.IntegerField(help_text="amount of 2 cent coins",
-                                           verbose_name="account 2 cent",
-                                           default=0)
-    account_coin_005 = models.IntegerField(help_text="amount of 5 cent coins",
-                                           verbose_name="account 5 cent",
-                                           default=0)
-    account_coin_010 = models.IntegerField(help_text="amount of 10 cent coins",
-                                           verbose_name="account 10 cent",
-                                           default=0)
-    account_coin_020 = models.IntegerField(help_text="amount of 20 cent coins",
-                                           verbose_name="account 20 cent",
-                                           default=0)
-    account_coin_050 = models.IntegerField(help_text="amount of 50 cent coins",
-                                           verbose_name="account 50 cent",
-                                           default=0)
-    account_coin_100 = models.IntegerField(help_text="amount of 1 euro coins",
-                                           verbose_name="account 1 euro",
-                                           default=0)
-    account_coin_200 = models.IntegerField(help_text="amount of 2 euro coins",
-                                           verbose_name="account 2 euro",
-                                           default=0)
-
-    account_bill_005 = models.IntegerField(help_text="amount of 5 euro bills",
-                                           verbose_name="account 5 euro",
-                                           default=0)
-    account_bill_010 = models.IntegerField(help_text="amount of 10 euro bills",
-                                           verbose_name="account 10 euro",
-                                           default=0)
-    account_bill_020 = models.IntegerField(help_text="amount of 20 euro bills",
-                                           verbose_name="account 20 euro",
-                                           default=0)
-    account_bill_050 = models.IntegerField(help_text="amount of 50 euro bills",
-                                           verbose_name="account 50 euro",
-                                           default=0)
-    account_bill_100 = models.IntegerField(help_text="amount of 100 euro bills",
-                                           verbose_name="account 100 euro",
-                                           default=0)
-    account_bill_200 = models.IntegerField(help_text="amount of 200 euro bills",
-                                           verbose_name="account 200 euro",
-                                           default=0)
-    account_bill_500 = models.IntegerField(help_text="amount of 500 euro bills",
-                                           verbose_name="account 500 euro",
-                                           default=0)
-
-    transaction_sum = models.DecimalField(
-        max_digits=8,
-        decimal_places=2,)
-
-    account_sum = models.DecimalField(
-        max_digits=8,
-        decimal_places=2,)
+    transaction_cash = models.ForeignKey(CashSet, ondelete=models.CASCADE, help_text='Transaction Cash Set')
+    account_cash = models.ForeignKey(CashSet, ondelete=models.CASCADE, help_text='Account Cash Set')
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     objects = NoBulkOperationsManager()
+
+    @property
+    def transaction_sum(self):
+        return self.transaction_cash.sum()
+
+    @property
+    def account_sum(self):
+        return self.account_cash.sum()
 
     def get_previous_cashtransaction(self):
         return CashTransaction.objects.exclude(id=self.id) \
@@ -229,36 +134,9 @@ class CashTransaction(models.Model):
 
     def get_negative_account_states(self):
         negative_account_states = dict()
-        if self.account_coin_001 < 0:
-            negative_account_states["account_coin_001"] = self.account_coin_001
-        if self.account_coin_002 < 0:
-            negative_account_states["account_coin_002"] = self.account_coin_002
-        if self.account_coin_005 < 0:
-            negative_account_states["account_coin_005"] = self.account_coin_005
-        if self.account_coin_010 < 0:
-            negative_account_states["account_coin_010"] = self.account_coin_010
-        if self.account_coin_020 < 0:
-            negative_account_states["account_coin_020"] = self.account_coin_020
-        if self.account_coin_050 < 0:
-            negative_account_states["account_coin_050"] = self.account_coin_050
-        if self.account_coin_100 < 0:
-            negative_account_states["account_coin_100"] = self.account_coin_100
-        if self.account_coin_200 < 0:
-            negative_account_states["account_coin_200"] = self.account_coin_200
-        if self.account_bill_005 < 0:
-            negative_account_states["account_bill_005"] = self.account_bill_005
-        if self.account_bill_010 < 0:
-            negative_account_states["account_bill_010"] = self.account_bill_010
-        if self.account_bill_020 < 0:
-            negative_account_states["account_bill_020"] = self.account_bill_020
-        if self.account_bill_050 < 0:
-            negative_account_states["account_bill_050"] = self.account_bill_050
-        if self.account_bill_100 < 0:
-            negative_account_states["account_bill_100"] = self.account_bill_100
-        if self.account_bill_200 < 0:
-            negative_account_states["account_bill_200"] = self.account_bill_200
-        if self.account_bill_500 < 0:
-            negative_account_states["account_bill_500"] = self.account_bill_500
+        for attr in self.account_cash.value_mapping:
+            if getattr(self.account_cash, attr) < 0:
+                negative_account_states['account_{}'.format(attr)] = getattr(self.account_cash, attr)
         return negative_account_states
 
     def __str__(self):
@@ -266,8 +144,8 @@ class CashTransaction(models.Model):
                                                      self.transaction_date_id,
                                                      self.transaction_id,
                                                      self.description,
-                                                     self.account_sum,
-                                                     self.transaction_sum)
+                                                     self.account_cash.sum(),
+                                                     self.transaction_cash.sum())
 
     def save(self, *args, **kwargs):
         if not self.transaction_id:
@@ -277,91 +155,14 @@ class CashTransaction(models.Model):
         previous_cashtransaction = self.get_previous_cashtransaction()
         if self.is_stored_by_account:
             if previous_cashtransaction:
-                self.transaction_coin_001 = self.account_coin_001 - previous_cashtransaction.account_coin_001
-                self.transaction_coin_002 = self.account_coin_002 - previous_cashtransaction.account_coin_002
-                self.transaction_coin_005 = self.account_coin_005 - previous_cashtransaction.account_coin_005
-                self.transaction_coin_010 = self.account_coin_010 - previous_cashtransaction.account_coin_010
-                self.transaction_coin_020 = self.account_coin_020 - previous_cashtransaction.account_coin_020
-                self.transaction_coin_050 = self.account_coin_050 - previous_cashtransaction.account_coin_050
-                self.transaction_coin_100 = self.account_coin_100 - previous_cashtransaction.account_coin_100
-                self.transaction_coin_200 = self.account_coin_200 - previous_cashtransaction.account_coin_200
-                self.transaction_bill_005 = self.account_bill_005 - previous_cashtransaction.account_bill_005
-                self.transaction_bill_010 = self.account_bill_010 - previous_cashtransaction.account_bill_010
-                self.transaction_bill_020 = self.account_bill_020 - previous_cashtransaction.account_bill_020
-                self.transaction_bill_050 = self.account_bill_050 - previous_cashtransaction.account_bill_050
-                self.transaction_bill_100 = self.account_bill_100 - previous_cashtransaction.account_bill_100
-                self.transaction_bill_200 = self.account_bill_200 - previous_cashtransaction.account_bill_200
-                self.transaction_bill_500 = self.account_bill_500 - previous_cashtransaction.account_bill_500
+                self.transaction_cash = self.account_cash - previous_cashtransaction.account_cash
             else:
-                self.transaction_coin_001 = self.account_coin_001
-                self.transaction_coin_002 = self.account_coin_002
-                self.transaction_coin_005 = self.account_coin_005
-                self.transaction_coin_010 = self.account_coin_010
-                self.transaction_coin_020 = self.account_coin_020
-                self.transaction_coin_050 = self.account_coin_050
-                self.transaction_coin_100 = self.account_coin_100
-                self.transaction_coin_200 = self.account_coin_200
-                self.transaction_bill_005 = self.account_bill_005
-                self.transaction_bill_010 = self.account_bill_010
-                self.transaction_bill_020 = self.account_bill_020
-                self.transaction_bill_050 = self.account_bill_050
-                self.transaction_bill_100 = self.account_bill_100
-                self.transaction_bill_200 = self.account_bill_200
-                self.transaction_bill_500 = self.account_bill_500
+                self.transaction_cash = self.account_cash
         else:
             if previous_cashtransaction:
-                self.account_coin_001 = previous_cashtransaction.account_coin_001 + self.transaction_coin_001
-                self.account_coin_002 = previous_cashtransaction.account_coin_002 + self.transaction_coin_002
-                self.account_coin_005 = previous_cashtransaction.account_coin_005 + self.transaction_coin_005
-                self.account_coin_010 = previous_cashtransaction.account_coin_010 + self.transaction_coin_010
-                self.account_coin_020 = previous_cashtransaction.account_coin_020 + self.transaction_coin_020
-                self.account_coin_050 = previous_cashtransaction.account_coin_050 + self.transaction_coin_050
-                self.account_coin_100 = previous_cashtransaction.account_coin_100 + self.transaction_coin_100
-                self.account_coin_200 = previous_cashtransaction.account_coin_200 + self.transaction_coin_200
-                self.account_bill_005 = previous_cashtransaction.account_bill_005 + self.transaction_bill_005
-                self.account_bill_010 = previous_cashtransaction.account_bill_010 + self.transaction_bill_010
-                self.account_bill_020 = previous_cashtransaction.account_bill_020 + self.transaction_bill_020
-                self.account_bill_050 = previous_cashtransaction.account_bill_050 + self.transaction_bill_050
-                self.account_bill_100 = previous_cashtransaction.account_bill_100 + self.transaction_bill_100
-                self.account_bill_200 = previous_cashtransaction.account_bill_200 + self.transaction_bill_200
-                self.account_bill_500 = previous_cashtransaction.account_bill_500 + self.transaction_bill_500
+                self.account_cash = previous_cashtransaction.account_cash + self.transaction_cash
             else:
-                self.account_coin_001 = self.transaction_coin_001
-                self.account_coin_002 = self.transaction_coin_002
-                self.account_coin_005 = self.transaction_coin_005
-                self.account_coin_010 = self.transaction_coin_010
-                self.account_coin_020 = self.transaction_coin_020
-                self.account_coin_050 = self.transaction_coin_050
-                self.account_coin_100 = self.transaction_coin_100
-                self.account_coin_200 = self.transaction_coin_200
-                self.account_bill_005 = self.transaction_bill_005
-                self.account_bill_010 = self.transaction_bill_010
-                self.account_bill_020 = self.transaction_bill_020
-                self.account_bill_050 = self.transaction_bill_050
-                self.account_bill_100 = self.transaction_bill_100
-                self.account_bill_200 = self.transaction_bill_200
-                self.account_bill_500 = self.transaction_bill_500
-
-        self.transaction_sum = self.transaction_coin_001 * Decimal("0.01") + \
-            self.transaction_coin_002 * Decimal("0.02") + \
-            self.transaction_coin_005 * Decimal("0.05") + \
-            self.transaction_coin_010 * Decimal("0.10") + \
-            self.transaction_coin_020 * Decimal("0.20") + \
-            self.transaction_coin_050 * Decimal("0.50") + \
-            self.transaction_coin_100 * Decimal("1.00") + \
-            self.transaction_coin_200 * Decimal("2.00") + \
-            self.transaction_bill_005 * Decimal("5.00") + \
-            self.transaction_bill_010 * Decimal("10.00") + \
-            self.transaction_bill_020 * Decimal("20.00") + \
-            self.transaction_bill_050 * Decimal("50.00") + \
-            self.transaction_bill_100 * Decimal("100.00") + \
-            self.transaction_bill_200 * Decimal("200.00") + \
-            self.transaction_bill_500 * Decimal("500.00")
-
-        if previous_cashtransaction:
-            self.account_sum = previous_cashtransaction.account_sum + self.transaction_sum
-        else:
-            self.account_sum = self.transaction_sum
+                self.account_cash = self.transaction_cash
 
         if self.pk:
             old_next_cashtransaction = CashTransaction.objects.get(id=self.id).get_next_cashtransaction()
