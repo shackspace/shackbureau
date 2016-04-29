@@ -34,6 +34,60 @@ class NoBulkOperationsManager(models.Manager):
     def get_queryset(self):
         return NoBulkOperationsQuerySet(self.model)
 
+CASHNAME = 'Amount of {} {} {}'
+class CashSet(models.Model):
+    coin_001 = models.IntegerField(verbose_name=CASHNAME.format(1, 'Cent', 'coins'), default=0)
+    coin_002 = models.IntegerField(verbose_name=CASHNAME.format(2, 'Cent', 'coins'), default=0)
+    coin_005 = models.IntegerField(verbose_name=CASHNAME.format(5, 'Cent', 'coins'), default=0)
+    coin_010 = models.IntegerField(verbose_name=CASHNAME.format(10, 'Cent', 'coins'), default=0)
+    coin_020 = models.IntegerField(verbose_name=CASHNAME.format(20, 'Cent', 'coins'), default=0)
+    coin_050 = models.IntegerField(verbose_name=CASHNAME.format(50, 'Cent', 'coins'), default=0)
+    coin_100 = models.IntegerField(verbose_name=CASHNAME.format(1, 'Euro', 'coins'), default=0)
+    coin_200 = models.IntegerField(verbose_name=CASHNAME.format(2, 'Euro', 'coins'), default=0)
+
+    bill_005 = models.IntegerField(verbose_name=CASHNAME.format(5, 'Euro', 'bills'), default=0)
+    bill_010 = models.IntegerField(verbose_name=CASHNAME.format(10, 'Euro', 'bills'), default=0)
+    bill_020 = models.IntegerField(verbose_name=CASHNAME.format(20, 'Euro', 'bills'), default=0)
+    bill_050 = models.IntegerField(verbose_name=CASHNAME.format(50, 'Euro', 'bills'), default=0)
+    bill_100 = models.IntegerField(verbose_name=CASHNAME.format(100, 'Euro', 'bills'), default=0)
+    bill_200 = models.IntegerField(verbose_name=CASHNAME.format(200, 'Euro', 'bills'), default=0)
+    bill_500 = models.IntegerField(verbose_name=CASHNAME.format(500, 'Euro', 'bills'), default=0)
+
+    value_mapping = {
+        'coin_001': Decimal('0.01'),
+        'coin_002': Decimal('0.02'),
+        'coin_005': Decimal('0.05'),
+        'coin_010': Decimal('0.10'),
+        'coin_020': Decimal('0.20'),
+        'coin_050': Decimal('0.50'),
+        'coin_100': Decimal('1.00'),
+        'coin_200': Decimal('2.00'),
+        'bill_005': Decimal('5.00'),
+        'bill_010': Decimal('10.00'),
+        'bill_020': Decimal('20.00'),
+        'bill_050': Decimal('50.00'),
+        'bill_100': Decimal('100.00'),
+        'bill_200': Decimal('200.00'),
+        'bill_500': Decimal('500.00'),
+    }
+
+    def sum(self):
+        return sum(getattr(self, attr) * value for attr, value in self.value_mapping)
+
+    def __add__(self, other):
+        result = {attr: getattr(self, attr) + getattr(other, attr) for attr in self.value_mapping}
+        return CashSet(**result)
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __sub__(self, other):
+        result = {attr: getattr(self, attr) - getattr(other, attr) for attr in self.value_mapping}
+        return CashSet(**result)
+
+    def __str__(self):
+        return 'CashSet of {}€'.format(self.sum())
+
 
 class CashTransaction(models.Model):
 
