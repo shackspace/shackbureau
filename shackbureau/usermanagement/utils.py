@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 
 from django.db import models
 
-from .models import Member, Membership, BankTransactionLog, AccountTransaction, MemberSpecials
+from .models import Member, Membership, BankTransactionLog, AccountTransaction, MemberSpecials, Memberlog
 from districtcourt.models import Debitor, DistrictcourtAccountTransaction
 
 
@@ -125,6 +125,12 @@ def subscribe_to_mailinglist(mailinglist, emailaddress):
     r = requests.post("https://shackspace.de/mlm-api/lists.shackspace.de/{}/{}".format(mailinglist, emailaddress),
                       auth=(settings.MAILMAN_API_USER, settings.MAILMAN_API_PASSWORD),
                       verify=False)
+    Memberlog.objects.create(
+        action='subscribe to mailinglist {}'.format(mailinglist),
+        detail="{email}\n\nHTTP Response:{status_code}\n{text}".format(email=emailaddress,
+                                                                       status_code=r.status_code,
+                                                                       text=r.text)
+    )
     assert r.status_code == 200
 
 
@@ -138,6 +144,12 @@ def remove_from_mailinglist(mailinglist, emailaddress):
     r = requests.delete("https://shackspace.de/mlm-api/lists.shackspace.de/{}/{}".format(mailinglist, emailaddress),
                         auth=(settings.MAILMAN_API_USER, settings.MAILMAN_API_PASSWORD),
                         verify=False)
+    Memberlog.objects.create(
+        action='unsubscribe from mailinglist {}'.format(mailinglist),
+        detail="{email}\n\nHTTP Response:{status_code}\n{text}".format(email=emailaddress,
+                                                                       status_code=r.status_code,
+                                                                       text=r.text)
+    )
     assert r.status_code == 200
 
 
