@@ -176,6 +176,14 @@ def add_to_mailman(mailaddr, mitgliederml=True):
     subscribe_to_mailinglist("mitglieder-announce", mailaddr)
 
 
+def is_allowed_on_mitglieder_mailinglist(emailaddress):
+    return Member.objects.get_active_members().filter(email__iexact=emailaddress).count() > 0
+
+
+def is_allowed_on_key_mailinglist(emailaddress):
+    return Member.objects.get_active_keymembers().filter(email__iexact=emailaddress).count() > 0
+
+
 class TransactionLogProcessor:
     def __init__(self):
         self.debitors = Debitor.objects.all().values('pk', 'record_token', 'record_token_line_2')

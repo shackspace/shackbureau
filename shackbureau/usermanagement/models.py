@@ -17,11 +17,21 @@ class MemberManager(models.Manager):
                    .filter(Q(is_active=True) | Q(leave_date__gt=date))\
                    .order_by("member_id")
 
+    def get_inactive_members(self, date=None):
+        if date is None:
+            date = datetime.date.today()
+        return self.exclude(join_date__gt=date)\
+                   .filter(Q(is_active=False) | Q(leave_date__lt=date))\
+                   .order_by("member_id")
+
     def get_active_members_in_year(self, year):
         from datetime import date
         return self.filter(join_date__lte=date(year, 12, 31))\
                    .filter(Q(is_active=True) | Q(leave_date__gte=date(year, 1, 1)))\
                    .order_by("member_id")
+
+    def get_active_keymembers(self):
+        return self.get_active_members().filter(memberspecials__is_keyholder=True)
 
     def get_joined_members(self, date):
         return self.filter(join_date=date)
