@@ -14,6 +14,7 @@ from .models import (
     MemberDocumentTag,
     MemberTrackingCode,
     Balance,
+    Memberlog
 )
 from .forms import MemberForm, MemberSpecialsForm, MembershipInlineFormset
 
@@ -382,6 +383,29 @@ class BalanceAdmin(OrderMemberByNameMixin, VersionAdmin):
                        'created_by',)
     list_filter = ('year', 'member')
     form = make_ajax_form(MemberSpecials, {'member': 'member'})
+
+    def save_model(self, request, obj, form, change):
+        if not getattr(obj, 'balance', False):
+            obj.balance = 0
+        if not getattr(obj, 'created_by', False):
+            obj.created_by = request.user
+        return super().save_model(request, obj, form, change)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Memberlog)
+class MemberlogAdmin(admin.ModelAdmin):
+    list_display = ('timestamp', 'member', 'action', 'detail')
+    list_display_links = list_display
+    search_fields = ('member__name', 'member__surname', 'member__nickname', 'action', 'detail')
+    readonly_fields = ('modified',
+                       'created',
+                       'created_by',)
+    list_filter = ('timestamp', 'action', 'member')
+    date_hierarchy = 'timestamp'
+    form = make_ajax_form(Memberlog, {'member': 'member'})
 
     def save_model(self, request, obj, form, change):
         if not getattr(obj, 'balance', False):

@@ -597,3 +597,14 @@ class Balance(models.Model):
 
     def __str__(self):
         return "Balance {} <{}>".format(self.year, self.member)
+
+
+class Memberlog(models.Model):
+    timestamp = models.DateTimeField(auto_now=True)
+    member = models.ForeignKey(Member, blank=True, null=True)
+    action = models.CharField(max_length=255)
+    detail = models.TextField(blank=True, null=True)
+
+    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
