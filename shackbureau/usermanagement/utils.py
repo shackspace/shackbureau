@@ -198,12 +198,14 @@ class TransactionLogProcessor:
             uid = None
             error = None
             if 'Buchungstext' in d:
-                members = Member.objects.filter(surname=d.get('Buchungstext'))
+                members = Member.objects.filter(surname__iexact=d.get('Buchungstext'))
                 if members.count() == 1:
                     member = members.first()
                     uid = member.member_id
             reference = d.get('Buchungstext')
-            amount = Decimal(d.get('Umsatz Haben').replace(',', '.') or 0) - Decimal(d.get('Umsatz Soll').replace(',', '.') or 0)
+            haben = Decimal(d.get('Umsatz Haben').replace(',', '.') or 0)
+            soll = Decimal(d.get('Umsatz Soll').replace(',', '.') or 0)
+            amount = haben - soll
             BankTransactionLog.objects.create(
                 upload=banktransaction,
                 reference=reference,
