@@ -253,8 +253,8 @@ class BankTransactionLogAdmin(OrderMemberByNameMixin, VersionAdmin):
     def add_transaction(self):
         if not self.is_matched and not self.is_resolved:
             return u"<a target='_blank' href='/admin/usermanagement/accounttransaction/add/?" + \
-                "amount={}&booking_date={}&payment_reference={}%0A{}&booking_type=deposit'>Add Transaction</a>".format(
-                    self.amount, self.booking_date, self.reference, self.transaction_owner)
+                "amount={}&booking_date={}&due_date={}&payment_reference={}%0A{}&booking_type=deposit'>Add Transaction</a>" \
+                .format(self.amount, self.booking_date, self.booking_date, self.reference, self.transaction_owner)
         else:
             return ''
     add_transaction.short_description = ''
