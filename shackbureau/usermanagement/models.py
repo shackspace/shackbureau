@@ -186,9 +186,15 @@ class Member(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
     def __str__(self):
+        memberships = ', '.join(
+            ["{ms.valid_from.year}-{ms.valid_from.month:02d} {ms.membership_fee_monthly}"
+             .format(ms=membership)
+             for membership in Membership.objects.filter(member=self).order_by('valid_from')]
+        )
         if self.nickname:
-            return "{}, {} ({}) [ID: {}]".format(self.surname, self.name, self.nickname, self.member_id)
-        return "{}, {} [ID: {}]".format(self.surname, self.name, self.member_id)
+            return "{}, {} ({}) [ID: {}] {{{}}}".format(self.surname, self.name, self.nickname,
+                                                        self.member_id, memberships)
+        return "{}, {} [ID: {}] {{{}}}".format(self.surname, self.name, self.member_id, memberships)
 
     def save(self, *args, **kwargs):
         if not self.member_id:
