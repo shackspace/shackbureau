@@ -187,7 +187,7 @@ class Member(models.Model):
 
     def __str__(self):
         memberships = ', '.join(
-            ["{ms.valid_from.year}-{ms.valid_from.month:02d} {ms.membership_fee_monthly}"
+            ["{ms.valid_from.year}-{ms.valid_from.month:02d} {ms.membership_fee_monthly}/{ms.membership_fee_interval}"
              .format(ms=membership)
              for membership in Membership.objects.filter(member=self).order_by('valid_from')]
         )
