@@ -86,7 +86,7 @@ class MemberDocumentInline(admin.TabularInline):
 @admin.register(Member)
 class MemberAdmin(VersionAdmin):
     list_display = ("member_id", 'is_active', "name", "surname", 'nickname',
-                    'is_underaged')
+                    'is_underaged', 'join_date', 'leave_date')
     list_display_links = list_display
     search_fields = ("=member_id", "name", "surname", "nickname", "email")
     list_filter = ("payment_type", "is_underaged", 'is_active',
