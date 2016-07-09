@@ -1,11 +1,11 @@
-Django<1.9
+Django<=1.10
 django-extensions
 django-flat-theme
 django-localflavor
-django-reversion==1.9.3
+django-reversion
 fake-factory
 ipython
-psycopg2
+psycopg2>=2.5.4
 pytest-django
 requests
 num2words

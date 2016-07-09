@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reversion import VersionAdmin
+from reversion.admin import VersionAdmin
 from django.contrib import messages
 from ajax_select import make_ajax_form
 
