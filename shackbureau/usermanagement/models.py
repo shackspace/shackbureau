@@ -214,22 +214,28 @@ class Member(models.Model):
             ret = send_cancellation_mail_to_cashmaster(self)
             if ret:
                 self.is_cancellation_mail_sent_to_cashmaster = True
-        if not self.is_welcome_mail_sent and self.is_active:
-            from .views import send_welcome_email
-            ret = send_welcome_email(self)
-            if ret:
-                self.is_welcome_mail_sent = True
         if not self.is_registration_to_mailinglists_sent and self.is_active:
             from .utils import add_to_mailman
             add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
             self.is_registration_to_mailinglists_sent = True
-        if not self.is_active and not self.is_revoke_memberspecials_mail_sent:
-            from .views import send_revoke_memberspecials_mail
-            ret = send_revoke_memberspecials_mail(self)
-            if ret:
-                self.is_revoke_memberspecials_mail_sent = True
 
-        return super().save(*args, **kwargs)
+        is_welcome_mail_sent = self.is_welcome_mail_sent
+        self.is_welcome_mail_sent = True and self.is_active
+
+        is_revoke_memberspecials_mail_sent = self.is_revoke_memberspecials_mail_sent
+        self.is_revoke_memberspecials_mail_sent = not self.is_active
+
+        ret = super().save(*args, **kwargs)
+
+        if not self.is_active and not is_revoke_memberspecials_mail_sent:
+            from .views import send_revoke_memberspecials_mail
+            send_revoke_memberspecials_mail(self)
+
+        if not is_welcome_mail_sent and self.is_active:
+            from .views import send_welcome_email
+            send_welcome_email(self)
+
+        return ret
 
     def get_ssh_public_key(self):
         if hasattr(self, 'memberspecials'):
