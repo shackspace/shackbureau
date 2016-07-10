@@ -9,13 +9,10 @@ from .utils import member_statistic
 def send_welcome_email(member):
     content = get_template('welcome_mail.txt').render(Context({'member': member}))
 
-    email = EmailMessage(subject='Willkommen im shack e.V.',
-                         body=content,
-                         to=[member.email],
-                         cc=['vorstand@shackspace.de'],
-                         )
-    ret = email.send()
-    return ret
+    return member.send_email(subject='Willkommen im shack e.V.',
+                             body=content,
+                             cc=['vorstand@shackspace.de'],
+                             )
 
 
 def payment_mail_content(membership):
@@ -74,12 +71,10 @@ def send_nagging_email(accounttransaction):
     content = get_template('nagging_mail.txt').render(Context({'accounttransaction': accounttransaction,
                                                                'member': member}))
 
-    email = EmailMessage(subject='Bitte Verwendungszweck anpassen',
-                         body=content,
-                         to=[member.email],
-                         cc=['vorstand@shackspace.de'])
-    ret = email.send()
-    return ret
+    return member.send_email(email_type="nagging",
+                             subject='Bitte Verwendungszweck anpassen',
+                             body=content,
+                             cc=['vorstand@shackspace.de'])
 
 
 def send_revoke_memberspecials_mail(member):
