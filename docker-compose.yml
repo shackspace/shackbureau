@@ -1,5 +1,5 @@
 web:
-  image: shackspace/shackbureau
+  build: .
   environment:
       PYTHONUNBUFFERED: 0
   links:
