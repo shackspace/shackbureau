@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db import models
 from localflavor.generic.models import IBANField, BICField
 from django.db.models import Q
+from django.contrib.postgres.fields import JSONField
 
 
 class MemberManager(models.Manager):
@@ -620,6 +621,7 @@ class Memberlog(models.Model):
     member = models.ForeignKey(Member, blank=True, null=True)
     action = models.CharField(max_length=255)
     detail = models.TextField(blank=True, null=True)
+    data = JSONField(blank=True, null=True)
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
