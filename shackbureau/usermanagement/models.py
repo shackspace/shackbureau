@@ -264,6 +264,16 @@ class Member(models.Model):
             .aggregate(models.Sum('amount')).get('amount__sum') or 0
         return sum_fee
 
+    def send_email(self, email_type="generic", **kwargs):
+        from django.core.mail import EmailMessage
+        email_parameter = dict(kwargs)
+        email_parameter['to'] = [self.email]
+
+        email = EmailMessage(**email_parameter)
+        ret = email.send()
+        Memberlog.objects.create(member=self, action="email_{}".format(email_type), data=email_parameter)
+        return ret
+
 
 class MembershipManager(models.Manager):
 
