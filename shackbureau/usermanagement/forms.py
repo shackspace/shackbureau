@@ -99,6 +99,7 @@ class MemberSpecialsForm(forms.ModelForm):
             'member',
             'has_matomat_key',
             'has_snackomat_key',
+            'has_laser_key',
             'has_shack_iron_key',
             'has_safe_key',
             'has_metro_card',
