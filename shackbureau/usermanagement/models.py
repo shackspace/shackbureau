@@ -513,6 +513,7 @@ class MemberSpecials(models.Model):
     member = models.OneToOneField("Member")
     has_matomat_key = models.BooleanField(default=False)
     has_snackomat_key = models.BooleanField(default=False)
+    has_laser_key = models.BooleanField(default=False)
     has_metro_card = models.BooleanField(default=False)
     has_selgros_card = models.BooleanField(default=False)
     has_shack_iron_key = models.BooleanField(default=False)
@@ -524,6 +525,8 @@ class MemberSpecials(models.Model):
         null=True, blank=True,
         help_text="The format ist forced into one line, with single whitespaces as seperators"
     )
+
+    laserkey_deposit = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     is_registration_to_key_mailinglist_sent = models.BooleanField(default=False)
 
