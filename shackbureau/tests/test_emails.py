@@ -46,6 +46,7 @@ class TestMemberEmails:
                         "has_selgros_card : True",
                         "has_matomat_key : True",
                         "has_snackomat_key : True",
+                        "has_laser_key : True",
                         "has_metro_card : True",
                         "has_selgros_card : True",
                         "has_shack_iron_key : True",
