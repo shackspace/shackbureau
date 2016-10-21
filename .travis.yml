@@ -8,6 +8,7 @@ install:
   - echo "nope"
 script:
   - docker-compose up -d
+  - sleep 10
   - docker exec -u root -ti shackbureau_web_1 py.test
 notifications:
   irc:
