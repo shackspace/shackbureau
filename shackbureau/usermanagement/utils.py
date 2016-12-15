@@ -295,7 +295,7 @@ class TransactionLogProcessor:
             if member:
                 defaults = {
                     'transaction_type': 'membership fee',
-                    'amount': Decimal(d.get('Betrag').replace(',', '.')),
+                    'amount': Decimal(d.get('Betrag').replace('.', '').replace(',', '.')),
                     'created_by': banktransaction.created_by,
                     'payment_reference': reference
                 }
@@ -309,7 +309,7 @@ class TransactionLogProcessor:
                     defaults=defaults)
             elif debitor:
                 defaults = {
-                    'amount': Decimal(d.get('Betrag').replace(',', '.')),
+                    'amount': Decimal(d.get('Betrag').replace('.', '').replace(',', '.')),
                     'created_by': banktransaction.created_by,
                     'payment_reference': reference
                 }
