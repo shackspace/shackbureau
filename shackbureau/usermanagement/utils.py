@@ -285,7 +285,7 @@ class TransactionLogProcessor:
                 member=member,
                 debitor=debitor,
                 error=error, score=score,
-                amount=Decimal(d.get('Betrag').replace(',', '.')),
+                amount=Decimal(d.get('Betrag').replace('.', '').replace(',', '.')),
                 booking_date=datetime.strptime(d.get('Buchungstag'), '%d.%m.%Y').date(),
                 transaction_owner=d.get('Auftraggeber/Empfänger'),
                 is_matched=bool(uid) or bool(debitor),
