@@ -3,7 +3,7 @@ django-extensions
 django-flat-theme
 django-localflavor
 django-reversion
-fake-factory
+Faker
 ipython
 psycopg2>=2.5.4
 pytest-django
