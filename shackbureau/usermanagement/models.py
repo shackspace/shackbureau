@@ -625,6 +625,7 @@ class Balance(models.Model):
 
     def save(self, *args, **kwargs):
         self.balance = AccountTransaction.objects.filter(due_date__lte=datetime.date.today()) \
+                                                 .filter(transaction_type='membership fee') \
                                                  .filter(member=self.member, due_date__year=self.year) \
                                                  .aggregate(models.Sum('amount')).get('amount__sum') or 0
         self.accumulated_balance = (Balance.objects.filter(member=self.member, year__lt=self.year)
