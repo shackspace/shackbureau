@@ -115,9 +115,11 @@ class DistrictcourtAccountTransaction(models.Model):
         ordering = ('-due_date', )
 
     def __str__(self):
-        return "{}: {} [{}]".format(self.debitor,
-                                    self.booking_type,
-                                    self.due_date)
+        return "{}: {} [{}]".format(
+            self.debitor,
+            self.booking_type,
+            self.amount,
+        )
 
     def save(self, *args, **kwargs):
         # claims are always negative. all others are positive
@@ -150,4 +152,4 @@ class DistrictcourtBalance(models.Model):
         return super().save(*args, **kwargs)
 
     def __str__(self):
-        return "Balance {}".format(self.debitor)
+        return "Balance for debtor {}".format(self.debitor)
