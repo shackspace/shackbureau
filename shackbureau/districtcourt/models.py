@@ -5,9 +5,6 @@ from django.conf import settings
 
 
 class Debitor(models.Model):
-    class Meta:
-        ordering = ('-created', )
-
     debitor_id = models.IntegerField(
         unique=True,
         help_text="Debitor ID")
@@ -48,6 +45,9 @@ class Debitor(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
+    class Meta:
+        ordering = ('-created', )
+
     def __str__(self):
         return "{}, {} [ID: {}]".format(self.name,
                                         self.record_token,
@@ -75,9 +75,6 @@ class Debitor(models.Model):
 
 class DistrictcourtAccountTransaction(models.Model):
 
-    class Meta:
-        ordering = ('-due_date', )
-
     debitor = models.ForeignKey(Debitor)
     amount = models.DecimalField(max_digits=8,
                                  decimal_places=2)
@@ -97,6 +94,9 @@ class DistrictcourtAccountTransaction(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
 
+    class Meta:
+        ordering = ('-due_date', )
+
     def __str__(self):
         return "{}: {} [{}]".format(self.debitor,
                                     self.booking_type,
@@ -111,8 +111,6 @@ class DistrictcourtAccountTransaction(models.Model):
 
 
 class DistrictcourtBalance(models.Model):
-    class Meta:
-        ordering = ('debitor', )
     debitor = models.OneToOneField(Debitor)
     balance = models.DecimalField(max_digits=8,
                                   decimal_places=2)
@@ -120,6 +118,9 @@ class DistrictcourtBalance(models.Model):
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,)
+
+    class Meta:
+        ordering = ('debitor', )
 
     def save(self, *args, **kwargs):
         self.balance = DistrictcourtAccountTransaction.objects.filter(debitor=self.debitor) \
