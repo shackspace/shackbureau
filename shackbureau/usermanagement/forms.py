@@ -146,13 +146,13 @@ class MembershipInlineFormset(forms.models.BaseInlineFormSet):
                     if membership_fee_monthly is not None:
                         if membership_fee_monthly < 20 and membership_type == "full":
                             form.add_error('membership_fee_monthly',
-                                        "Membership Full must have a membership fee greater or equal 20.00")
+                                           "Membership Full must have a membership fee greater or equal 20.00")
                         if membership_fee_monthly >= 20 and membership_type == "reduced":
                             form.add_error('membership_fee_monthly',
-                                        "Membership reduced must have a membership fee lower than 20.00")
+                                           "Membership reduced must have a membership fee lower than 20.00")
                         if membership_fee_monthly < 0:
                             form.add_error('membership_fee_monthly',
-                                        "Negative membership fee is not allowed")
+                                           "Negative membership fee is not allowed")
             except AttributeError:
                 # annoyingly, if a subform is invalid Django explicity raises
                 # an AttributeError for cleaned_data

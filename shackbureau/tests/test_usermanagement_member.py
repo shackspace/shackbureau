@@ -27,18 +27,18 @@ class TestMemberManager:
         day_count = (leave_date_fixture - join_date_fixture).days
         join_date = datetime.date(join_date_fixture.year, join_date_fixture.month, 1)
 
-        #today in from join_date_fixture to leave_date_fixture +- 100 days
+        # today in from join_date_fixture to leave_date_fixture +- 100 days
         for today in [d for d in (join_date_fixture + datetime.timedelta(n) for n in range(-100, day_count + 100, 100))]:
             members = Member.objects.get_active_members(today)
             if today < join_date:
-                assert not member_fixture_transfer in members
-                assert not member_fixture_inactive in members
+                assert member_fixture_transfer not in members
+                assert member_fixture_inactive not in members
             if join_date <= today < leave_date_fixture:
                 assert member_fixture_transfer in members
                 assert member_fixture_inactive in members
             if leave_date_fixture <= today:
                 assert member_fixture_transfer in members
-                assert not member_fixture_inactive in members
+                assert member_fixture_inactive not in members
 
 
 class TestSepa:

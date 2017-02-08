@@ -87,7 +87,6 @@ class TestCashTransaction:
         CashTransaction.objects.bulk_create(cashtransactions)
         self.validate_cashtransactions()
 
-
     def validate_cashtransactions(self):
         cashtransaction = CashTransaction.objects.order_by('transaction_date', 'transaction_date_id').first()
         ctr = 0
