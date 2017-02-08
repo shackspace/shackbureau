@@ -7,39 +7,42 @@ from django.conf import settings
 class Debitor(models.Model):
     debitor_id = models.IntegerField(
         unique=True,
-        help_text="Debitor ID")
-
-    comment = models.TextField(
-        blank=True,
-        null=True)
-
+        help_text="Debitor ID"
+    )
+    name = models.CharField(
+        max_length=255,
+    )
+    debt_amount = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+    )
+    is_done = models.BooleanField(
+        default=False,
+        help_text='Vollständig gezahlt',
+    )
     districtcourt = models.CharField(
         choices=(('reutlingen', 'Amtsgericht Reutlingen'), ),
         max_length=10,
         default="reutlingen",)
-
-    date_of_receipt = models.DateField()
-
+    date_of_receipt = models.DateField(
+        help_text='Datum des Gerichtsbescheids',
+    )
+    due_date = models.DateField(
+        help_text='Zahlungsfrist',
+    )
     record_token = models.CharField(
         max_length=255,
-        help_text="Aktenzeichen")
-
+        help_text="Aktenzeichen",
+    )
     record_token_line_2 = models.CharField(
         max_length=255,
         help_text="Aktenzeichen Zeile 2",
-        blank=True, null=True)
-
-    name = models.CharField(
-        max_length=255,)
-
-    debt_amount = models.DecimalField(
-        max_digits=8,
-        decimal_places=2,)
-
-    due_date = models.DateField()
-
-    is_done = models.BooleanField(
-        default=False,)
+        blank=True, null=True,
+    )
+    comment = models.TextField(
+        blank=True,
+        null=True,
+    )
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -62,31 +65,45 @@ class Debitor(models.Model):
         accounttransaction, created = DistrictcourtAccountTransaction.objects.get_or_create(
             debitor=self,
             booking_type='districtcourt_claim',
-            defaults={'amount': - self.debt_amount,
-                      'due_date': self.date_of_receipt,
-                      'created_by': self.created_by}
+            defaults={
+                'amount': - self.debt_amount,
+                'due_date': self.date_of_receipt,
+                'created_by': self.created_by,
+            }
         )
         accounttransaction.amount = - self.debt_amount
         accounttransaction.due_date = self.date_of_receipt
-        accounttransaction.payment_reference = "debt defined by districtcourt {}".format(self.districtcourt)
+        accounttransaction.payment_reference = "initial debt defined by districtcourt {}".format(self.districtcourt)
         accounttransaction.save()
         return ret
 
 
 class DistrictcourtAccountTransaction(models.Model):
 
-    debitor = models.ForeignKey(Debitor)
-    amount = models.DecimalField(max_digits=8,
-                                 decimal_places=2)
-    due_date = models.DateField()
-    booking_date = models.DateField(default=datetime.date.today)
-    booking_type = models.CharField(max_length=255,
-                                    choices=(
-                                        ('claim', 'Forderung'),
-                                        ('districtcourt_claim', 'Automatische Forderung des Amtsgericht'),
-                                        ('deposit', 'Einzahlung'),
-                                        ('credit', 'Gutschrift'),
-                                    ))
+    debitor = models.ForeignKey(
+        to=Debitor,
+        help_text='Schuldner',
+    )
+    amount = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+    )
+    due_date = models.DateField(
+        help_text='Zahlungsziel',  # TODO: why?
+    )
+    booking_date = models.DateField(
+        default=datetime.date.today,
+        help_text='Date of payment'
+    )
+    booking_type = models.CharField(
+        max_length=255,
+        choices=(
+            ('claim', 'Forderung'),
+            ('districtcourt_claim', 'Automatische Forderung des Amtsgericht'),
+            ('deposit', 'Einzahlung'),
+            ('credit', 'Gutschrift'),
+        ),
+    )
     payment_reference = models.TextField()
     transaction_hash = models.TextField(null=True, blank=True)
 
@@ -111,9 +128,14 @@ class DistrictcourtAccountTransaction(models.Model):
 
 
 class DistrictcourtBalance(models.Model):
-    debitor = models.OneToOneField(Debitor)
-    balance = models.DecimalField(max_digits=8,
-                                  decimal_places=2)
+    debitor = models.OneToOneField(
+        to=Debitor,
+        help_text='Schuldner',
+    )
+    balance = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+    )
 
     modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
