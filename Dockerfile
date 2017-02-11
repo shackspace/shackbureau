@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM python:3.6
 MAINTAINER shackspace
 
 EXPOSE 8000
@@ -6,21 +6,23 @@ EXPOSE 8000
 ENV DEBIAN_FRONTEND noninteractive
 
 USER root
-RUN apt-get update -y && apt-get install -y python3-pip\
-    zlib1g-dev\
-    libjpeg8-dev\
-    lib32z1-dev\
-    postgresql-server-dev-all\
+RUN apt-get update -y && apt-get install -y \
+    bash\
+    curl\
     git\
-    postgresql-client\
+    lib32z1-dev\
     libfreetype6-dev\
-    curl
+    libjpeg-dev\
+    locales\
+    postgresql-server-dev-all\
+    postgresql-client\
+    zlib1g-dev
 
 RUN apt-get install --no-install-recommends -y \
-    texlive\
-    texlive-latex-extra\
     lmodern\
-    texlive-lang-german
+    texlive\
+    texlive-lang-german\
+    texlive-latex-extra
 
 # Set the locale
 RUN locale-gen en_US.UTF-8  
