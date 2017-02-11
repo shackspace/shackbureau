@@ -11,7 +11,7 @@ web:
   entrypoint:
    - 'python3'
    - 'manage.py'
-  command: 
+  command:
    - 'runserver'
    - '0.0.0.0:8000'
   ports:

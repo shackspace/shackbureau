@@ -10,8 +10,8 @@ from django.conf import settings
 def pdflatex(base_filename, template, context, tempdirectory, additional_files=None):
     base_filename = get_valid_filename(base_filename)
     tex_file = path.join(tempdirectory, "{}.tex".format(base_filename))
-    with open(tex_file, 'w') as tex:
-        tex.write(get_template(template).render(Context(context)))
+    with open(tex_file, 'wb') as tex:
+        tex.write(get_template(template).render(Context(context)).encode('utf-8'))
 
     if additional_files:
         for additional_file in additional_files:

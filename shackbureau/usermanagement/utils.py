@@ -15,7 +15,7 @@ from districtcourt.models import Debitor, DistrictcourtAccountTransaction
 
 
 def import_old_shit(filename):
-    with open(filename) as fp:
+    with open(filename, encoding="utf-8") as fp:
         reader = csv.reader(fp, delimiter=";", quotechar='"')
         headers = reader.__next__()
         for line in reader:

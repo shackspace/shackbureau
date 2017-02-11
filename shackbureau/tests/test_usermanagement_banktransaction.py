@@ -50,7 +50,7 @@ class TestBankTransactionUpload:
         fn = os.path.join(folder, 'fixtures',
                           'sample_lastschrift.csv')
         dummy_file = io.BytesIO()
-        dummy_file.write(open(fn).read().encode('utf-8'))
+        dummy_file.write(open(fn, encoding="latin-1").read().encode('latin-1'))
         text_file = InMemoryUploadedFile(dummy_file, None, 'sample_lastschrift.csv', 'text',
                                          len(dummy_file.read()), None)
         return text_file
