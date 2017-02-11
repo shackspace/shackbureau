@@ -6,7 +6,7 @@
 
 \begin{tabularx}{\textwidth}{|Xr|}
   \hline
-  {\bfseries Aussteller} & \multirow{2}{*}{\includegraphics[height=4.5em]{img/logo_shack_brightbg}} \\ 
+  {\bfseries Aussteller} & \multirow{2}{*}{\includegraphics[height=4.5em]{img/logo_shack_brightbg}} \\
   shack e.V. & \\
   Ulmerstr. 255 & \\
   70327 Stuttgart & \\
@@ -23,7 +23,7 @@ Bestätigung über Sachzuwendungen
 {% endif %}
 {% verbatim %}
 }
-  
+
 im Sinne des §10b des Einkommensteuergesetzes an eine der in §5 Abs. 1 Nr. 9 des
 Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen oder Vermögensmassen
 
@@ -38,7 +38,7 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 
 \begin{tabulary}{\textwidth}{|c|C|c|}
   \hline
-  {\bfseries Betrag der Zuwendung}  &  {\bfseries - in Buchstaben -}  &  {\bfseries Tag der Zuwendung}\\ 
+  {\bfseries Betrag der Zuwendung}  &  {\bfseries - in Buchstaben -}  &  {\bfseries Tag der Zuwendung}\\
 {% endverbatim %}
   {% language 'de' %}
   EUR {{ amount|floatformat:2 }}  &  {{ amount | num2words:'de' }}  &  {{ day_of_donation | date_or_string:"d.m.Y" }}\\
@@ -83,7 +83,7 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
   {% if is_from_private_assets %}$\boxtimes${% else %}$\square${% endif %} &
   Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen.\\
 
-  {% if no_information_about_origin %}$\boxtimes${% else %}$\square${% endif %} & 
+  {% if no_information_about_origin %}$\boxtimes${% else %}$\square${% endif %} &
   Der Zuwendende hat trotz Aufforderung keine Angaben zur Herkunft der Sachzuwendung gemacht.\\
 
   {% if has_documents_of_value %}$\boxtimes${% else %}$\square${% endif %} &

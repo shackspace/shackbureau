@@ -25,10 +25,10 @@ RUN apt-get install --no-install-recommends -y \
     texlive-latex-extra
 
 # Set the locale
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8  
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 ADD requirements.txt /opt/code/requirements.txt
 WORKDIR /opt/code
