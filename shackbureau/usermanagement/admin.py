@@ -83,6 +83,31 @@ class MemberDocumentInline(admin.TabularInline):
                        'created_by',)
 
 
+class MemberSpecialInline(admin.TabularInline):
+    model = MemberSpecials
+    extra = 0
+    min_num = 1
+    exclude = ('created_by', 'is_registration_to_key_mailinglist_sent')
+
+
+class BalanceInline(admin.TabularInline):
+    model = Balance
+    extra = 0
+    min_num = 1
+    fields = ('balance',
+              'accumulated_balance',
+              'year')
+    readonly_fields = ('balance',
+                       'accumulated_balance',
+                       'year')
+
+    def get_queryset(self, request):
+        from django.db.models import Max, F
+        qs = super().get_queryset(request)
+        year_max = qs.aggregate(Max('year')).get('year__max')
+        return qs.filter(year=year_max)
+
+
 @admin.register(Member)
 class MemberAdmin(VersionAdmin):
     list_display = ("member_id", 'is_active', "name", "surname", 'nickname',
@@ -143,6 +168,8 @@ class MemberAdmin(VersionAdmin):
     inlines = [
         MembershipInline,
         MemberDocumentInline,
+        MemberSpecialInline,
+        BalanceInline,
     ]
     form = MemberForm
     actions = None
@@ -173,16 +200,13 @@ class MemberAdmin(VersionAdmin):
                 if not getattr(obj, 'valid_from', False):
                     # don't save if valid_from is not set
                     continue
-                if not getattr(obj, 'created_by', False):
-                    obj.created_by = request.user
-                obj.save()
             if isinstance(obj, MemberDocument):
                 if not getattr(obj, 'data_file', False):
                     # don't save without a file
                     continue
-                if not getattr(obj, 'created_by', False):
-                    obj.created_by = request.user
-                obj.save()
+            if not getattr(obj, 'created_by', False):
+                obj.created_by = request.user
+            obj.save()
             formset.save_m2m()
 
     def has_delete_permission(self, request, obj=None):
