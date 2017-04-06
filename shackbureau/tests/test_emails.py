@@ -1,6 +1,5 @@
 # coding=utf-8
 import pytest
-from django.template import Context
 from django.template.loader import get_template
 
 
@@ -8,14 +7,14 @@ from django.template.loader import get_template
 class TestMemberEmails:
 
     def test_welcome_mail_transfer(self, member_fixture_transfer):
-        mail_content = get_template('welcome_mail.txt').render(Context({'member': member_fixture_transfer}))
+        mail_content = get_template('welcome_mail.txt').render({'member': member_fixture_transfer})
         assert mail_content.split('\n')[0] == 'Hallo {},'.format(member_fixture_transfer.name)
         assert 'überweise deinen Mitgliedsbeitrag' in mail_content
         assert 'shack e.V. Mitgliedsbeitrag ID {}'.format(member_fixture_transfer.member_id) in mail_content
         assert 'SEPA-Lastschriftmandat' not in mail_content
 
     def test_welcome_mail_sepa(self, member_fixture_sepa):
-        mail_content = get_template('welcome_mail.txt').render(Context({'member': member_fixture_sepa}))
+        mail_content = get_template('welcome_mail.txt').render({'member': member_fixture_sepa})
         assert mail_content.split('\n')[0] == 'Hallo {},'.format(member_fixture_sepa.name)
         assert 'überweise deinen Mitgliedsbeitrag' not in mail_content
         assert 'SEPA-Lastschriftmandat' in mail_content
@@ -27,8 +26,8 @@ class TestMemberEmails:
                          'modified', 'created_by_id', 'id :', 'member_id']
         # test member_fixture_keymember
         specials = member_fixture_keymember.memberspecials.active_specials()
-        content = get_template('revoke_memberspecials_mail.txt').render(Context({'specials': specials,
-                                                                                 'member': member_fixture_keymember}))
+        content = get_template('revoke_memberspecials_mail.txt').render({'specials': specials,
+                                                                         'member': member_fixture_keymember})
         assert "is_keyholder : True" in content
         assert "has_matomat_key" not in content
         assert "has_selgros_card" not in content
@@ -40,8 +39,8 @@ class TestMemberEmails:
         # test member_fixture_memberspecials
         specials = member_fixture_memberspecials.memberspecials.active_specials()
         content = get_template('revoke_memberspecials_mail.txt') \
-            .render(Context({'specials': specials,
-                             'member': member_fixture_memberspecials}))
+            .render({'specials': specials,
+                     'member': member_fixture_memberspecials})
         for special in ["has_matomat_key : True",
                         "has_selgros_card : True",
                         "has_matomat_key : True",

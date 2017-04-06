@@ -2,7 +2,6 @@ from os import path, mkdir
 from subprocess import call
 from shutil import copyfile
 from django.template.loader import get_template
-from django.template import Context
 from django.utils.text import get_valid_filename
 from django.conf import settings
 
@@ -11,7 +10,7 @@ def pdflatex(base_filename, template, context, tempdirectory, additional_files=N
     base_filename = get_valid_filename(base_filename)
     tex_file = path.join(tempdirectory, "{}.tex".format(base_filename))
     with open(tex_file, 'w') as tex:
-        tex.write(get_template(template).render(Context(context)))
+        tex.write(get_template(template).render(context))
 
     if additional_files:
         for additional_file in additional_files:
