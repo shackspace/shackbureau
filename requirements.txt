@@ -12,3 +12,4 @@ psycopg2>=2.5.4
 pylama
 pytest-django
 requests
+pytest-pudb
