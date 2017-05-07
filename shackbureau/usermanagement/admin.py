@@ -168,8 +168,8 @@ class MemberAdmin(VersionAdmin):
     inlines = [
         MembershipInline,
         MemberDocumentInline,
-        MemberSpecialInline,
-        BalanceInline,
+#        MemberSpecialInline,
+#        BalanceInline,
     ]
     form = MemberForm
     actions = None
