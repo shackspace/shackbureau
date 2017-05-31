@@ -17,15 +17,15 @@
 {\bfseries
 {% endverbatim %}
 {% if donation_type == 'allowance in money' %}
-Bestätigung über Geldzuwendungen/Mitgliedsbeitrag
+Bestaetigung ueber Geldzuwendungen/Mitgliedsbeitrag
 {% elif donation_type == 'benefits' %}
-Bestätigung über Sachzuwendungen
+Bestaetigung ueber Sachzuwendungen
 {% endif %}
 {% verbatim %}
 }
   
-im Sinne des §10b des Einkommensteuergesetzes an eine der in §5 Abs. 1 Nr. 9 des
-Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen oder Vermögensmassen
+im Sinne des Paragraph 10b des Einkommensteuergesetzes an eine der in Paragraph 5 Abs. 1 Nr. 9 des
+Koerperschaftsteuergesetzes bezeichneten Koerperschaften, Personenvereinigungen oder Vermoegensmassen
 
 \begin{tabularx}{\textwidth}{|X|}
   \hline
@@ -76,12 +76,12 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 {% endverbatim %}
 {% if donation_type == "benefits" %}
   {% if is_from_business_assets %}$\boxtimes${% else %}$\square${% endif %} &
-  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermögen.
+  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Betriebsvermoegen.
   Die Zuwendung wurde nach dem Wert der Entnahme (ggf. mit dem niedrigeren gemeinen Wert)
-  und nach der Umsatzsteuer, die auf die Entnahme entfällt, bewertet.\\
+  und nach der Umsatzsteuer, die auf die Entnahme entfaellt, bewertet.\\
 
   {% if is_from_private_assets %}$\boxtimes${% else %}$\square${% endif %} &
-  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermögen.\\
+  Die Sachzuwendung stammt nach den Angaben des Zuwendenden aus dem Privatvermoegen.\\
 
   {% if no_information_about_origin %}$\boxtimes${% else %}$\square${% endif %} & 
   Der Zuwendende hat trotz Aufforderung keine Angaben zur Herkunft der Sachzuwendung gemacht.\\
@@ -91,17 +91,17 @@ Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen 
 {% endif %}
 
 {% verbatim %}
-  $\boxtimes$ & Wir sind wegen Förderung der Volks- und Berufsbildung sowie der Studentenhilfe
+  $\boxtimes$ & Wir sind wegen Foerderung der Volks- und Berufsbildung sowie der Studentenhilfe
 nach dem Freistellungsbescheid des Finanzamtes Stuttgart, Steuernummer 99059/29935,
-vom 26.06.2015 für den letzten Veranlagungszeitraum 2013 nach §5 Abs. 1 Nr. 9 des
-Körperschaftsteuergesetzes von der Körperschaftsteuer und nach §3 Nr. 6 des
+vom 26.06.2015 fuer den letzten Veranlagungszeitraum 2013 nach Paragraph 5 Abs. 1 Nr. 9 des
+Koerperschaftsteuergesetzes von der Koerperschaftsteuer und nach Paragraph 3 Nr. 6 des
 Gewerbesteuergesetzes von der Gewerbesteuer befreit.
 \end{tabularx}
 
 
 \begin{tabularx}{\textwidth}{|X|}
   \hline
-  Es wird bestätigt, dass die Zuwendung nur zur Förderung der Volks- und Berufsbildung
+  Es wird bestaetigt, dass die Zuwendung nur zur Foerderung der Volks- und Berufsbildung
   sowie der Studentenhilfe verwendet wird.\\
   \hline
 \end{tabularx}
@@ -114,12 +114,12 @@ Gewerbesteuergesetzes von der Gewerbesteuer befreit.
 {% if no_signature %}
 {% verbatim %}
 \begin{center}
-Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.
+Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gueltig.
 \end{center}
 {% endverbatim %}
 {% else %}
 \hline \\
-(Ort, Datum und Unterschrift des Zuwendungsempfängers)
+(Ort, Datum und Unterschrift des Zuwendungsempfaengers)
 {% endif %}
 
 {% verbatim %}
@@ -127,15 +127,15 @@ Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.
 \vfill
 
 {\footnotesize{\bfseries Hinweis}\\
-Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder
-wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen
-steuerbegünstigten Zwecken verwendet werden, haftet für die Steuer, die dem Fiskus durch
-einen etwaigen Abzug der Zuwendungen beim Zuwendenden entgeht (§10b Abs. 4 EStG, §9 Abs. 3 KStG,
-§9 Nr. 5 GewStG).\\
-Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt,
-wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der vorläufigen
-Bescheinigung länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt
-(BMF vom 15.12.1994 – BStBl I S. 884).
+Wer vorsaetzlich oder grob fahrlaessig eine unrichtige Zuwendungsbestaetigung erstellt oder
+wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestaetigung angegebenen
+steuerbeguenstigten Zwecken verwendet werden, haftet fuer die Steuer, die dem Fiskus durch
+einen etwaigen Abzug der Zuwendungen beim Zuwendenden entgeht (Paragraph 10b Abs. 4 EStG, Paragraph 9 Abs. 3 KStG,
+Paragraph 9 Nr. 5 GewStG).\\
+Diese Bestaetigung wird nicht als Nachweis fuer die steuerliche Beruecksichtigung der Zuwendung anerkannt,
+wenn das Datum des Freistellungsbescheides laenger als 5 Jahre bzw. das Datum der vorlaeufigen
+Bescheinigung laenger als 3 Jahre seit Ausstellung der Bestaetigung zurueckliegt
+(BMF vom 15.12.1994 - BStBl I S. 884).
 }
 
 {% endverbatim %}
