@@ -51,6 +51,10 @@ def main():
                 elif action == 'm':
                     print(template_text.replace('{{ member_id }}', member['member_id']).replace('{{ amount }}', member['accumulated_balance']).replace('{{ email }}', member['email']))
 
+                    delete = input('Delete this user from list? (y/n) ')
+                    if delete == 'y':
+                        del(member)
+
     except Exception as e:
         print(e)
         print_help()
