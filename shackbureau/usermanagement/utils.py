@@ -448,3 +448,14 @@ def get_shackbureau_user():
     shackbureau, created = user_model.objects.get_or_create(username='shackbureau',
                                                             defaults={'is_active': False})
     return shackbureau
+
+
+def safe_print(string):
+    result = ''
+    for letter in string:
+        try:
+            print(letter)
+            result += letter
+        except:
+            result += '_'
+    return result
