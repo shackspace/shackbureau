@@ -1,7 +1,9 @@
 import csv
 import hashlib
+import os
 import requests
 import re
+from contextlib import redirect_stdout
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 
@@ -452,10 +454,11 @@ def get_shackbureau_user():
 
 def safe_print(string):
     result = ''
-    for letter in string:
-        try:
-            print(letter)
-            result += letter
-        except:
-            result += '_'
+    with redirect_stdout(open(os.devnull, 'w')):
+        for letter in string:
+            try:
+                print(letter)
+                result += letter
+            except:
+                result += '_'
     return result
