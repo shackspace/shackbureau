@@ -10,5 +10,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for member in Member.objects.all():
-            print(member)
+            try:
+                print(member)
+            except:
+                print('Member ID ' + str(member.member_id))
             Balance.objects.fix_or_create_balances(member)
