@@ -50,7 +50,15 @@ def main():
                 elif action == 's':
                     continue
                 elif action == 'm':
-                    print(template_text.replace('{{ member_id }}', member['member_id']).replace('{{ amount }}', member['accumulated_balance']).replace('{{ email }}', member['email']))
+                    print('\n=== BEGIN MAIL ===\n\n')
+                    print(
+                        template_text\
+                            .replace('{{ member_id }}', member['member_id'])\
+                            .replace('{{ name }}', member['name'])\
+                            .replace('{{ amount }}', f'{round(abs(float(member["accumulated_balance"])), 2):.2f}'.replace('.', ','))\
+                            .replace('{{ email }}', member['email'])
+                    )
+                    print('\n=== END MAIL ===\n\n')
 
                     delete = input('Delete this user from list? (y/n) ')
                     if delete == 'y':
