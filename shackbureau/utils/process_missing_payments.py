@@ -15,6 +15,7 @@ def print_member(member):
         print(f'{member["name"]} {flag}')
     print(f'Schuldet {member["accumulated_balance"]} €, davon {member["balance"]} € von {member["year"]}')
     print(f'Letzte Zahlungen: http://localhost:8000/admin/usermanagement/accounttransaction/?booking_type__exact=deposit&q={member["name"].replace(" ", "+")}')
+    print(f'Balances: http://localhost:8000/admin/usermanagement/balance/?q={member["name"].replace(" ", "+")}')
     print()
 
 
