@@ -36,17 +36,17 @@ def main():
         with open(csv_path) as csv_file:
             reader = csv.DictReader(csv_file)
             members = [m for m in reader]
-            for member in members:
+            for index, member in enumerate(members):
                 print_member(member)
                 action = input('(m)ail, (s)kip, (d)elete from list, (w)rite list and quit, (q)uit: ')
 
                 if action == 'q':
                     return
                 elif action == 'w':
-                    write_dict(members, reader.fieldnames)
+                    write_dict([m for m in members if m is not None], reader.fieldnames)
                     return
                 elif action == 'd':
-                    del(member)
+                    members[index] = None
                 elif action == 's':
                     continue
                 elif action == 'm':
@@ -54,7 +54,8 @@ def main():
 
                     delete = input('Delete this user from list? (y/n) ')
                     if delete == 'y':
-                        del(member)
+                        members[index] = None
+            write_dict([m for m in members if m is not None], reader.fieldnames)
 
     except Exception as e:
         print(e)
