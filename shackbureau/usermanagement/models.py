@@ -214,10 +214,10 @@ class Member(models.Model):
             ret = send_cancellation_mail_to_cashmaster(self)
             if ret:
                 self.is_cancellation_mail_sent_to_cashmaster = True
-        if not self.is_registration_to_mailinglists_sent and self.is_active:
-            from .utils import add_to_mailman
-            add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
-            self.is_registration_to_mailinglists_sent = True
+#        if not self.is_registration_to_mailinglists_sent and self.is_active:
+#            from .utils import add_to_mailman
+#            add_to_mailman(self.email, self.mailing_list_initial_mitglieder)
+#            self.is_registration_to_mailinglists_sent = True
 
         is_welcome_mail_sent = self.is_welcome_mail_sent
         self.is_welcome_mail_sent = True and self.is_active
@@ -548,10 +548,10 @@ class MemberSpecials(models.Model):
             # format ssh-key in on line seperated by single whitespaces
             self.ssh_public_key = " ".join(self.ssh_public_key.strip().split())
 
-        if self.is_keyholder and not self.is_registration_to_key_mailinglist_sent:
-            from .utils import subscribe_to_mailinglist
-            subscribe_to_mailinglist("key", self.member.email)
-            self.is_registration_to_key_mailinglist_sent = True
+#        if self.is_keyholder and not self.is_registration_to_key_mailinglist_sent:
+#            from .utils import subscribe_to_mailinglist
+#            subscribe_to_mailinglist("key", self.member.email)
+#            self.is_registration_to_key_mailinglist_sent = True
 
         return super().save(*args, **kwargs)
 
