@@ -88,7 +88,7 @@ def send_revoke_memberspecials_mail(member):
 
     email = EmailMessage(subject='Revoke Memberspecials for {}'.format(member),
                          body=content,
-                         to=['tt-vorstand@shackspace.de'])
+                         to=['help@shackspace.de'])
     ret = email.send()
     return ret
 
