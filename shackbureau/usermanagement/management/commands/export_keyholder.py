@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 'members': members,
             }
             content = get_template('portal_authorized_keys.txt')\
-                .render(Context(context))
+                .render(context)
 
             with open(path.join(settings.EXPORT_ROOT, "authorized_keys." +
                                 task), 'w') as f:
