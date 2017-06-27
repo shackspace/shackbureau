@@ -11,8 +11,8 @@ deine Mandatsreferenz lautet: {{ member.get_mandate_reference }}
 {% else %}
 Bitte überweise deinen Mitgliedsbeitrag mit dem Verwendungszweck:
 {{ member.get_mandate_reason }}
-Unsere Kontodaten findest du hier: 
-http://shackspace.de/wiki/doku.php?id=golden_bankaccount
+Unsere Kontodaten findest du hier:
+https://wiki.shackspace.de/kasse/start
 {% endif %}
 
 Viel Spaß im shackspace
@@ -20,5 +20,5 @@ Viel Spaß im shackspace
 shackbureau
 https://github.com/shackspace/shackbureau
 
-[1] http://shackspace.de/wiki/doku.php?id=styleschutz:mailinglisten
+[1] https://wiki.shackspace.de/styleschutz/mailinglisten
 
