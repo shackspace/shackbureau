@@ -1,8 +1,10 @@
 # coding=utf-8
-from django.core.management import BaseCommand
-from django.template import Context
-from django.template.loader import get_template
+from django.db.models import Q
 from django.conf import settings
+from django.core.management import BaseCommand
+from django.template.loader import get_template
+from django.utils import timezone
+
 from os import path
 
 
@@ -13,8 +15,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from usermanagement.models import Member
 
-        members = Member.objects.filter(memberspecials__is_keyholder=True)\
-            .filter(is_active=True).order_by("member_id")
+        members = Member.objects.filter(memberspecials__is_keyholder=True) \
+                                .filter(Q(is_active=True) | Q(leave_date__gt=timezone.now()))\
+                                .order_by("member_id")
 
         for task in ["open", "close"]:
             context = {
