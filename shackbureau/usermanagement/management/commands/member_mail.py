@@ -1,4 +1,6 @@
 # coding=utf-8
+import time
+
 from django.core.management import BaseCommand
 from django.template import Context
 from django.template.loader import get_template
@@ -17,9 +19,14 @@ class Command(BaseCommand):
             if not member.email:
                 continue
 
+            time.sleep(1)
             uuid, created = MemberTrackingCode.objects.get_or_create(member=member,
                                                                      created_by=get_shackbureau_user())
             if uuid.validated:
+                continue
+
+            # only send mail, when created
+            if not created:
                 continue
 
             context = {
