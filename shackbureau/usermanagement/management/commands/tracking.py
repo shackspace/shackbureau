@@ -13,7 +13,7 @@ class Command(BaseCommand):
         from usermanagement.models import MemberTrackingCode
         with open(options['filename']) as fp:
             for line in fp.readlines():
-                dt, uuid_str = line.strip().split(',')
+                uuid_str = line 
                 try:
                     mtc = MemberTrackingCode.objects.filter(uuid=uuid_str).first()
                     if mtc:
