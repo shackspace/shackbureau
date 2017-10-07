@@ -1,10 +1,9 @@
 # coding=utf-8
-import time
-
+from django.core.mail import EmailMessage
 from django.core.management import BaseCommand
+from django.db import transaction
 from django.template import Context
 from django.template.loader import get_template
-from django.core.mail import EmailMessage
 
 from usermanagement.utils import get_shackbureau_user
 
@@ -19,26 +18,26 @@ class Command(BaseCommand):
             if not member.email:
                 continue
 
-            time.sleep(1)
-            uuid, created = MemberTrackingCode.objects.get_or_create(member=member,
-                                                                     created_by=get_shackbureau_user())
-            if uuid.validated:
-                continue
+            with transaction.atomic():
+                uuid, created = MemberTrackingCode.objects.get_or_create(member=member,
+                                                                         created_by=get_shackbureau_user())
+                if uuid.validated:
+                    continue
 
-            # only send mail, when created
-            if not created:
-                continue
+                # only send mail, when created
+                if not created:
+                    continue
 
-            context = {
-                'uuid': uuid,
-                'member': member,
-            }
-            content = get_template('active_member_mail.txt').render(Context(context))
+                context = {
+                    'uuid': uuid,
+                    'member': member,
+                }
+                content = get_template('active_member_mail.txt').render(Context(context))
 
-            print(member.email)
+                print(member.email)
 
-            email = EmailMessage('Deine Mitgliedsdaten',
-                                 content,
-                                 'vorstand@shackspace.de',
-                                 [member.email])
-            email.send()
+                email = EmailMessage('Deine Mitgliedsdaten',
+                                     content,
+                                     'vorstand@shackspace.de',
+                                     [member.email])
+                email.send()
