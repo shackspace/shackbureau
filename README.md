@@ -19,7 +19,7 @@ the one and only (yet another) shack member managment
 #### db reset
     dc run --rm web reset_db
 
-#### database reset
+#### (re-)create database structure
     dc run --rm web migrate
 
 #### createsuperuser
