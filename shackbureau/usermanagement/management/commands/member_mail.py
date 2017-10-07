@@ -13,13 +13,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from usermanagement.models import Member, MemberTrackingCode
-        for member in Member.objects.filter(is_active=True)\
-                                    .filter(membertrackingcode__validated=False):
+        for member in Member.objects.filter(is_active=True):
             if not member.email:
                 continue
 
             uuid, created = MemberTrackingCode.objects.get_or_create(member=member,
                                                                      created_by=get_shackbureau_user())
+            if uuid.validated:
+                continue
+
             context = {
                 'uuid': uuid,
                 'member': member,
