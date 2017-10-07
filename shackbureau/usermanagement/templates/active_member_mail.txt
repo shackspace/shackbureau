@@ -3,7 +3,7 @@ Hallo {{ member.name }},
 Wir schreiben dir, um deine bei uns hinterlegten Daten zu verifizieren.
 
 Bitte klicke in erster Instanz auf folgenden Link damit wir wissen dass unsere E-Mail ankam:
-http://active.shack.space/uuid/{{ uuid.uuid }}
+http://active.shack.space/{{ uuid.uuid }}
 
 Deine bei uns hinterlegten Daten sind:
 
