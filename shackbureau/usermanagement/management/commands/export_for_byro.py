@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 'sepa__iban': member.iban,
                 'sepa__bic': member.bic,
                 'sepa__institute': member.iban_institute,
-                'sepa__issue_date': member.iban_issue_date,
+                'sepa__issue_date': str(member.iban_issue_date or ''),
                 'sepa__fullname': member.iban_fullname,
                 'sepa__address': member.iban_address,
                 'sepa__zip_code': member.iban_zip_code,
@@ -67,8 +67,8 @@ class Command(BaseCommand):
             memberships = []
             for membership in member.membership_set.all():
                 membership_dict = {
-                    "membership_start": membership.valid_from,
-                    "membership_fee_monthly": membership.membership_fee_monthly,
+                    "membership_start": str(membership.valid_from),
+                    "membership_fee_monthly": str(membership.membership_fee_monthly),
                     "membership_type": membership.membership_type,
                     "membership_fee_interval": membership.membership_fee_interval
                 }
@@ -76,4 +76,4 @@ class Command(BaseCommand):
 
             members_list.append(member_dict)
         with open(path.join(settings.EXPORT_ROOT, "shack2byro.json"), "w") as fp:
-            json.dump(members_list, fp, sort_keys=True)
+            json.dump(members_list, fp, sort_keys=True, indent=2)
