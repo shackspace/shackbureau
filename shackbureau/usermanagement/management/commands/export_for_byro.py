@@ -66,13 +66,13 @@ class Command(BaseCommand):
 
             memberships = []
             for membership in member.membership_set.all():
-                membership_dict = {
+                memberships.append({
                     "membership_start": str(membership.valid_from),
                     "membership_fee_monthly": str(membership.membership_fee_monthly),
                     "membership_type": membership.membership_type,
                     "membership_fee_interval": membership.membership_fee_interval
-                }
-            member_dict['memberships'] = membership_dict
+                })
+            member_dict['memberships'] = memberships
 
             members_list.append(member_dict)
         with open(path.join(settings.EXPORT_ROOT, "shack2byro.json"), "w") as fp:
