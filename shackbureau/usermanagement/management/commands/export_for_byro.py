@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = "Export everything for byro!"
 
     def handle(self, *args, **options):
-        from usermanagement.models import Member
+        from usermanagement.models import BankTransactionLog, Member
 
         members_list = []
         for member in Member.objects.order_by("member_id"):
@@ -75,5 +75,19 @@ class Command(BaseCommand):
             member_dict['memberships'] = memberships
 
             members_list.append(member_dict)
+
+        transactions = []
+        for btrans in BankTransactionLog.objects.filter(member__isnull=True):
+            transactions.append({
+                'booking_date': str(btrans.booking_date),
+                'debitor_id': str(btrans.debitor_id),
+                'reference': btrans.reference,
+                'transaction_owner': btrans.transaction_owner,
+                'amount': str(btrans.amount),
+            })
+        document = {
+            'members': members_list,
+            'unresolved_bank_transactions': transactions,
+        }
         with open(path.join(settings.EXPORT_ROOT, "shack2byro.json"), "w") as fp:
-            json.dump(members_list, fp, sort_keys=True, indent=2)
+            json.dump(document, fp, sort_keys=True, indent=2)
