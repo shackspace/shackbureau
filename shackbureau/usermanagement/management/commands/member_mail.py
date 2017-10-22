@@ -25,8 +25,8 @@ class Command(BaseCommand):
                     continue
 
                 # only send mail, when created
-                if not created:
-                    continue
+                # if not created:
+                    # continue
 
                 context = {
                     'uuid': uuid,
