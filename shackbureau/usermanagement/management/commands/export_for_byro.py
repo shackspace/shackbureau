@@ -41,6 +41,19 @@ class Command(BaseCommand):
                 'join_date': str(member.join_date or ''),
                 'leave_date': str(member.leave_date or ''),
             }
+            if hasattr(member, 'memberspecials'):
+                member_dict.update({
+                    'has_snackomat_key': member.memberspecials.has_snackomat_key,
+                    'has_matomat_key': member.memberspecials.has_matomat_key,
+                    'has_metro_card': member.memberspecials.has_metro_card,
+                    'has_selgros_card': member.memberspecials.has_selgros_card,
+                    'has_shack_iron_key': member.memberspecials.has_shack_iron_key,
+                    'is_keyholder': member.memberspecials.is_keyholder,
+                    'has_safe_key': member.memberspecials.has_safe_key,
+                    'has_loeffelhardt_account': member.memberspecials.has_loeffelhardt_account,
+                    'signed_DSV': member.memberspecials.signed_DSV,
+                    'ssh_public_key': member.memberspecials.ssh_public_key,
+                })
             transactions = []
             for btrans in member.banktransactionlog_set.all():
                 transactions.append({
