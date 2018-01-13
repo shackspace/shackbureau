@@ -140,6 +140,7 @@ EXPORT_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'export'))
 # set email to stdout for debugging
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+SESSION_COOKIE_NAME = 'byro_sessionid'
 
 try:
     from .production_settings_template import *
