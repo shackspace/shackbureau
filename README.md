@@ -1,5 +1,7 @@
 # shackbureau
-the one and only (yet another) shack member managment
+
+shackbureau was the shackspace membership management software. It was retired in favor of
+[byro](https://github.com/byro/byro).
 
 [![Build Status](https://travis-ci.org/shackspace/shackbureau.svg?branch=master)](https://travis-ci.org/shackspace/shackbureau)
 
