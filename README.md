@@ -1,3 +1,5 @@
+migrated to new location: https://codeberg.org/shackspace/shackbureau
+
 # shackbureau
 
 shackbureau was the shackspace membership management software. It was retired in favor of
